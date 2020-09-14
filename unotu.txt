@@ -1,0 +1,13 @@
+Raw idea.
+
+Some kind of note taking program with advanced search.
+
+Perhaps each note could contain:
+
+title
+content
+tags
+
+And then you could search by pattern and select if you wanna match title or content or tags. Or perhaps search only the notes that have matching tag. The program can be used to remember YouTube videos for example, since it's often hard to find them provided the author's description and Google's evil. In Unotu you could describe the video yourself, and give it appropriate tags.
+
+I don't  think it's a good idea to make it in a console. Perhaps I should try really hard and make it in OpenGL.

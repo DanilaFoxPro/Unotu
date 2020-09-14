@@ -1,0 +1,9 @@
+target_sources_local(
+        ${APP_LIBRARY_NAME}
+        PUBLIC
+                card.h
+                simple_timer.h
+        PRIVATE
+                card.cpp
+                simple_timer.cpp
+)

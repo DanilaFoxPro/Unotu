@@ -1,0 +1,13 @@
+target_sources_local(
+        ${APP_LIBRARY_NAME}
+        PUBLIC
+                base.h
+                color.h
+                text.h
+                texture.h
+        PRIVATE
+                base.cpp
+                color.cpp
+                text.cpp
+                texture.cpp
+)
