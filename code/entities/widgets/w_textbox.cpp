@@ -107,10 +107,11 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         if( CaretPtr && CaretPtr->HasCaretSelection() ) {
                 
-                // TODO: Offset.
-                
                 const text_coord First  = CaretPtr->FirstCaretSelection();
                 const text_coord Second = CaretPtr->SecondCaretSelection();
+                
+                      text_coord FirstOffset  = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
+                const text_coord SecondOffset = VerticallyOffsetTextCoord( Second, static_cast<std::ptrdiff_t>(-Offset) );
                 
                 const rgba InvFontColor = rgba( ~this->FontColor, this->FontColor.alpha );
         
@@ -121,8 +122,8 @@ void w_textbox::OnRefresh( ValidityState_t )
                         TextArea.first,
                         {
                                 {{0, 0}, this->FontColor},
-                                {First, InvFontColor, this->FontColor},
-                                {Second, this->FontColor},
+                                {FirstOffset, InvFontColor, this->FontColor},
+                                {SecondOffset, this->FontColor},
                         },
                         TopCut,
                         BottomCut

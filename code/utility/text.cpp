@@ -292,6 +292,20 @@ size_t GetMaxStringCoord( const std::vector<split_line>& Lines )
         return Offset;
 }
 
+/**
+ * @brief Vertically offsets text coordinate by offset specified.
+ * @note Clamps the result, so it cannot underflow. Clamped output is always (0, 0).
+ */
+text_coord VerticallyOffsetTextCoord( const text_coord& TextCoord, const std::ptrdiff_t Offset )
+{
+        if( (std::ptrdiff_t)TextCoord.first < -Offset ) {
+                return text_coord( 0, 0 );
+        } else {
+                return text_coord( TextCoord.first+Offset, TextCoord.second );
+        }
+}
+
+
 std::string AssembleText( const std::string& Text, const std::vector<split_line>& Lines )
 {
         std::string Output;

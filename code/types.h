@@ -3,6 +3,7 @@
 
 #include <utility\fpoint.h>
 
+/** Type to use for text coordinates, in YX format. */
 using text_coord = std::pair<std::size_t, std::size_t>;
 
 struct rgb
