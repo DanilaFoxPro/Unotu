@@ -69,6 +69,8 @@ std::pair< size_t, size_t >     ToDoubleCoord(
 size_t ToStringCoord( const std::pair< size_t, size_t >& LineCoord, const std::vector<split_line>& Lines );
 size_t GetMaxStringCoord( const std::vector<split_line>& Lines );
 
+text_coord VerticallyOffsetTextCoord( const text_coord& TextCoord, const std::ptrdiff_t Offset );
+
 std::string AssembleText( const std::string& Text, const std::vector<split_line>& Lines );
 std::pair< std::size_t, std::size_t > GetCharacterCoordinates( const std::string&, std::size_t );
 std::size_t GetCharacterPosition( const std::string&, std::size_t, std::size_t );

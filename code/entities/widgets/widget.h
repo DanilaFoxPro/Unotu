@@ -80,7 +80,7 @@ struct widget
                 /** Tick the children after this widget is tick'ed. */
         bool bTickRecursive = true;
                 /** Auto-validate widget after updating the geometry. */
-        bool bValidateOnGeometryUpdate = true;
+        bool bValidateOnRefresh = true;
                 /** Invalidate the widget when mouse enters or leaves collision. */
         bool bInvalidateOnMousePass = false;
                 /** Invalidate the widget each frame the mouse hovers over it. */

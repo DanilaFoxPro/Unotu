@@ -392,7 +392,7 @@ bool RefreshWidgets( std::vector<std::shared_ptr<widget>>& Widgets )
                 if( CurValidity != ValidityState::Valid ) {
                         Current->OnRefresh( CurValidity );
                         
-                        if( Current->bValidateOnGeometryUpdate ) {
+                        if( Current->bValidateOnRefresh ) {
                                 Current->ValidityState = ValidityState::Valid;
                         }
                         

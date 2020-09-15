@@ -140,7 +140,7 @@ void widget::SimpleCopy( const widget& Widget )
 	this->bKeyboardFocused = Widget.bKeyboardFocused;
 	
 	// Other.
-	this->bValidateOnGeometryUpdate = Widget.bValidateOnGeometryUpdate;
+	this->bValidateOnRefresh = Widget.bValidateOnRefresh;
 	this->bInvalidateOnMousePass = Widget.bInvalidateOnMousePass;
 	this->bInvalidateOnKeyboardFocus = Widget.bInvalidateOnKeyboardFocus;
 	
