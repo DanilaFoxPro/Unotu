@@ -23,3 +23,4 @@ Current goal:
  - Separate the Unotu project and the GUI engine. Perhaps call it UnotuGUI.
  - Polish and fix bugs.
  - Improve usability.
+ - Documentation. Ahem.
