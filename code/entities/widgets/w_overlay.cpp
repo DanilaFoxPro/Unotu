@@ -129,10 +129,13 @@ void w_overlay::OnRefresh( ValidityState_t )
                         const std::shared_ptr<widget> Locked = TheWindow.KeyboardFocus.lock();
                         w_editabletextbox* TextBox = nullptr;
                         
-                        if( ( TextBox = dynamic_cast<w_editabletextbox*>(Locked.get()) ) ) {
+                        if(
+                                ( TextBox = dynamic_cast<w_editabletextbox*>(Locked.get()) )
+                                && TextBox->DoesCollide(MousePos)
+                        ) {
                                 
                                 const text_coord TextCoord = TextBox->TextBox->PositionToTextCoord(MousePos);
-                                const std::string CoordText = std::to_string( TextCoord.second ) + ":" + std::to_string( TextCoord.first );
+                                const std::string CoordText = std::to_string( TextCoord.first ) + ":" + std::to_string( TextCoord.second );
                                 
                                 const point Origin = MousePos+point(8,-8);
                                 this->CreateLabel( CoordText, Origin );

@@ -199,10 +199,24 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position )
         
         fpoint LocalPosition = Localize( this->Position, Position );
         
+        const auto &LineMap = this->GetLineMap();
+        
+        if( LineMap.size() == 0 ) {
+                return {0, 0};
+        }
+        
         text_coord Result;
         
-        Result.first = LocalPosition.x/FFontSize.x;
-        Result.second = -LocalPosition.y/FFontSize.y+this->Offset;
+        Result.first = -LocalPosition.y/FFontSize.y+this->Offset;
+        Result.second = LocalPosition.x/FFontSize.x;
+        
+        if( Result.first >= LineMap.size() ) {
+                Result.first = LineMap.size()-1;
+        }
+        
+        if( Result.second > LineMap[Result.first].Length() ) {
+                Result.second = LineMap[Result.first].Length();
+        }
         
         return Result;
         
