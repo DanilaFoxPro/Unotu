@@ -71,7 +71,7 @@ void w_button::SetOptions()
 
         //:: Overrides.
 
-void w_button::OnMousePressed( int Button )
+void w_button::OnMousePressed( const int Button )
 {
         this->ThrowEvent( std::make_shared<we_click>( this->ActionID, this->ActionName, Button ) );
 }

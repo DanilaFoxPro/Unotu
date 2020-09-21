@@ -181,7 +181,7 @@ void w_minicard::OnDraw()
 	this->ColorGeometry.Draw();
 }
 
-void w_minicard::OnMousePressed( int Button )
+void w_minicard::OnMousePressed( const int Button )
 {
         if( Button == GLFW_MOUSE_BUTTON_LEFT ) {
                 this->ThrowEvent( std::make_shared<we_click>( 1, "Edit", Button ) );

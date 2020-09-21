@@ -48,7 +48,7 @@ struct w_minicard: public widget {
 	virtual void OnRefresh( ValidityState_t );
 	virtual void OnDraw();
         
-        virtual void OnMousePressed( int );
+        virtual void OnMousePressed( const int );
         
         //:: Helpers.
         

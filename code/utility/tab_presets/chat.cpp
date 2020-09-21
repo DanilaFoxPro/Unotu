@@ -68,7 +68,7 @@ void Chat::OnEvent( std::shared_ptr<widget_event> Event )
 
 #include <entities\ent_window.h>
 
-void Chat::OnMousePressed( int Button )
+void Chat::OnMousePressed( const int Button )
 {
         if( Button == GLFW_MOUSE_BUTTON_LEFT ) {
                 SetKeyboardFocus( std::weak_ptr<widget>( this->InputField ) );

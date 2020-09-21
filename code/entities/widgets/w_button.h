@@ -83,7 +83,7 @@ struct w_button : public widget
         text_geometry  gText;
         
 //:: Overrides.
-        virtual void OnMousePressed( int );
+        virtual void OnMousePressed( const int );
         
         virtual void OnRefresh( ValidityState_t );
         virtual void OnDraw();

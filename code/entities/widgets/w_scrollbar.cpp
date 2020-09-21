@@ -18,7 +18,7 @@
 #include <cmath>
 #include <stdio.h> //TODO: DEBUG.
 
-void w_scrollbar::OnMousePressed( int button )
+void w_scrollbar::OnMousePressed( const int button )
 {
 	switch( button )
 	{
@@ -30,7 +30,7 @@ void w_scrollbar::OnMousePressed( int button )
 	}
 }
 
-void w_scrollbar::OnMouseReleased( int button )
+void w_scrollbar::OnMouseReleased( const int button )
 {
 	switch( button )
 	{

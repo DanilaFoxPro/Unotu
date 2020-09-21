@@ -23,7 +23,7 @@ struct Chat : public w_tab
         virtual void OnRefresh( ValidityState_t );
         
         virtual void OnEvent( std::shared_ptr<widget_event> );
-        virtual void OnMousePressed( int );
+        virtual void OnMousePressed( const int );
 
 //:: Data.
         std::shared_ptr<w_textscrollbox> OutputLog;
