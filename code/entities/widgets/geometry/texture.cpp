@@ -64,38 +64,6 @@ void texture_geometry::Draw()
         }
 }
 
-
-void texture_geometry::DrawText( rgba TextColor )
-{
-        
-        glActiveTexture(GL_TEXTURE0);
-	glBindTexture( GL_TEXTURE_2D, the_opengl.FontTexture );
-        
-	glUseProgram( the_opengl.TextShader );
-	glUniform4f(
-		glGetUniformLocation( the_opengl.TextShader, "fontColor" ),
-		TextColor.r,
-		TextColor.g,
-		TextColor.b,
-		TextColor.a
-	);
-        
-        if( this->EnableBlend )
-	{
-		glEnable( GL_BLEND );
-	}
-	    
-	glUseProgram( the_opengl.TextShader );
-	glBindVertexArray( this->VAO );
-	glDrawElements( GL_TRIANGLES, this->Indices.size(), GL_UNSIGNED_INT, 0 );
-
-	if( this->EnableBlend )
-	{
-		glEnable( GL_BLEND );
-	}
-        
-}
-
 //--Shapes.
 
 void texture_geometry::Clear(void)

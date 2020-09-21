@@ -16,7 +16,6 @@ struct texture_geometry : geometry
         virtual void Update(void);
         virtual void Draw(void);
         void Draw( GLuint );
-        void DrawText( rgba );
         
         virtual void Clear(void);
         void AddRectangle( const textured_rectangle& );

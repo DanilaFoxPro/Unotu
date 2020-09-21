@@ -20,26 +20,26 @@
 
 void w_scrollbar::OnMousePressed( const int button )
 {
-	switch( button )
-	{
-		case GLFW_MOUSE_BUTTON_LEFT:
-		{
-			this->bHasMouse = true;
-			break;
-		}
-	}
+        switch( button )
+        {
+                case GLFW_MOUSE_BUTTON_LEFT:
+                {
+                        this->bHasMouse = true;
+                        break;
+                }
+        }
 }
 
 void w_scrollbar::OnMouseReleased( const int button )
 {
-	switch( button )
-	{
-		case GLFW_MOUSE_BUTTON_LEFT:
-		{
-			this->bHasMouse = false;
-			break;
-		}
-	}
+        switch( button )
+        {
+                case GLFW_MOUSE_BUTTON_LEFT:
+                {
+                        this->bHasMouse = false;
+                        break;
+                }
+        }
 }
 
 bool w_scrollbar::DoesHintCollide( point Position )
@@ -52,7 +52,7 @@ bool w_scrollbar::DoesHintCollide( point Position )
 
 void w_scrollbar::OnTick()
 {
-	
+        
         if( !this->bHasMouse ) {
                 return;
         }
@@ -87,7 +87,7 @@ void w_scrollbar::OnTick()
                 )
         );
         this->Invalidate();
-	
+        
 }
 
 void w_scrollbar::OnRefresh( ValidityState_t )
@@ -102,7 +102,7 @@ void w_scrollbar::OnRefresh( ValidityState_t )
         const point PSize = point( this->Size.x.xpixels(), this->Size.y.ypixels() );
 
         gColor.Clear();
-        gTexture.Clear();
+        gText.Clear();
         gPreviewColor.Clear();
 
         //:: Color.
@@ -158,36 +158,24 @@ void w_scrollbar::OnRefresh( ValidityState_t )
 
         //:: Texture.
         // Top button.
-        gTexture.AddRectangle(
-                textured_rectangle(
-                        point
-                        (
-                                Position.x+(PSize.x/4),
-                                Position.y
-                        ),
-                        point
-                        (
-                                Position2.x-(Size.x/4),
-                                Position.y-PSize.x
-                        ),
-                        CharacterTextureCoordinates( fsym::arrow_up )
-                )
+        gText.AddText(
+                std::string( 1, fsym::arrow_up ),
+                PSize.x.xpixels(),
+                point (
+                        Position.x+(PSize.x/4),
+                        Position.y
+                ),
+                color::white
         );
         // Bottom button.
-        gTexture.AddRectangle(
-                textured_rectangle(
-                        point
-                        (
-                                Position.x+(PSize.x/4),
-                                Position2.y+PSize.x
-                        ),
-                        point
-                        (
-                                Position2.x-(PSize.x/4),
-                                Position2.y
-                        ),
-                        CharacterTextureCoordinates( fsym::arrow_down )
-                )
+        gText.AddText(
+                std::string( 1, fsym::arrow_down ),
+                PSize.x.xpixels(),
+                point (
+                        Position.x+(PSize.x/4),
+                        Position2.y+PSize.x
+                ),
+                color::white
         );
         
         //:: Preview color.
@@ -245,18 +233,18 @@ void w_scrollbar::OnRefresh( ValidityState_t )
         }
         
         gColor.Update();
-        gTexture.Update();
+        gText.Update();
         gPreviewColor.Update();
 }
 
 void w_scrollbar::OnDraw()
 {
-	if( this->bHintFocused || this->bHasMouse ) {
+        if( this->bHintFocused || this->bHasMouse ) {
                 //:: Draw rectangles.
                 this->gColor.Draw();
                 
                 //:: Draw text.
-                this->gTexture.DrawText( color::white );
+                this->gText.Draw();
         } else {
                 this->gPreviewColor.Draw();
         }
