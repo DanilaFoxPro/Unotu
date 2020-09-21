@@ -1,6 +1,5 @@
 #include <utility\tab_presets\test.h>
 
-#include <entities\widgets\w_debugoverlay.h>
 #include <entities\widgets\w_minicard.h>
 #include <entities\widgets\w_editabletextbox.h>
 #include <entities\widgets\w_editabletext.h>
@@ -24,10 +23,6 @@ Test::Test()
 
 void Test::PostConstruct()
 {
-        
-        this->AddChild(
-                new w_debugoverlay()
-        );
         
         const std::vector<std::string> Options = {
                 "Edit Card Tab",

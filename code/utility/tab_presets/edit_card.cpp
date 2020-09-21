@@ -1,7 +1,5 @@
 #include <utility\tab_presets\edit_card.h>
 
-#include <entities\widgets\w_debugoverlay.h>
-
 #include <utility\data.h>
 #include <utility\colors.h>
 
@@ -50,7 +48,6 @@ void EditCard::PostConstruct()
         
         this->CardContent->TextBox->FontSize = 32;
         
-        this->AddChild( new w_debugoverlay() );
 }
 
 EditCard::~EditCard()

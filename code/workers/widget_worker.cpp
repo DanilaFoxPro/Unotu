@@ -7,9 +7,10 @@
 #include <stdio.h>//TODO: DEBUG.
 
 #include <entities\ent_window.h>
+#include <entities\widgets\w_overlay.h>
+#include <workers\window_worker.h>
 #include <utility\shortcuts.h>
 #include <utility\widget.h>
-#include "window_worker.h"
 
 //:: Interface actions.
 
@@ -130,6 +131,7 @@ void SwitchTabs()
                 if( TheTab.PendingTab ) {
                         printf( "Switch to '%s'!\n", ClassName( *TheTab.PendingTab ).c_str() );
                         TheTab.Widgets.clear();
+                        TheTab.AddWidget( new w_overlay() );
                         TheTab.AddWidget( TheTab.PendingTab );
                         TheTab.PendingTab = nullptr;
                 }

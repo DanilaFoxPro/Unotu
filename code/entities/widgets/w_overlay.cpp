@@ -1,4 +1,4 @@
-#include <entities\widgets\w_debugoverlay.h>
+#include <entities\widgets\w_overlay.h>
 
 #include <utility\text.h>
 #include <workers\widget_worker.h>
@@ -8,7 +8,7 @@
 
 #include <utility\colors.h>
 
-void w_debugoverlay::CheckpointFrame()
+void w_overlay::CheckpointFrame()
 {
         const chrono::high_resolution_clock::duration AvgPeriod =
                 this->FrameTimer.ElapsedTime()/this->FPSAverageStep;
@@ -21,7 +21,7 @@ void w_debugoverlay::CheckpointFrame()
  * @brief Creates a label-like text with background at given position.
  * @note  Should only be called 'OnReferesh()'.
  */
-void w_debugoverlay::CreateLabel(
+void w_overlay::CreateLabel(
         const std::string&      Label,
         const point             Origin,
         const int               FontSize,
@@ -60,7 +60,7 @@ void w_debugoverlay::CreateLabel(
 }
 
 
-void w_debugoverlay::OnTick()
+void w_overlay::OnTick()
 {
         
         if( bDisplayFrameCount || bDisplayMouse ) {
@@ -77,7 +77,7 @@ void w_debugoverlay::OnTick()
         
 }
 
-void w_debugoverlay::OnRefresh( ValidityState_t )
+void w_overlay::OnRefresh( ValidityState_t )
 {
         gColor.Clear();
         gText.Clear();
@@ -165,7 +165,7 @@ void w_debugoverlay::OnRefresh( ValidityState_t )
         
 }
 
-void w_debugoverlay::OnDraw()
+void w_overlay::OnDraw()
 {
         
         //:: Draw rectangles.

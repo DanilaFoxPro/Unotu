@@ -9,8 +9,6 @@
 #include <utility\shortcuts.h>
 #include <utility\data.h>
 
-#include <entities\widgets\w_debugoverlay.h>
-
 namespace TabPresets
 {
 
@@ -31,8 +29,6 @@ void CardSearch::PostConstruct()
         this->TopBox->Padding = point( pixel(10), 0 );
         
         this->SearchField->OutlineColor = color::gray * 0.5f;
-        
-        this->AddChild( new w_debugoverlay() );
         
         this->Search();
         
