@@ -149,7 +149,7 @@ void w_editabletextbox::OnKeyInput( const int& Key, const int& Modifiers )
 
 void w_editabletextbox::OnMousePressed( const int Button )
 {
-        if( Button == GLFW_MOUSE_BUTTON_1 ) {
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bKeyboardFocused ) {
                 text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 
                 this->VoidCaretSelection();

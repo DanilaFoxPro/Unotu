@@ -57,9 +57,15 @@ struct w_editabletext : public widget, public m_caret, public m_text
         virtual void OnCharacterInput( const std::string& ) final;
         virtual void OnKeyInput( const int&, const int& ) final;
         
+        virtual void OnMousePressed( const int Button ) final;
+        virtual void OnMouseReleased( const int Button ) final;
+        
 //:: Functions
         
         void CommitText();
+        
+        int FontSize();
+        text_coord PositionToTextCoord( const fpoint Position );
         
         virtual void SetText( const std::string& );
         virtual void ClearText();

@@ -191,6 +191,7 @@ std::size_t w_textbox::LineCount() const
 	return this->TotalLineCount;
 }
 
+/** @brief Position in text coordinates based on on-screen position. */
 text_coord w_textbox::PositionToTextCoord( const fpoint Position )
 {
         const fpoint Pixel = pixel(1);

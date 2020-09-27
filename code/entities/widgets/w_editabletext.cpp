@@ -2,6 +2,7 @@
 
 #include <entities\ent_opengl.h>
 #include <workers\widget_worker.h>
+#include <workers\window_worker.h>
 
 #include <utility\text.h>
 #include <utility\shortcuts.h>
@@ -56,16 +57,13 @@ void w_editabletext::OnRefresh( ValidityState_t )
 	
 	const point Position2 = SecondPosition( Position, Size );
 	const std::pair<point, point> Area = OutlineAdjustedArea( Position, Position2, OutlineThickness );
-	const point LocalAreaSize = AreaSize( Area.first, Area.second );
 	
 	this->gColor.Clear();
 	this->gText.Clear();
 	
 	// Outline.
-	if( this->OutlineColor.alpha > 0.0f )
-	{
-		this->gColor.AddOutline
-		(
+	if( this->OutlineColor.alpha > 0.0f ) {
+		this->gColor.AddOutline (
 			         colored_rectangle( Position, Position2, this->bKeyboardFocused ? TheTheme.Accent : OutlineColor ),
 			OutlineThickness
 		);
@@ -84,7 +82,7 @@ void w_editabletext::OnRefresh( ValidityState_t )
 	if( this->TextColor.alpha > 0.0f )
 	{
 		// Main text.
-		const int FontSize = LocalAreaSize.y.ypixels();
+		const int FontSize = this->FontSize();
 		
                 if( this->Text.size() != 0 ) {
                         const std::size_t Limit = this->Text.size()-1;
@@ -183,6 +181,35 @@ void w_editabletext::OnKeyInput( const int& Key, const int& Modifiers )
 	}
 }
 
+void w_editabletext::OnMousePressed( const int Button )
+{
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bKeyboardFocused ) {
+                const text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
+                
+                this->VoidCaretSelection();
+                this->TextCaretPosition = TextCoord;
+                this->BumpCaret();
+                
+                this->FixupCaretPosition();
+                this->StartSelection();
+                
+                this->Invalidate();
+        }
+}
+
+void w_editabletext::OnMouseReleased( const int Button )
+{
+        if( Button == GLFW_MOUSE_BUTTON_1 ) {
+                text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
+                
+                this->TextCaretPosition = TextCoord;
+                this->FixupCaretPosition();
+                
+                this->BumpCaret();
+                this->Invalidate();
+        }
+}
+
 /**
  * @brief Commit the text. Sends out a commit event.
  */
@@ -193,6 +220,26 @@ void w_editabletext::CommitText()
                 this->ClearText();
         }
 }
+
+int w_editabletext::FontSize()
+{
+        const point Position2 = SecondPosition( this->Position, this->Size );
+        const std::pair<point, point> Area = OutlineAdjustedArea( Position, Position2, OutlineThickness );
+	const point LocalAreaSize = AreaSize( Area.first, Area.second );
+        return LocalAreaSize.y.ypixels();
+}
+
+
+/** @brief Position in text coordinates based on on-screen position. */
+text_coord w_editabletext::PositionToTextCoord( const fpoint Position )
+{
+        const fpoint Pixel = pixel(1);
+        const fpoint LocalPosition = Localize( this->Position, Position );
+        const std::size_t XTextCoord = LocalPosition.x / (this->FontSize()*Pixel.x/2.0f);
+        
+        return {0, XTextCoord};
+}
+
 
 void w_editabletext::SetText( const std::string& Text )
 {
