@@ -149,6 +149,11 @@ void w_editabletextbox::OnKeyInput( const int& Key, const int& Modifiers )
 
 void w_editabletextbox::OnMousePressed( const int Button )
 {
+        
+        // HACK: Fixes mouse selection activating while using the scrollbar.
+        if( this->ScrollBar->DoesCollide( MousePosition() ) )
+                return;
+        
         if( Button == GLFW_MOUSE_BUTTON_1 && this->bKeyboardFocused ) {
                 text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 
@@ -159,17 +164,25 @@ void w_editabletextbox::OnMousePressed( const int Button )
                 this->FixupCaretPosition();
                 this->StartSelection();
                 
+                this->bBegunClickSelection = true;
+                
                 this->Invalidate();
+                
         }
 }
 
-void w_editabletextbox::OnMouseReleased( const int Button, const bool bFocusingClick )
+void w_editabletextbox::OnMouseReleased( const int Button, const bool )
 {
-        if( Button == GLFW_MOUSE_BUTTON_1 && !bFocusingClick ) {
-                text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
+                
+                const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 this->TextCaretPosition = TextCoord;
+                
                 this->FixupCaretPosition();
                 this->BumpCaret();
+                
+                this->bBegunClickSelection = false;
+                
                 this->Invalidate();
         }
 }

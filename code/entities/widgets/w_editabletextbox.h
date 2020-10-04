@@ -23,6 +23,11 @@ struct w_editabletextbox : public w_textscrollbox, public m_caret
 	);
 	virtual ~w_editabletextbox() = default; // Just to be safe.
 	
+//:: Data.
+        
+                /** Used by the mouse selection system. @see OnMousePressed() */
+        bool bBegunClickSelection = false;
+	
 //:: Overrides.
 	virtual void OnTick();
 	virtual void OnRefresh( ValidityState_t );
