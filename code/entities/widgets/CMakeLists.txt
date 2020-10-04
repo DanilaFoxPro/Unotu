@@ -17,6 +17,7 @@ target_sources_local(
     w_text.h
     w_textbox.h
     w_textscrollbox.h
+    w_widgethierarchybrowser.h
   PRIVATE
     widget.cpp
     
@@ -34,6 +35,7 @@ target_sources_local(
     w_text.cpp
     w_textbox.cpp
     w_textscrollbox.cpp
+    w_widgethierarchybrowser.cpp
 )
 
 add_subdirectory( geometry )

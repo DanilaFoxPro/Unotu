@@ -146,22 +146,22 @@ namespace systems
                 //::Load.
                 
                         //Color shader source.
-                        GLchar* vertexShaderSource_color			= ZeroTerminate( (char*)DATA_COLORED_VERTICES_VS, DATA_COLORED_VERTICES_VS_SIZE );
-                        GLchar* fragmentShaderSource_color		= ZeroTerminate( (char*)DATA_COLORED_VERTICES_FRAG, DATA_COLORED_VERTICES_FRAG_SIZE );
+                        GLchar* vertexShaderSource_color        = ZeroTerminate( (char*)DATA_COLORED_VERTICES_VS, DATA_COLORED_VERTICES_VS_SIZE );
+                        GLchar* fragmentShaderSource_color      = ZeroTerminate( (char*)DATA_COLORED_VERTICES_FRAG, DATA_COLORED_VERTICES_FRAG_SIZE );
                         
                         //Texture shader source.
-                        GLchar* vertexShaderSource_texture		= ZeroTerminate( (char*)DATA_TEXTURED_VERTICES_VS, DATA_TEXTURED_VERTICES_VS_SIZE );
-                        GLchar* fragmentShaderSource_texture	= ZeroTerminate( (char*)DATA_TEXTURED_VERTICES_FRAG, DATA_TEXTURED_VERTICES_FRAG_SIZE );
+                        GLchar* vertexShaderSource_texture      = ZeroTerminate( (char*)DATA_TEXTURED_VERTICES_VS, DATA_TEXTURED_VERTICES_VS_SIZE );
+                        GLchar* fragmentShaderSource_texture    = ZeroTerminate( (char*)DATA_TEXTURED_VERTICES_FRAG, DATA_TEXTURED_VERTICES_FRAG_SIZE );
                         
                         //Text shader source.
-                        GLchar* vertexShaderSource_text			= ZeroTerminate( (char*)DATA_TEXT_VS, DATA_TEXT_VS_SIZE );
-                        GLchar* fragmentShaderSource_text		= ZeroTerminate( (char*)DATA_TEXT_FRAG, DATA_TEXT_FRAG_SIZE );
+                        GLchar* vertexShaderSource_text         = ZeroTerminate( (char*)DATA_TEXT_VS, DATA_TEXT_VS_SIZE );
+                        GLchar* fragmentShaderSource_text       = ZeroTerminate( (char*)DATA_TEXT_FRAG, DATA_TEXT_FRAG_SIZE );
                 
                 //::Compile and link.
                         
-                the_opengl.ColorShader		= compileAndLinkShaders( vertexShaderSource_color, fragmentShaderSource_color, "Color shader" );
-                the_opengl.TextureShader	= compileAndLinkShaders( vertexShaderSource_texture, fragmentShaderSource_texture, "Texture shader" );
-                the_opengl.TextShader		= compileAndLinkShaders( vertexShaderSource_text, fragmentShaderSource_text, "Text shader" );
+                the_opengl.ColorShader          = compileAndLinkShaders( vertexShaderSource_color, fragmentShaderSource_color, "Color shader" );
+                the_opengl.TextureShader        = compileAndLinkShaders( vertexShaderSource_texture, fragmentShaderSource_texture, "Texture shader" );
+                the_opengl.TextShader           = compileAndLinkShaders( vertexShaderSource_text, fragmentShaderSource_text, "Text shader" );
                 
                 //::Bind textures.
                 
