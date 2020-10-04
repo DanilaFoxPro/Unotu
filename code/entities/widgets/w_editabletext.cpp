@@ -197,9 +197,9 @@ void w_editabletext::OnMousePressed( const int Button )
         }
 }
 
-void w_editabletext::OnMouseReleased( const int Button )
+void w_editabletext::OnMouseReleased( const int Button, const bool bFocusingClick )
 {
-        if( Button == GLFW_MOUSE_BUTTON_1 ) {
+        if( Button == GLFW_MOUSE_BUTTON_1 && !bFocusingClick ) {
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
                 this->TextCaretPosition = TextCoord;

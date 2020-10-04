@@ -34,7 +34,7 @@ struct w_editabletextbox : public w_textscrollbox, public m_caret
 	virtual void OnKeyInput( const int&, const int& ) final;
         
         virtual void OnMousePressed( const int Button ) final;
-        virtual void OnMouseReleased( const int Button ) final;
+        virtual void OnMouseReleased( const int Button, const bool bFocusingClick ) final;
 	
 //:: Geometry.
 	text_geometry gText; // Only for a caret. What a waste.

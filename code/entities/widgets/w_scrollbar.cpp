@@ -30,7 +30,7 @@ void w_scrollbar::OnMousePressed( const int button )
         }
 }
 
-void w_scrollbar::OnMouseReleased( const int button )
+void w_scrollbar::OnMouseReleased( const int button, const bool )
 {
         switch( button )
         {

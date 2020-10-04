@@ -537,10 +537,11 @@ std::string m_caret::GetSelectedSubstring()
         
 }
 
-
+/** Deletes all selected characters and calls `VoidCaretSelection()`. */
 void m_caret::DeleteCaretSelection()
 {
         if( !this->HasCaretSelection() ) {
+                this->VoidCaretSelection();
                 return;
         }
         

@@ -124,8 +124,8 @@ struct widget
 
         //
 
-        virtual void OnMousePressed( const int button ) { (void)button; };
-        virtual void OnMouseReleased( const int button ) {(void)button;};
+        virtual void OnMousePressed( const int Button ) { (void)Button; };
+        virtual void OnMouseReleased( const int Button, const bool bFocusingClick ) {(void)Button;(void)bFocusingClick;};
         virtual void OnMouseEnter() {};
         virtual void OnMouseLeave() {};
         virtual void OnMouseOver( point ) { };

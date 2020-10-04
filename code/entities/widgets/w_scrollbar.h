@@ -39,7 +39,7 @@ struct w_scrollbar : public widget
         }
         
         virtual void OnMousePressed( const int );
-        virtual void OnMouseReleased( const int );
+        virtual void OnMouseReleased( const int, const bool );
         
         virtual bool DoesHintCollide( point );
         
