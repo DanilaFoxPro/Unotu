@@ -101,19 +101,17 @@ void color_geometry::AddRectangle( const colored_rectangle& rect )
   * @note  Allows for negative thickness. */
 void color_geometry::AddOutline( const rectangle& Bounds, int Thickness, rgba Left, rgba Right, rgba Top, rgba Bottom )
 {
-        
-        const ent_window& TheWindow = TheWindowManager.Cur();
 	
-	const float XThickness = pixel( Thickness ).ratio( TheWindow.x );
-	const float YThickness = pixel( Thickness ).ratio( TheWindow.y );
+	const float XThickness = pixel( Thickness ).xratio();
+	const float YThickness = pixel( Thickness ).yratio();
         
         //
         
         if( Thickness < 0 ) {
                 const rectangle NewBounds = rectangle(
                         Bounds.x1 + XThickness,
-                        Bounds.x2 - XThickness,
                         Bounds.y1 - YThickness,
+                        Bounds.x2 - XThickness,
                         Bounds.y2 + YThickness
                 );
                 return this->AddOutline( NewBounds, -Thickness, Left, Right, Top, Bottom );

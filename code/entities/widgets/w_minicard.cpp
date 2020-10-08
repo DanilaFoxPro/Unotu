@@ -79,8 +79,8 @@ void w_minicard::CommonSetup()
         
         this->ContentText->FontColor = color::black;
         this->ContentText->BackgroundColor = color::light_sky_blue;
-        this->ContentText->OutlineThickness = 0;
-        this->ContentText->OutlineColor = color::black;
+        this->ContentText->OutlineThickness = 3;
+        this->ContentText->OutlineColor = TheTheme.Text;
 }
 
 
@@ -119,18 +119,23 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
                 colored_rectangle (
                         FPosition,
                         FPosition2,
-                        color::pale_silver
+                        TheTheme.Primary
                 )
         );
         
-        this->ColorGeometry.AddOutline
-        (
-                colored_rectangle(
+        const rgba OutlinePrimary   = this->bMouseOver ? TheTheme.AccentLit : TheTheme.PrimaryLit;
+        const rgba OutlineSecondary = this->bMouseOver ? TheTheme.AccentBack : TheTheme.PrimaryBack;
+        
+        this->ColorGeometry.AddOutline(
+                rectangle(
                         FPosition,
-                        FPosition2,
-                        this->bMouseOver ? TheTheme.Accent : TheTheme.Primary
+                        FPosition2
                 ),
-                -3
+                -4,
+                OutlineSecondary,
+                OutlinePrimary,
+                OutlinePrimary,
+                OutlineSecondary
         );
         
         this->ColorGeometry.Update();
@@ -159,20 +164,16 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
         
         //:: Content.
         
-        this->ContentText->Position =
-                        point
-                        (
-                                this->Position.x + pixel(PADDING),
-                                TitleLowerYPos - Padding.y*2.0f
-                        );
-        this->ContentText->SetSecondPosition
-                (
-                        point
-                        (
-                                FPosition2.x - Padding.x,
-                                FPosition2.y + Padding.y
-                        )
-                );
+        this->ContentText->Position = point(
+                this->Position.x + pixel(PADDING),
+                TitleLowerYPos - Padding.y*2.0f
+        );
+        this->ContentText->SetSecondPosition(
+                point(
+                        FPosition2.x - Padding.x,
+                        FPosition2.y + Padding.y
+                )
+        );
         
         this->ContentText->Invalidate( Reason );
         

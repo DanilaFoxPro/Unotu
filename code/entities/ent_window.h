@@ -4,6 +4,7 @@
 #include <entities\widgets\widget.h>
 #include <utility\fpoint.h>
 #include <utility\shortcuts.h>
+#include <utility\colors.h>
 
 #include <utility\deps\opengl_includes.h>
 
@@ -35,6 +36,8 @@ struct theme
         rgba Background = rgb{ 0.25f, 0.25f, 0.25f };
         rgba Highlight = color::light_sky_blue * 0.7f;
         rgba Accent = color::yellow;
+        rgba AccentLit = this->Accent;
+        rgba AccentBack = color::orange * 0.7f;
 };
 
 struct ent_window

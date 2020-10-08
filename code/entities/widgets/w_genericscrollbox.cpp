@@ -199,3 +199,11 @@ float w_genericscrollbox::ItemOffset( std::size_t Item )
         
         return fItemPadding + ( (float)Item * ( fItemHeight + fItemPadding ) );
 }
+
+/** @brief Set scrollbox background color. */
+void w_genericscrollbox::SetBackgroundColor( const rgba& Color )
+{
+        this->Buffer->BackgroundColor = Color;
+        this->Buffer->Invalidate( ValidityState::ParametersUpdated );
+}
+
