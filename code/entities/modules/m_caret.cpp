@@ -348,7 +348,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                 // Select all.
                                 case GLFW_KEY_A:
                                         this->CaretToBeginning();
-                                        this->StartSelection();
+                                        this->StartSelection(false);
                                         this->CaretToEnd();
                                         break;
                                 // Copy.
