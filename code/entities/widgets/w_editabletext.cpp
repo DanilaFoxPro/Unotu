@@ -45,11 +45,27 @@ void w_editabletext::OnTick()
 		and
 		this->bKeyboardFocused
 	);
+        
 	if( bTextCaretVisible != bCaretShouldBeVisible )
 	{
 		bTextCaretVisible = bCaretShouldBeVisible;
 		this->Invalidate();
 	}
+	
+	if( this->bBegunClickSelection ) {
+                
+                text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
+                
+                if( TextCoord == this->TextCaretPosition )
+                        return;
+                
+                this->TextCaretPosition = TextCoord;
+                this->FixupCaretPosition();
+                
+                this->BumpCaret();
+                this->Invalidate();
+        }
+	
 }
 
 void w_editabletext::OnRefresh( ValidityState_t )
@@ -194,12 +210,14 @@ void w_editabletext::OnMousePressed( const int Button )
                 this->StartSelection();
                 
                 this->Invalidate();
+                
+                this->bBegunClickSelection = true;
         }
 }
 
-void w_editabletext::OnMouseReleased( const int Button, const bool bFocusingClick )
+void w_editabletext::OnMouseReleased( const int Button, const bool )
 {
-        if( Button == GLFW_MOUSE_BUTTON_1 && !bFocusingClick ) {
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
                 this->TextCaretPosition = TextCoord;
@@ -207,6 +225,8 @@ void w_editabletext::OnMouseReleased( const int Button, const bool bFocusingClic
                 
                 this->BumpCaret();
                 this->Invalidate();
+                
+                this->bBegunClickSelection = false;
         }
 }
 

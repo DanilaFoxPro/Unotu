@@ -34,6 +34,11 @@ struct w_editabletext : public widget, public m_caret, public m_text
         
         int OutlineThickness	= 2;
         
+        // State.
+        
+                /** Used by the mouse selection system. @see OnMousePressed() */
+        bool bBegunClickSelection = false;
+        
         // Options.
         
         bool bCommitOnEnter = false;

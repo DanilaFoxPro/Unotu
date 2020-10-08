@@ -68,6 +68,22 @@ void w_editabletextbox::OnTick()
                 and
                 this->bKeyboardFocused
         );
+        
+        // Dynamic selection visuals.
+        if( this->bBegunClickSelection ) {
+                
+                const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
+                
+                if( TextCoord == this->TextCaretPosition )
+                        return;
+                
+                this->TextCaretPosition = TextCoord;
+                
+                this->FixupCaretPosition();
+                this->BumpCaret();
+                
+                this->Invalidate();
+        }
 }
 
 void w_editabletextbox::OnRefresh( ValidityState_t Reason )
