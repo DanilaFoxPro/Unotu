@@ -16,8 +16,14 @@ struct w_textbox : public widget, public m_textlines
         rgba FontColor = TheTheme.Text;
         float Offset = 0.0f;
 
-        rgba BackgroundColor = color::transparent;
-        rgba OutlineColor    = color::black;
+        rgba BackgroundColor    = color::transparent;
+        
+        rgba
+                OutlineColorLeft,
+                OutlineColorRight,
+                OutlineColorTop,
+                OutlineColorBottom 
+        = color::black;
 
         int OutlineThickness = 2;
 
@@ -57,7 +63,7 @@ struct w_textbox : public widget, public m_textlines
                 
                 //:: Body.
                 this->BackgroundColor	= BackgroundColor;
-                this->OutlineColor		= OutlineColor;
+                this->SetOutlineColor( OutlineColor );
                 this->OutlineThickness	= OutlineThickness;
                 
                 //:: Widget base.
@@ -77,9 +83,10 @@ struct w_textbox : public widget, public m_textlines
         // Helpers.
 
         void SetOffset( const float& ratio );
+        void SetOutlineColor( const rgba& Color );
         std::size_t LineCount() const;
         text_coord PositionToTextCoord( const fpoint Position );
-
+        
 //:: Text module.
         
         virtual void SetText( const std::string& );

@@ -78,9 +78,14 @@ void w_minicard::CommonSetup()
         this->TitleText->color = color::black;
         
         this->ContentText->FontColor = color::black;
-        this->ContentText->BackgroundColor = color::light_sky_blue;
-        this->ContentText->OutlineThickness = 3;
-        this->ContentText->OutlineColor = TheTheme.Text;
+        this->ContentText->BackgroundColor = color::white;
+        this->ContentText->OutlineThickness = 2;
+        
+        this->ContentText->OutlineColorLeft   = TheTheme.PrimaryLit;
+        this->ContentText->OutlineColorRight  = TheTheme.PrimaryBack;
+        this->ContentText->OutlineColorTop    = TheTheme.PrimaryBack;
+        this->ContentText->OutlineColorBottom = TheTheme.PrimaryLit;
+        
 }
 
 
@@ -113,32 +118,41 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
         
         //:: Own geometry.
         
-        this->ColorGeometry.Clear();
+        this->gColor.Clear();
         
-        this->ColorGeometry.AddRectangle (
-                colored_rectangle (
+        this->gColor.AddRectangle(
+                colored_rectangle(
                         FPosition,
                         FPosition2,
-                        TheTheme.Primary
+                        this->bMouseOver ? TheTheme.Highlight : TheTheme.Primary
                 )
         );
         
-        const rgba OutlinePrimary   = this->bMouseOver ? TheTheme.AccentLit : TheTheme.PrimaryLit;
-        const rgba OutlineSecondary = this->bMouseOver ? TheTheme.AccentBack : TheTheme.PrimaryBack;
+        const rgba OutlineColor1 = TheTheme.PrimaryLit;
+        const rgba OutlineColor2 = TheTheme.PrimaryBack;
+        const rgba OutlineColor2Light = color::gray * 0.8f;
         
-        this->ColorGeometry.AddOutline(
-                rectangle(
-                        FPosition,
-                        FPosition2
-                ),
-                -4,
-                OutlineSecondary,
-                OutlinePrimary,
-                OutlinePrimary,
-                OutlineSecondary
-        );
+        if( this->bMouseOver ) {
+                this->gColor.AddOutline(
+                        rectangle( FPosition, FPosition2 ),
+                        -4,
+                        OutlineColor1,
+                        OutlineColor2Light,
+                        OutlineColor2Light,
+                        OutlineColor1
+                );
+        } else {
+                this->gColor.AddOutline(
+                        rectangle( FPosition, FPosition2 ),
+                        -4,
+                        OutlineColor2,
+                        OutlineColor1,
+                        OutlineColor1,
+                        OutlineColor2
+                );
+        }
         
-        this->ColorGeometry.Update();
+        this->gColor.Update();
         
         //:: Title.
         
@@ -168,6 +182,7 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
                 this->Position.x + pixel(PADDING),
                 TitleLowerYPos - Padding.y*2.0f
         );
+        
         this->ContentText->SetSecondPosition(
                 point(
                         FPosition2.x - Padding.x,
@@ -182,7 +197,7 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
 void w_minicard::OnDraw()
 {
         //:: Draw colored rectangles.
-        this->ColorGeometry.Draw();
+        this->gColor.Draw();
 }
 
 void w_minicard::OnMousePressed( const int Button )

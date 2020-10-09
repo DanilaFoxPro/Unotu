@@ -34,14 +34,24 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         const bool bDrawOutline = (
                 this->OutlineThickness &&
-                this->OutlineColor.alpha != 0.0f
+                (
+                        this->OutlineColorLeft.alpha   > 0.0f ||
+                        this->OutlineColorRight.alpha  > 0.0f ||
+                        this->OutlineColorTop.alpha    > 0.0f ||
+                        this->OutlineColorBottom.alpha > 0.0f
+                )
         );
         
         if( bDrawOutline ) {
-                gColor.AddOutline (
-                        colored_rectangle( Position, Position2, this->OutlineColor ),
-                        this->OutlineThickness
-                );	
+                gColor.AddOutline(
+                        rectangle( Position, Position2 ),
+                        this->OutlineThickness,
+                        
+                        this->OutlineColorLeft,
+                        this->OutlineColorRight,
+                        this->OutlineColorTop,
+                        this->OutlineColorBottom
+                );
         }
         
         //:: Background.
@@ -184,6 +194,14 @@ void w_textbox::SetOffset( const float& ratio )
 		*
 		clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
 	);
+}
+
+void w_textbox::SetOutlineColor( const rgba& Color )
+{
+        this->OutlineColorLeft   = 
+        this->OutlineColorRight  = 
+        this->OutlineColorTop    = 
+        this->OutlineColorBottom = Color;
 }
 
 std::size_t w_textbox::LineCount() const

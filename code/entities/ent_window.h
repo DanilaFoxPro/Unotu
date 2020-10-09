@@ -36,8 +36,6 @@ struct theme
         rgba Background = rgb{ 0.25f, 0.25f, 0.25f };
         rgba Highlight = color::light_sky_blue * 0.7f;
         rgba Accent = color::yellow;
-        rgba AccentLit = this->Accent;
-        rgba AccentBack = color::orange * 0.7f;
 };
 
 struct ent_window

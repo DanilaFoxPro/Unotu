@@ -59,7 +59,10 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
                 this->Buffer->AddChild( Current );
                 
                 Current->Position = point( this->Position.x + pixel( this->XPadding ), this->Position.y.yratio()-(this->ItemOffset( i )-Offset) );
-                Current->SetSecondPosition( point( Position2.x-this->XPadding, Current->Position.y-this->ItemHeight ) );
+                Current->SetSecondPosition( point(
+                        Position2.x-this->XPadding-w_scrollbar::IdealPreviewWidth,
+                        Current->Position.y-this->ItemHeight
+                ) );
                 
                 Current->Invalidate( ValidityState::Resized );
         }
