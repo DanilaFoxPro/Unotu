@@ -202,14 +202,6 @@ namespace systems
                         printf( "    %s - %s.\n", Extensions[i], Supported ? "supported" : "not supported" );
                 }
                 
-                // This is duplicated in window creation code. But it's useless for the first window there,
-                // because when first window is created -- GLEW isn't initialized yet. And GLEW needs active OpenGL
-                // context to initialize, so I have to create a window before initializing GLEW.
-                //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                
-                //Wireframe mode.
-                //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                
                 // Vertical synchronization.
                 glfwSwapInterval(0);
                 
@@ -341,6 +333,7 @@ namespace systems
                 cycle_interface(); // Interface updates.
                 cycle_render(); // OpenGL rendering. Nothing more.
                 
+                //printf( "%i: %i\n", (int)TheWindowManager.Cur().CurrentFrame, (int)Timer.ElapsedTime().count() );
                 std::this_thread::sleep_for( the_opengl.IdealFramePeriod-Timer.ElapsedTime() );
                 
         }
