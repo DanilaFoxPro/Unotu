@@ -224,18 +224,22 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position )
                 return {0, 0};
         }
         
-        text_coord Result;
+        std::pair< std::ptrdiff_t, std::ptrdiff_t > Result;
         
         Result.first = -LocalPosition.y/FFontSize.y+this->Offset;
         Result.second = LocalPosition.x/FFontSize.x;
         
-        if( Result.first >= LineMap.size() ) {
-                Result.first = LineMap.size()-1;
-        }
+        Result.first = clamp(
+                Result.first,
+                (std::ptrdiff_t)(0),
+                (std::ptrdiff_t)LineMap.size()-1
+        );
         
-        if( Result.second > LineMap[Result.first].Length() ) {
-                Result.second = LineMap[Result.first].Length();
-        }
+        Result.second = clamp(
+                Result.second,
+                (std::ptrdiff_t)(0),
+                (std::ptrdiff_t)LineMap[Result.first].Length()
+        );
         
         return Result;
         

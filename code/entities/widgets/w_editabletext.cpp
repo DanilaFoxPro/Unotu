@@ -255,7 +255,14 @@ text_coord w_editabletext::PositionToTextCoord( const fpoint Position )
 {
         const fpoint Pixel = pixel(1);
         const fpoint LocalPosition = Localize( this->Position, Position );
-        const std::size_t XTextCoord = LocalPosition.x / (this->FontSize()*Pixel.x/2.0f);
+        
+        std::ptrdiff_t XTextCoord = LocalPosition.x / (this->FontSize()*Pixel.x/2.0f);
+        
+        XTextCoord = clamp(
+                XTextCoord,
+                (std::ptrdiff_t)(0),
+                (std::ptrdiff_t)this->Text.size()
+        );
         
         return {0, XTextCoord};
 }
