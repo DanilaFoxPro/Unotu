@@ -13,8 +13,8 @@
 #include <system_error> // For throwing exeptions around.
 
 /** Doesn't create the window right away, but schedules its
- *  creation to an appropriate time.
- */
+*  creation to an appropriate time.
+*/
 void CreatePendingWindow()
 {
         pending_window PendingWindow;
@@ -22,10 +22,10 @@ void CreatePendingWindow()
 }
 
 /** Shouldn't be called directly, since it creates the window right away.
- *  Use CreatePendingWindow() instead.
- * 
- *  @note Sets the newly created window as current.
- */
+*  Use CreatePendingWindow() instead.
+* 
+*  @note Sets the newly created window as current.
+*/
 void CreateWindow()
 {
         
@@ -108,11 +108,14 @@ void UpdateWindows()
                 //:: Close check.
                 if( glfwWindowShouldClose(TheWindow.Reference) )
                 {
-                        printf( "    Destroying '%i' ..\n", (int)i );
+                        printf(
+                                "    Destroying window index '%i' (of %i)..",
+                               (int)i, (int)TheWindowManager.Windows.size()-1
+                        );
                         glfwDestroyWindow( TheWindow.Reference );
-                        printf( "    Removing from window manager %i/%i..\n", (int)i+1, (int)TheWindowManager.Windows.size() );
-                                TheWindowManager.Windows.erase( TheWindowManager.Windows.begin()+i );
-                        printf( "    Continue..\n" );
+                        printf( " Removing from window manager.." );
+                        TheWindowManager.Windows.erase( TheWindowManager.Windows.begin()+i );
+                        printf( " Continue..\n" );
                         continue;
                 }
                 
