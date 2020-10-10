@@ -348,7 +348,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                 // Select all.
                                 case GLFW_KEY_A:
                                         this->CaretToBeginning();
-                                        this->StartSelection();
+                                        this->StartSelection(false);
                                         this->CaretToEnd();
                                         break;
                                 // Copy.
@@ -537,10 +537,11 @@ std::string m_caret::GetSelectedSubstring()
         
 }
 
-
+/** Deletes all selected characters and calls `VoidCaretSelection()`. */
 void m_caret::DeleteCaretSelection()
 {
         if( !this->HasCaretSelection() ) {
+                this->VoidCaretSelection();
                 return;
         }
         

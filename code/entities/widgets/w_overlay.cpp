@@ -1,4 +1,4 @@
-#include <entities\widgets\w_debugoverlay.h>
+#include <entities\widgets\w_overlay.h>
 
 #include <utility\text.h>
 #include <workers\widget_worker.h>
@@ -8,7 +8,7 @@
 
 #include <utility\colors.h>
 
-void w_debugoverlay::CheckpointFrame()
+void w_overlay::CheckpointFrame()
 {
         const chrono::high_resolution_clock::duration AvgPeriod =
                 this->FrameTimer.ElapsedTime()/this->FPSAverageStep;
@@ -21,7 +21,7 @@ void w_debugoverlay::CheckpointFrame()
  * @brief Creates a label-like text with background at given position.
  * @note  Should only be called 'OnReferesh()'.
  */
-void w_debugoverlay::CreateLabel(
+void w_overlay::CreateLabel(
         const std::string&      Label,
         const point             Origin,
         const int               FontSize,
@@ -60,7 +60,7 @@ void w_debugoverlay::CreateLabel(
 }
 
 
-void w_debugoverlay::OnTick()
+void w_overlay::OnTick()
 {
         
         if( bDisplayFrameCount || bDisplayMouse ) {
@@ -77,7 +77,7 @@ void w_debugoverlay::OnTick()
         
 }
 
-void w_debugoverlay::OnRefresh( ValidityState_t )
+void w_overlay::OnRefresh( ValidityState_t )
 {
         gColor.Clear();
         gText.Clear();
@@ -129,10 +129,13 @@ void w_debugoverlay::OnRefresh( ValidityState_t )
                         const std::shared_ptr<widget> Locked = TheWindow.KeyboardFocus.lock();
                         w_editabletextbox* TextBox = nullptr;
                         
-                        if( ( TextBox = dynamic_cast<w_editabletextbox*>(Locked.get()) ) ) {
+                        if(
+                                ( TextBox = dynamic_cast<w_editabletextbox*>(Locked.get()) )
+                                && TextBox->DoesCollide(MousePos)
+                        ) {
                                 
                                 const text_coord TextCoord = TextBox->TextBox->PositionToTextCoord(MousePos);
-                                const std::string CoordText = std::to_string( TextCoord.second ) + ":" + std::to_string( TextCoord.first );
+                                const std::string CoordText = std::to_string( TextCoord.first ) + ":" + std::to_string( TextCoord.second );
                                 
                                 const point Origin = MousePos+point(8,-8);
                                 this->CreateLabel( CoordText, Origin );
@@ -165,7 +168,7 @@ void w_debugoverlay::OnRefresh( ValidityState_t )
         
 }
 
-void w_debugoverlay::OnDraw()
+void w_overlay::OnDraw()
 {
         
         //:: Draw rectangles.

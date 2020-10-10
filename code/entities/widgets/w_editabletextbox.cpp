@@ -1,5 +1,6 @@
 #include <entities\widgets\w_editabletextbox.h>
 
+#include <workers\window_worker.h>
 #include <utility\text.h>
 #include <utility\widget.h>
 #include <font_symbols.h>
@@ -10,16 +11,16 @@
 
 w_editabletextbox::w_editabletextbox
 (
-	const point& Position,
-	const point& Size,
-	
-	const std::string&	Text,
-	const int&			FontSize,
-	const rgba&			TextColor,
-	
-	const rgba& BackgroundColor,
-	const rgba& OutlineColor,
-	const int&	OutlineThickness
+        const point& Position,
+        const point& Size,
+        
+        const std::string&	Text,
+        const int&			FontSize,
+        const rgba&			TextColor,
+        
+        const rgba& BackgroundColor,
+        const rgba& OutlineColor,
+        const int&	OutlineThickness
 )
 {
         //:: Boring.
@@ -55,18 +56,34 @@ w_editabletextbox::w_editabletextbox
 
 void w_editabletextbox::OnTick()
 {
-	w_textscrollbox::OnTick();
-	const double CurrentTime = glfwGetTime();
-	this->bTextCaretVisible =
-	(
-		(
-			( fmod(CurrentTime , CaretPeriod ) < CaretPeriod/2.0 )
-			or
-			( CurrentTime - this->LastCaretBump < 0.5f )
-		)
-		and
-		this->bKeyboardFocused
-	);
+        w_textscrollbox::OnTick();
+        const double CurrentTime = glfwGetTime();
+        this->bTextCaretVisible =
+        (
+                (
+                        ( fmod(CurrentTime , CaretPeriod ) < CaretPeriod/2.0 )
+                        or
+                        ( CurrentTime - this->LastCaretBump < 0.5f )
+                )
+                and
+                this->bKeyboardFocused
+        );
+        
+        // Dynamic selection visuals.
+        if( this->bBegunClickSelection ) {
+                
+                const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
+                
+                if( TextCoord == this->TextCaretPosition )
+                        return;
+                
+                this->TextCaretPosition = TextCoord;
+                
+                this->FixupCaretPosition();
+                this->BumpCaret();
+                
+                this->Invalidate();
+        }
 }
 
 void w_editabletextbox::OnRefresh( ValidityState_t Reason )
@@ -107,23 +124,23 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
         );
         
         this->gText.Update();
-	
+        
 }
 
 
 void w_editabletextbox::OnDraw()
 {
-	// Otherwise parent would be invisible, once more.
-	w_textscrollbox::OnDraw();
-	if( this->bTextCaretVisible ) {
-		this->gText.Draw();
-	}
+        // Otherwise parent would be invisible, once more.
+        w_textscrollbox::OnDraw();
+        if( this->bTextCaretVisible ) {
+                this->gText.Draw();
+        }
 }
 
 void w_editabletextbox::OnKeyboardFocused()
 {
-	const std::size_t CurrentLine = this->TextCaretPosition.first;
-	this->ScrollIntoView( CurrentLine );
+        const std::size_t CurrentLine = this->TextCaretPosition.first;
+        this->ScrollIntoView( CurrentLine );
 }
 
 void w_editabletextbox::OnCharacterInput( const std::string& Input )
@@ -138,10 +155,52 @@ void w_editabletextbox::OnCharacterInput( const std::string& Input )
 
 void w_editabletextbox::OnKeyInput( const int& Key, const int& Modifiers )
 {
-	if( this->ProcessKeyInput( Key, Modifiers ) )
-	{
-		this->Invalidate( ValidityState::ParametersUpdated );	
-		const std::size_t CurrentLine = this->TextCaretPosition.first;
-		this->ScrollIntoView( CurrentLine );
-	}
+        if( this->ProcessKeyInput( Key, Modifiers ) )
+        {
+                this->Invalidate( ValidityState::ParametersUpdated );	
+                const std::size_t CurrentLine = this->TextCaretPosition.first;
+                this->ScrollIntoView( CurrentLine );
+        }
 }
+
+void w_editabletextbox::OnMousePressed( const int Button )
+{
+        
+        // HACK: Fixes mouse selection activating while using the scrollbar.
+        if( this->ScrollBar->DoesCollide( MousePosition() ) )
+                return;
+        
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bKeyboardFocused ) {
+                text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
+                
+                this->VoidCaretSelection();
+                this->TextCaretPosition = TextCoord;
+                this->BumpCaret();
+                
+                this->FixupCaretPosition();
+                this->StartSelection();
+                
+                this->bBegunClickSelection = true;
+                
+                this->Invalidate();
+                
+        }
+}
+
+void w_editabletextbox::OnMouseReleased( const int Button, const bool )
+{
+        if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
+                
+                const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
+                this->TextCaretPosition = TextCoord;
+                
+                this->FixupCaretPosition();
+                this->BumpCaret();
+                
+                this->bBegunClickSelection = false;
+                
+                this->Invalidate();
+        }
+}
+
+

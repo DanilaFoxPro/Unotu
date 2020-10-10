@@ -1,5 +1,5 @@
-#ifndef __W_DEBUGOVERLAY_H_
-#define __W_DEBUGOVERLAY_H_
+#ifndef __UNOTU_ENTITIES_WIDGETS_W_OVERLAY_H_
+#define __UNOTU_ENTITIES_WIDGETS_W_OVERLAY_H_
 
 #include <climits>
 #include <chrono>
@@ -8,7 +8,7 @@
 #include <entities\ent_window.h>
 #include <utility\classes\simple_timer.h>
 
-struct w_debugoverlay : widget
+struct w_overlay : widget
 {
         
 //:: Settings.
@@ -23,7 +23,7 @@ struct w_debugoverlay : widget
         };
         
 //:: Constructor.
-        w_debugoverlay()
+        w_overlay()
         {
                 this->Position = point( 0.0f, 1.0f );
                 this->Size     = point( 1.0f, 1.0f );

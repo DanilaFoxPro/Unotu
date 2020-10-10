@@ -1,4 +1,4 @@
-#include <entities/ent_tab.h>
+#include <entities\ent_tab.h>
 
 std::weak_ptr<widget> ent_tab::AddWidget( widget* const widget_ )
 {

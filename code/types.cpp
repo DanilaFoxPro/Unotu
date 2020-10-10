@@ -167,13 +167,11 @@ rectangle::rectangle( const fpoint& Position, const fpoint& Position2 )
 rectangle::rectangle( const point& Position, const point& Position2 )
 {
 	
-	const ent_window& TheWindow = TheWindowManager.Cur();
-	
-	this->x1 = Position.x.ratio( TheWindow.x );
-	this->y1 = Position.y.ratio( TheWindow.y );
-		
-	this->x2 = Position2.x.ratio( TheWindow.x );
-	this->y2 = Position2.y.ratio( TheWindow.y );
+	this->x1 = Position.x.xratio();
+	this->y1 = Position.y.yratio();
+        
+	this->x2 = Position2.x.xratio();
+	this->y2 = Position2.y.yratio();
 	
 }
 

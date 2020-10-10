@@ -34,14 +34,24 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         const bool bDrawOutline = (
                 this->OutlineThickness &&
-                this->OutlineColor.alpha != 0.0f
+                (
+                        this->OutlineColorLeft.alpha   > 0.0f ||
+                        this->OutlineColorRight.alpha  > 0.0f ||
+                        this->OutlineColorTop.alpha    > 0.0f ||
+                        this->OutlineColorBottom.alpha > 0.0f
+                )
         );
         
         if( bDrawOutline ) {
-                gColor.AddOutline (
-                        colored_rectangle( Position, Position2, this->OutlineColor ),
-                        this->OutlineThickness
-                );	
+                gColor.AddOutline(
+                        rectangle( Position, Position2 ),
+                        this->OutlineThickness,
+                        
+                        this->OutlineColorLeft,
+                        this->OutlineColorRight,
+                        this->OutlineColorTop,
+                        this->OutlineColorBottom
+                );
         }
         
         //:: Background.
@@ -186,11 +196,20 @@ void w_textbox::SetOffset( const float& ratio )
 	);
 }
 
+void w_textbox::SetOutlineColor( const rgba& Color )
+{
+        this->OutlineColorLeft   = 
+        this->OutlineColorRight  = 
+        this->OutlineColorTop    = 
+        this->OutlineColorBottom = Color;
+}
+
 std::size_t w_textbox::LineCount() const
 {
 	return this->TotalLineCount;
 }
 
+/** @brief Position in text coordinates based on on-screen position. */
 text_coord w_textbox::PositionToTextCoord( const fpoint Position )
 {
         const fpoint Pixel = pixel(1);
@@ -199,10 +218,28 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position )
         
         fpoint LocalPosition = Localize( this->Position, Position );
         
-        text_coord Result;
+        const auto &LineMap = this->GetLineMap();
         
-        Result.first = LocalPosition.x/FFontSize.x;
-        Result.second = -LocalPosition.y/FFontSize.y+this->Offset;
+        if( LineMap.size() == 0 ) {
+                return {0, 0};
+        }
+        
+        std::pair< std::ptrdiff_t, std::ptrdiff_t > Result;
+        
+        Result.first = -LocalPosition.y/FFontSize.y+this->Offset;
+        Result.second = LocalPosition.x/FFontSize.x;
+        
+        Result.first = clamp(
+                Result.first,
+                (std::ptrdiff_t)(0),
+                (std::ptrdiff_t)LineMap.size()-1
+        );
+        
+        Result.second = clamp(
+                Result.second,
+                (std::ptrdiff_t)(0),
+                (std::ptrdiff_t)LineMap[Result.first].Length()
+        );
         
         return Result;
         

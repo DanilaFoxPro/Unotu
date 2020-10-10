@@ -40,7 +40,7 @@ struct w_minicard: public widget {
 	std::shared_ptr<w_text> TitleText;
 	std::shared_ptr<w_textbox> ContentText;
 	
-	color_geometry ColorGeometry;
+	color_geometry gColor;
 	
 	//:: Overrides.
 	
@@ -48,7 +48,7 @@ struct w_minicard: public widget {
 	virtual void OnRefresh( ValidityState_t );
 	virtual void OnDraw();
         
-        virtual void OnMousePressed( int );
+        virtual void OnMousePressed( const int );
         
         //:: Helpers.
         

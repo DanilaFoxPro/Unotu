@@ -4,6 +4,7 @@
 #include <entities\widgets\widget.h>
 #include <utility\fpoint.h>
 #include <utility\shortcuts.h>
+#include <utility\colors.h>
 
 #include <utility\deps\opengl_includes.h>
 

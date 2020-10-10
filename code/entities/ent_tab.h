@@ -10,8 +10,9 @@
 
 struct release_listener
 {
-	int Button;
 	std::weak_ptr<widget> Listener;
+        int Button;
+        bool bFocusingPress;
 };
 
 struct ent_tab

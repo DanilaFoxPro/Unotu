@@ -34,6 +34,9 @@ struct w_genericscrollbox : public widget
         float ScrollLength();
         std::size_t NextItem( float );
         float ItemOffset( std::size_t );
+        
+        void SetBackgroundColor( const rgba& Color );
+        
 };
 
 #endif

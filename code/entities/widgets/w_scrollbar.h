@@ -19,7 +19,7 @@ struct w_scrollbar : public widget
         
 //:: Geometry.
         color_geometry gColor = color_geometry(GL_STREAM_DRAW);
-        texture_geometry gTexture;
+        text_geometry gText;
         
         color_geometry gPreviewColor = color_geometry(GL_STREAM_DRAW);
         
@@ -38,8 +38,8 @@ struct w_scrollbar : public widget
                 Layer = layer_;
         }
         
-        virtual void OnMousePressed( int );
-        virtual void OnMouseReleased( int );
+        virtual void OnMousePressed( const int );
+        virtual void OnMouseReleased( const int, const bool );
         
         virtual bool DoesHintCollide( point );
         

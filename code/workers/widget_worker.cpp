@@ -7,9 +7,10 @@
 #include <stdio.h>//TODO: DEBUG.
 
 #include <entities\ent_window.h>
+#include <entities\widgets\w_overlay.h>
+#include <workers\window_worker.h>
 #include <utility\shortcuts.h>
 #include <utility\widget.h>
-#include "window_worker.h"
 
 //:: Interface actions.
 
@@ -130,6 +131,7 @@ void SwitchTabs()
                 if( TheTab.PendingTab ) {
                         printf( "Switch to '%s'!\n", ClassName( *TheTab.PendingTab ).c_str() );
                         TheTab.Widgets.clear();
+                        TheTab.AddWidget( new w_overlay() );
                         TheTab.AddWidget( TheTab.PendingTab );
                         TheTab.PendingTab = nullptr;
                 }
@@ -277,9 +279,15 @@ void mouseButtonTrace( int Button, const std::vector< std::weak_ptr<widget> >& C
                 const std::shared_ptr<widget> Locked = current.lock();
                 
                 Locked->OnMousePressed( Button );
-                the_interface.MouseReleaseListeners.push_back( {Button, current} );
                 
-                if( Locked->bKeyboardFocusable )
+                const bool bShouldFocus = (
+                           Locked->bKeyboardFocusable
+                        && !Locked->bKeyboardFocused
+                        && Button == GLFW_MOUSE_BUTTON_1
+                );
+                the_interface.MouseReleaseListeners.push_back( {current, Button, bShouldFocus} );
+                
+                if( bShouldFocus )
                 {
                         SetKeyboardFocus( Locked );
                 }
@@ -300,7 +308,7 @@ void mouseButtonRelease( int Button )
                 if( Current.Button == Button )
                 {
                         if( !Current.Listener.expired() ) {
-                                Current.Listener.lock()->OnMouseReleased( Button );
+                                Current.Listener.lock()->OnMouseReleased( Button, Current.bFocusingPress );
                         }
                         
                         listeners.erase( listeners.begin()+i );

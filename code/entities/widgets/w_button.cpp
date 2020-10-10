@@ -71,7 +71,7 @@ void w_button::SetOptions()
 
         //:: Overrides.
 
-void w_button::OnMousePressed( int Button )
+void w_button::OnMousePressed( const int Button )
 {
         this->ThrowEvent( std::make_shared<we_click>( this->ActionID, this->ActionName, Button ) );
 }
@@ -120,6 +120,8 @@ void w_button::OnRefresh(
         this->gColor.Clear();
         this->gText.Clear();
         
+        //:: Background.
+        
         this->gColor.AddRectangle(
                 colored_rectangle(
                         this->Position,
@@ -128,9 +130,11 @@ void w_button::OnRefresh(
                 )
         );
         
+        //:: Text.
+        
         this->gText.AddText( this->Text, FontSize, TextOrigin, this->TextColor );
         
-        // Testing outline.
+        //:: Outline.
         
         const fpoint FPosition2 = SecondPosition( this->Position, this->Size );
         

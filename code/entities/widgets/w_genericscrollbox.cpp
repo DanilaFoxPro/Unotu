@@ -59,7 +59,10 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
                 this->Buffer->AddChild( Current );
                 
                 Current->Position = point( this->Position.x + pixel( this->XPadding ), this->Position.y.yratio()-(this->ItemOffset( i )-Offset) );
-                Current->SetSecondPosition( point( Position2.x-this->XPadding, Current->Position.y-this->ItemHeight ) );
+                Current->SetSecondPosition( point(
+                        Position2.x-this->XPadding-w_scrollbar::IdealPreviewWidth,
+                        Current->Position.y-this->ItemHeight
+                ) );
                 
                 Current->Invalidate( ValidityState::Resized );
         }
@@ -199,3 +202,11 @@ float w_genericscrollbox::ItemOffset( std::size_t Item )
         
         return fItemPadding + ( (float)Item * ( fItemHeight + fItemPadding ) );
 }
+
+/** @brief Set scrollbox background color. */
+void w_genericscrollbox::SetBackgroundColor( const rgba& Color )
+{
+        this->Buffer->BackgroundColor = Color;
+        this->Buffer->Invalidate( ValidityState::ParametersUpdated );
+}
+
