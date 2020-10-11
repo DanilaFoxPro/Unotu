@@ -93,8 +93,8 @@ std::vector<split_line> SplitTextNew( const std::string& String, std::size_t Wid
                         
                         if( ( LastSpace == -1 ) or ( i-LastSpace >= WidthLimit ) ) {
                                 // Split on i.
-                                Output.push_back( split_line( LastSplit+1, i+1 ) );
-                                LastSplit = i-1;
+                                Output.push_back( split_line( LastSplit+1, i ) );
+                                LastSplit = i;
                         } else {
                                 // Split on last_space.
                                 Output.push_back( split_line( LastSplit+1, LastSpace ) );
