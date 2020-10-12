@@ -30,6 +30,7 @@ struct w_genericscrollbox : public widget
         void ClearItems();
         
         float ItemHeightRatio();
+        float ItemYPaddingRatio();
         float VisibleItemsCount();
         float ScrollLength();
         std::size_t NextItem( float );

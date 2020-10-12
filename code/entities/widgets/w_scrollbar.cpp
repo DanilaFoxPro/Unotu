@@ -249,3 +249,34 @@ void w_scrollbar::OnDraw()
                 this->gPreviewColor.Draw();
         }
 }
+
+/** Offset scrollbar offset by viewzones specified. */
+void w_scrollbar::OffsetByViewzone( double Ratio )
+{
+        this->ScrollOffset += Ratio * this->ViewzoneOffset();
+        this->ScrollOffset = clamp( this->ScrollOffset, 0.0, 1.0 );
+}
+
+/** Offset scrollbar offset by a ratio of total scroll. */
+void w_scrollbar::OffsetByRatio( double Ratio )
+{
+        this->ScrollOffset += Ratio/this->MaximumOffset();
+        this->ScrollOffset = clamp( this->ScrollOffset, 0.0, 1.0 );
+}
+
+
+/** Returns an offset equal to one viewzone. */
+double w_scrollbar::ViewzoneOffset() const
+{
+        return ScrollViewzone/this->MaximumOffset();
+}
+
+/** ScrollbarOffset data member is a ratio of real offset to this. */
+double w_scrollbar::MaximumOffset() const
+{
+        // TODO: Think about the whole current scrollbar system.
+        // Since it starts to make less and less sense, with the amount of workarounds
+        // I have to use when working with it.
+        return 1.0-ScrollViewzone;
+}
+
