@@ -11,8 +11,8 @@ struct w_scrollbar : public widget
         static const int IdealPreviewWidth = static_cast<int>(12);
         
 //:: Scrolling.
-        float ScrollViewzone = 0.2f;
-        float ScrollOffset = 0.0f;
+        double ScrollViewzone = 0.2;
+        double ScrollOffset = 0.0;
         
 //:: Input.
         bool bHasMouse = false;
@@ -46,7 +46,13 @@ struct w_scrollbar : public widget
         virtual void OnTick();
         virtual void OnRefresh( ValidityState_t );
         virtual void OnDraw();
-                
+        
+        void OffsetByViewzone( double Ratio );
+        void OffsetByRatio( double Ratio );
+        
+        double ViewzoneOffset() const;
+        double MaximumOffset() const;
+        
 };
 
 #endif

@@ -42,10 +42,10 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
         
         InvalidateWidgets( this->Items, Reason );
         
-        const float VisibleItems = this->VisibleItemsCount();
-        const float TotalScrollHeight = this->ScrollLength();
-        const float Offset =
-                clamp( this->Scrollbar->ScrollOffset * ( TotalScrollHeight - this->Size.y.yratio() ), 0.0f, TotalScrollHeight );
+        const double VisibleItems = this->VisibleItemsCount();
+        const double TotalScrollHeight = this->ScrollLength();
+        const double Offset =
+                clamp( this->Scrollbar->ScrollOffset * ( TotalScrollHeight - this->Size.y.yratio() ), 0.0, TotalScrollHeight );
         
         const std::pair< std::size_t, std::size_t > Visible = std::make_pair( this->NextItem( Offset-this->ItemHeight.yratio() ), ((std::size_t)VisibleItems)+2 );
         
@@ -58,7 +58,7 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
                 
                 this->Buffer->AddChild( Current );
                 
-                Current->Position = point( this->Position.x + pixel( this->XPadding ), this->Position.y.yratio()-(this->ItemOffset( i )-Offset) );
+                Current->Position = point( this->Position.x + pixel( this->XPadding ), (float)(this->Position.y.yratio()-(this->ItemOffset( i )-Offset)) );
                 Current->SetSecondPosition( point(
                         Position2.x-this->XPadding-w_scrollbar::IdealPreviewWidth,
                         Current->Position.y-this->ItemHeight
@@ -69,7 +69,7 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
         
         // Update scrollbar.
         
-        this->Scrollbar->ScrollViewzone = clamp( this->Size.y.yratio()/TotalScrollHeight, 0.0f, 1.0f );
+        this->Scrollbar->ScrollViewzone = clamp( this->Size.y.yratio()/TotalScrollHeight, 0.0, 1.0 );
         
 }
 
@@ -84,20 +84,16 @@ void w_genericscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         
         we_scrolllines* ScrollLines = dynamic_cast<we_scrolllines*>(Event.get());
         if( ScrollLines ) {
-                // TODO: Not precise at all.
-                float& ScrollOffset = this->Scrollbar->ScrollOffset;
-                ScrollOffset -= this->ItemHeightRatio() * ScrollLines->Lines;
-                ScrollOffset = clamp( ScrollOffset, 0.0f, 1.0f );
+                this->Scrollbar->OffsetByRatio(
+                        -(this->ItemHeightRatio()+this->ItemYPaddingRatio()) * ScrollLines->Lines
+                );
                 this->Invalidate( ValidityState::ParametersUpdated );
                 Event->Handle();
         }
         
         auto ScrollPages = dynamic_cast<we_scrollpages*>( Event.get() );
         if( ScrollPages ) {
-                float& ScrollOffset = this->Scrollbar->ScrollOffset;
-                const float ViewZone = this->Scrollbar->ScrollViewzone;
-                ScrollOffset -= ViewZone*ScrollPages->Pages;
-                ScrollOffset = clamp( ScrollOffset, 0.0f, 1.0f );
+                this->Scrollbar->OffsetByViewzone( -ScrollPages->Pages );
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
@@ -127,15 +123,16 @@ void w_genericscrollbox::ClearItems()
 float w_genericscrollbox::ItemHeightRatio()
 {
         const float fItemHeight = this->ItemHeight.yratio();
-        const float fItemPadding = pixel(this->ItemPadding).yratio();
-        
-        const float LengthNoPadding = this->ScrollLength()-( fItemPadding*(this->Items.size()+1) );
-        
-        const float ItemRatio = fItemHeight/LengthNoPadding;
-        
-        //printf( "%f <=> %f\n", ItemRatio*this->ScrollLength(), fItemHeight );
-        
+        const float ItemRatio = fItemHeight/this->ScrollLength();
         return ItemRatio;
+}
+
+/** @brief Y padding height as a ratio of total scroll. */
+float w_genericscrollbox::ItemYPaddingRatio()
+{
+        const float fItemPadding = pixel(this->ItemPadding).yratio();
+        const float PaddingRatio = fItemPadding/this->ScrollLength();
+        return PaddingRatio;
 }
 
 

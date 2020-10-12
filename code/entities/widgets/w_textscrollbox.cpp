@@ -125,21 +125,14 @@ void w_textscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         
         auto ScrollLines = dynamic_cast<we_scrolllines*>( EventPtr );
         if( ScrollLines ) {
-                const float LineRatio = 1.0f/this->TextBox->LineCount();
-                float& ScrollOffset = this->ScrollBar->ScrollOffset;
-                ScrollOffset -= ScrollLines->Lines*LineRatio;
-                ScrollOffset = clamp( ScrollOffset, 0.0f, 1.0f );
+                const double LineRatio = 1.0/this->TextBox->LineCount();
+                this->ScrollBar->OffsetByRatio( -ScrollLines->Lines*LineRatio );
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
         auto ScrollPages = dynamic_cast<we_scrollpages*>( EventPtr );
         if( ScrollPages ) {
-                float& ScrollOffset = this->ScrollBar->ScrollOffset;
-                const float ViewZone = this->ScrollBar->ScrollViewzone;
-                
-                ScrollOffset -= ViewZone*ScrollPages->Pages;
-                ScrollOffset = clamp( ScrollOffset, 0.0f, 1.0f );
-                
+                this->ScrollBar->OffsetByViewzone( -ScrollPages->Pages );
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
