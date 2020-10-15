@@ -4,6 +4,8 @@
 #include <workers\window_worker.h>
 #include <utility\widget.h>
 
+#include <math.h> // floor
+
 w_textscrollbox::w_textscrollbox
 (
 	const point& position_,
@@ -165,27 +167,34 @@ void w_textscrollbox::SetScrollOffset( std::size_t Line )
 
 /**
  * @brief Scroll line into view.
+ *        Makes sure the line falls between beginning and end of the viewzone, with minimal amount of scrolling.
+ *        Doesn't scroll if line is already fully visible.
  */
 void w_textscrollbox::ScrollIntoView( std::size_t Line )
 {
         const w_textbox& TextBox = *this->TextBox;
         
-        const size_t RoundedViewOffset = this->GetScrollOffsetLines();
-        const size_t Viewzone          = TextBox.TextViewzoneY();
-        const size_t LastSeenLine      = RoundedViewOffset+Viewzone;
+        const double DLine = Line;
+        
+        const double ViewOffset   = this->GetScrollOffsetLines();
+        const double Viewzone     = TextBox.TextViewzoneY();
+        const double LastSeenLine = ViewOffset+Viewzone;
         
         const double ScrollLength = pixel(TextBox.FontSize).yratio() * TextBox.LineCount();
         const double LineRatio    = (ScrollLength-TextBox.TextAreaSize.y.yratio())/TextBox.LineCount();
         
-        if( RoundedViewOffset >= Line ) {
-                const ptrdiff_t TargetOffset = Line-RoundedViewOffset-1;
-                this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
-                this->Invalidate( ValidityState::ParametersUpdated );
-        } else if( Line > LastSeenLine ) {
-                const ptrdiff_t TargetOffset = Line-LastSeenLine;
-                this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
-                this->Invalidate( ValidityState::ParametersUpdated );
+        double TargetOffset;
+        
+        if( ViewOffset >= DLine ) {
+                TargetOffset = DLine-ViewOffset;
+        } else if( DLine >= floor(LastSeenLine) ) {
+                TargetOffset = DLine-LastSeenLine+1.0;
+        } else {
+                return;
         }
+        
+        this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
+        this->Invalidate( ValidityState::ParametersUpdated );
         
 }
 
