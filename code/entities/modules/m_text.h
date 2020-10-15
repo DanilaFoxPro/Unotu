@@ -27,7 +27,7 @@ struct m_textlines : public m_text
 {
         virtual std::string GetLine() { return ""; }
         virtual std::vector<std::string> GetLines() { return {}; }
-        virtual std::vector<split_line> GetLineMap() { return {}; }
+        virtual std::vector<split_line> GetLineMap() const { return {}; }
 };
 
 #endif

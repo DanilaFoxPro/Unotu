@@ -210,7 +210,7 @@ std::size_t w_textbox::LineCount() const
 }
 
 /** @brief Position in text coordinates based on on-screen position. */
-text_coord w_textbox::PositionToTextCoord( const fpoint Position )
+text_coord w_textbox::PositionToTextCoord( const fpoint Position ) const
 {
         const fpoint Pixel = pixel(1);
               fpoint FFontSize = FontSize*Pixel;
@@ -243,6 +243,18 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position )
         
         return Result;
         
+}
+
+/** @brief How many characters can fit vertically. */
+float w_textbox::TextViewzoneX() const
+{
+        return TextAreaSize.x.xratio() / (pixel(this->FontSize).xratio()/2.0);
+}
+
+/** @brief How many lines of text can fit horizontally. */
+float w_textbox::TextViewzoneY() const
+{
+        return TextAreaSize.y.yratio() / pixel(this->FontSize).yratio();
 }
 
 
@@ -281,7 +293,7 @@ std::string w_textbox::GetText()
         return AssembleText( this->Text, this->SplitTextCache );
 }
 
-std::vector<split_line> w_textbox::GetLineMap()
+std::vector<split_line> w_textbox::GetLineMap() const
 {
         return this->SplitTextCache;
 }

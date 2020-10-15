@@ -163,58 +163,55 @@ void w_textscrollbox::SetScrollOffset( std::size_t Line )
 	this->SetScrollOffset( Offset );
 }
 
-/*
+/**
  * @brief Scroll line into view.
  */
 void w_textscrollbox::ScrollIntoView( std::size_t Line )
 {
-	const std::size_t HalfHeight = this->TextBox->TextAreaSize.x.xpixels()/this->TextBox->FontSize/2;
-	const std::size_t EndHalfHeight =
-		(this->TextBox->TotalLineCount >= HalfHeight)
-			?
-		this->TextBox->TotalLineCount-HalfHeight
-			:
-		this->TextBox->TotalLineCount;
-	if( Line < HalfHeight )
-	{
-		return this->SetScrollOffset( 0.0f );
-	}
-	else if ( Line > EndHalfHeight )
-	{
-		return this->SetScrollOffset( 1.0f );
-	}
-	else
-	{
-		return this->SetScrollOffset( Line-HalfHeight );
-	}
+        const w_textbox& TextBox = *this->TextBox;
+        
+        const size_t RoundedViewOffset = this->GetScrollOffsetLines();
+        const size_t Viewzone          = TextBox.TextViewzoneY();
+        const size_t LastSeenLine      = RoundedViewOffset+Viewzone;
+        
+        const double ScrollLength = pixel(TextBox.FontSize).yratio() * TextBox.LineCount();
+        const double LineRatio    = (ScrollLength-TextBox.TextAreaSize.y.yratio())/TextBox.LineCount();
+        
+        if( RoundedViewOffset >= Line ) {
+                const ptrdiff_t TargetOffset = Line-RoundedViewOffset-1;
+                this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
+                this->Invalidate( ValidityState::ParametersUpdated );
+        } else if( Line > LastSeenLine ) {
+                const ptrdiff_t TargetOffset = Line-LastSeenLine;
+                this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
+                this->Invalidate( ValidityState::ParametersUpdated );
+        }
+        
 }
 
 float w_textscrollbox::GetScrollOffsetLines()
 {
-    const w_textbox& TextBox = *this->TextBox;
-    const float ViewHeight = (float)TextBox.TextAreaSize.y.ypixels() / (float)TextBox.FontSize;
-    if( this->ScrollBar->ScrollViewzone < 1.0f )
-    {
-        return
-            this->ScrollBar->ScrollOffset
-            *
-            ( (float)TextBox.LineCount() - (float)ViewHeight );
-    }
-    else
-    {
-        return 0.0f;
-    }
-    
+        const w_textbox& TextBox = *this->TextBox;
+        const float ViewHeight = (float)TextBox.TextAreaSize.y.ypixels() / (float)TextBox.FontSize;
+        if( this->ScrollBar->ScrollViewzone < 1.0f ) {
+                return
+                this->ScrollBar->ScrollOffset
+                *
+                ( (float)TextBox.LineCount() - (float)ViewHeight );
+        } else {
+                return 0.0f;
+        }
+
 }
 
 void w_textscrollbox::ScrollToTop()
 {
-    this->SetScrollOffset( 0.0f );
+        this->SetScrollOffset( 0.0f );
 }
 
 void w_textscrollbox::ScrollToBottom()
 {
-    this->SetScrollOffset( 1.0f );
+        this->SetScrollOffset( 1.0f );
 }
 
         //:: Text module.

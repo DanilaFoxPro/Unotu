@@ -84,8 +84,11 @@ struct w_textbox : public widget, public m_textlines
 
         void SetOffset( const float& ratio );
         void SetOutlineColor( const rgba& Color );
+        
         std::size_t LineCount() const;
-        text_coord PositionToTextCoord( const fpoint Position );
+        text_coord PositionToTextCoord( const fpoint Position ) const;
+        float TextViewzoneX() const;
+        float TextViewzoneY() const;
         
 //:: Text module.
         
@@ -98,7 +101,7 @@ struct w_textbox : public widget, public m_textlines
         
         virtual std::string GetText();
 
-        virtual std::vector<split_line> GetLineMap();
+        virtual std::vector<split_line> GetLineMap() const;
 };
 
 #endif
