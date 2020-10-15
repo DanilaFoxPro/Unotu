@@ -1,2 +1,0 @@
-.\code\stb_image.h
-.\code\stb_image.cpp
