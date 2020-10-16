@@ -57,50 +57,54 @@ void w_scrollbar::OnTick()
                 return;
         }
         
-        const ent_window& the_window = TheWindowManager.Cur();
+        const point Position2 = SecondPosition( Position, Size );
+        const point MousePos = MousePosition();
         
-        const point position2 = SecondPosition( Position, Size );
-        const point mpos = MousePosition();
+        const fpoint FPosition = this->Position;
+        const fpoint FPosition2 = Position2;
         
-        //TODO: Organize this horror.
+        const double ButtonSize      = pixel(Size.x.xpixels()).yratio();
         
-        const float scroll_space = ((Position.y-position2.y)-(Size.x*2)).ratio( the_window.y );
-        const float scrollbar_height = scroll_space * ScrollViewzone;
-        const float input_space = scroll_space - scrollbar_height;
+        const double ScrollSpace     = FPosition.y-FPosition2.y-ButtonSize*2.0;
+        const double ScrollbarHeight = ScrollSpace * this->ViewzoneRatio();
+        const double InputSpace      = ScrollSpace - ScrollbarHeight;
         
-        const point origin = // Starting point of the scrollbar input zone.
-        point
-        (
-                Position.x,
-                Position.y-Size.x-ratio( scrollbar_height/2.0f )
-        );
+        // Starting point of the scrollbar input zone.
+        const double InputBegin  = FPosition.y-ButtonSize;
+        const double LocalOffset = InputBegin-MousePos.y.yratio()-ScrollbarHeight/2.0;
         
-        point local = Localize( origin, mpos );
-        local.y = -local.y;
+        // -ScrollbarHeight/2 so mouse drags the middle of the scrollbar. ^
         
-        this->ScrollOffset = clamp( ( local.y.ratio( the_window.y ) / input_space ), 0.0f, 1.0f );
-        this->ThrowEvent
-        (
-                std::shared_ptr<widget_event>
-                (
-                        new we_scrollsetratio( ScrollOffset )
+        this->ScrollOffsetSet( clamp( LocalOffset / InputSpace, 0.0, 1.0 ) * this->MaximumOffset() );
+        this->ThrowEvent (
+                std::shared_ptr<widget_event> (
+                        new we_scrollsetratio( this->ScrollOffsetGet() )
                 )
         );
-        this->Invalidate();
         
 }
 
-void w_scrollbar::OnRefresh( ValidityState_t )
+void w_scrollbar::OnRefresh( ValidityState_t Reason )
 {
-
-        const ent_window& TheWindow = TheWindowManager.Cur();
+        
+        if( Reason & ValidityState::Resized ) {
+                // Clamps offset to maximum.
+                this->ScrollOffsetSet( this->ScrollOffsetGet() );
+                // HACK: Hacky.
+                if( !this->Parent.expired() ) {
+                        this->Parent.lock()->Invalidate( ValidityState::ParametersUpdated );
+                }
+        }
         
         const rgb BackgroundColor = TheTheme.Background;
         const rgb ButtonColor = TheTheme.Primary2;
-
+        
         const point Position2 = SecondPosition( Position, Size );
         const point PSize = point( this->Size.x.xpixels(), this->Size.y.ypixels() );
 
+        const fpoint FPosition  = this->Position;
+        const fpoint FPosition2 = Position2;
+        
         gColor.Clear();
         gText.Clear();
         gPreviewColor.Clear();
@@ -137,19 +141,25 @@ void w_scrollbar::OnRefresh( ValidityState_t )
 
         //TODO: Do something about this mess. D:
         {
-                const float ScrollSpace = ((Position.y-Position2.y)-(Size.x*2)).ratio( TheWindow.y );
-                const float ScrollSpace2 = ScrollSpace * (1.0f-ScrollViewzone);
-                const float ScrollbarHeight = ScrollSpace * ScrollViewzone;
-                const float ScrollbarStart = (Position.y-Size.x).yratio() - ScrollOffset * ScrollSpace2;
+                const double ButtonHeight = pixel( Size.x.xpixels() ).yratio();
+                
+                const double ScrollSpace     = FPosition.y-FPosition2.y-ButtonHeight*2;
+                const double InputSpace      = ScrollSpace * MaximumOffsetRatio();
+                
+                const double ScrollbarHeight  = ScrollSpace * ViewzoneRatio();
+                const double ScrollSpaceBegin = FPosition.y-ButtonHeight;
+                
+                const double ScrollbarStart  = ScrollSpaceBegin - OffsetRatio() * InputSpace;
+                const double ScrollbarEnd    = ScrollbarStart-ScrollbarHeight;
 
                 gColor.AddRectangle
                 (
                         colored_rectangle(
-                                Position.x.ratio( TheWindow.x ),
+                                Position.x.xratio(),
                                 ScrollbarStart,
                                 
-                                Position2.x.ratio( TheWindow.x ),
-                                ScrollbarStart-ScrollbarHeight,
+                                Position2.x.xratio(),
+                                ScrollbarEnd,
                                 
                                 ButtonColor
                         )
@@ -188,11 +198,11 @@ void w_scrollbar::OnRefresh( ValidityState_t )
                 const float BeginY = Position.y.yratio();
                 const float EndY   = Position2.y.yratio();
                 
-                const float SizeY  = Size.y.yratio();
-                const float LowerSizeY = SizeY-SizeY*ScrollViewzone;
+                const float SizeY       = Size.y.yratio();
+                const float OffsetSizeY = SizeY*MaximumOffsetRatio();
                 
-                const float ScrollbarStart = BeginY - LowerSizeY*ScrollOffset;
-                const float ScrollbarEnd   = ScrollbarStart - SizeY*ScrollViewzone;
+                const float ScrollbarStart = BeginY - OffsetSizeY*OffsetRatio();
+                const float ScrollbarEnd   = ScrollbarStart - SizeY*ViewzoneRatio();
                 
                 // Top background.
                 gPreviewColor.AddRectangle(
@@ -250,33 +260,97 @@ void w_scrollbar::OnDraw()
         }
 }
 
+/** Offset scrollbar offset by offset specified. */
+void w_scrollbar::Offset( const double Offset )
+{
+        this->ScrollOffsetSet( ScrollOffsetGet()+Offset );
+}
+
 /** Offset scrollbar offset by viewzones specified. */
 void w_scrollbar::OffsetByViewzone( double Ratio )
 {
-        this->ScrollOffset += Ratio * this->ViewzoneOffset();
-        this->ScrollOffset = clamp( this->ScrollOffset, 0.0, 1.0 );
+        this->ScrollOffsetSet( this->ScrollOffsetGet() + Ratio * this->ScrollViewzoneGet() );
+        this->Invalidate( ValidityState::ParametersUpdated );
 }
 
 /** Offset scrollbar offset by a ratio of total scroll. */
 void w_scrollbar::OffsetByRatio( double Ratio )
 {
-        this->ScrollOffset += Ratio/this->MaximumOffset();
-        this->ScrollOffset = clamp( this->ScrollOffset, 0.0, 1.0 );
+        this->ScrollOffsetSet( this->ScrollOffsetGet() + Ratio / this->MaximumOffset() );
+        this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-
-/** Returns an offset equal to one viewzone. */
-double w_scrollbar::ViewzoneOffset() const
+void w_scrollbar::ScrollLengthSet( const double ScrollLength )
 {
-        return ScrollViewzone/this->MaximumOffset();
+        this->ScrollLength = ScrollLength < 0.0 ? 0.0 : ScrollLength;
+        this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-/** ScrollbarOffset data member is a ratio of real offset to this. */
+/** @note Offset gets clamped according to scroll length. */
+void w_scrollbar::ScrollOffsetSet( const double ScrollOffset )
+{
+        this->ScrollOffset = clamp( ScrollOffset, 0.0, this->MaximumOffset() );
+        this->Invalidate( ValidityState::ParametersUpdated );
+}
+
+void w_scrollbar::ScrollViewzoneSet( const double ScrollViewzone )
+{
+        this->ScrollViewzone = ScrollViewzone < 0.0 ? 0.0 : ScrollViewzone;
+        this->Invalidate( ValidityState::ParametersUpdated );
+}
+
+double w_scrollbar::ScrollLengthGet() const
+{
+        return this->ScrollLength;
+}
+
+double w_scrollbar::ScrollOffsetGet() const
+{
+        return this->ScrollOffset;
+}
+
+double w_scrollbar::ScrollViewzoneGet() const
+{
+        if( this->ScrollViewzone > this->ScrollLengthGet() ) {
+                return this->ScrollLengthGet();
+        } else {
+                return this->ScrollViewzone;
+        }
+}
+
+/** Maximum offset possible before scrolling outside of the scroll range. */
 double w_scrollbar::MaximumOffset() const
 {
-        // TODO: Think about the whole current scrollbar system.
-        // Since it starts to make less and less sense, with the amount of workarounds
-        // I have to use when working with it.
-        return 1.0-ScrollViewzone;
+        const double Result = ScrollLength-ScrollViewzoneGet();
+        return Result < 0.0 ? 0.0 : Result;
+}
+
+/** Maximum offset as a ratio between maximum offset and scroll length. */
+double w_scrollbar::MaximumOffsetRatio() const
+{
+        if( ScrollLengthGet() == 0.0 ) {
+                return 0.0;
+        } else {
+                return (ScrollLengthGet()-ScrollViewzoneGet())/ScrollLengthGet();
+        }
+}
+
+/** Viewzone as a ratio of scroll length. */
+double w_scrollbar::ViewzoneRatio() const
+{
+        if( ScrollLengthGet() == 0.0 ) {
+                return 0.0;
+        } else {
+                return ScrollViewzoneGet()/this->ScrollLengthGet();
+        }
+}
+
+double w_scrollbar::OffsetRatio() const
+{
+        if( this->MaximumOffset() == 0.0 ) {
+                return 0.0;
+        } else {
+                return this->ScrollOffsetGet()/this->MaximumOffset();
+        }
 }
 

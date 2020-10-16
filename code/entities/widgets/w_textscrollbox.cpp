@@ -8,38 +8,38 @@
 
 w_textscrollbox::w_textscrollbox
 (
-	const point& position_,
-	const point& size_,
-	
-	const std::string&	text,
-	const int&			font_size,
-	const rgba&			text_color,
-	
-	const rgba& background_color_,
-	const rgba& outline_color_,
-	const int&	outline_thickness_
+        const point& position_,
+        const point& size_,
+        
+        const std::string&	text,
+        const int&			font_size,
+        const rgba&			text_color,
+        
+        const rgba& background_color_,
+        const rgba& outline_color_,
+        const int&	outline_thickness_
 )
 {
-	//:: Them pointers.
-	this->TextBox = std::make_shared<w_textbox>();
-	this->ScrollBar = std::make_shared<w_scrollbar>();
-	
-	//:: Widget base.
-	Position = position_;
-	Size = size_;
-	
-	//:: Textbox.
-	this->TextBox->SetText( text );
-	this->TextBox->FontSize = font_size;
-	this->TextBox->FontColor = text_color;
-	this->TextBox->BackgroundColor = rgba( color::black, 0.0f );
-	this->TextBox->OutlineThickness = 0;
-	
-	//:: Text scrollbox.
-	   BackgroundColor = background_color_;
-	   OutlineColor = outline_color_;
-	   OutlineThickness = outline_thickness_;
-	
+        //:: Them pointers.
+        this->TextBox = std::make_shared<w_textbox>();
+        this->ScrollBar = std::make_shared<w_scrollbar>();
+        
+        //:: Widget base.
+        Position = position_;
+        Size = size_;
+        
+        //:: Textbox.
+        this->TextBox->SetText( text );
+        this->TextBox->FontSize = font_size;
+        this->TextBox->FontColor = text_color;
+        this->TextBox->BackgroundColor = rgba( color::black, 0.0f );
+        this->TextBox->OutlineThickness = 0;
+        
+        //:: Text scrollbox.
+        BackgroundColor = background_color_;
+        OutlineColor = outline_color_;
+        OutlineThickness = outline_thickness_;
+        
 }
 
 void w_textscrollbox::PostConstruct()
@@ -60,33 +60,31 @@ void w_textscrollbox::OnRefresh( ValidityState_t Reason )
         
         const fpoint Pixel = point( pixel(1) );
 
-        const float min_scrollbox_width = Pixel.x*32;
+        const float MinimumScrollboxWidth = Pixel.x*w_scrollbar::IdealWidth;
 
         this->TextBox->Position = PaddedArea.first;
-        this->TextBox->SetSecondPosition(
-                point(
+        this->TextBox->SetSecondPosition( point(
                         PaddedArea.second.x,
                         PaddedArea.second.y
-                )
-        );
+        ) );
 
-        this->ScrollBar->Position = 
-                point(
-                        PaddedArea.second.x-ratio( min_scrollbox_width ),
-                        PaddedArea.first.y
-                );
+        this->ScrollBar->Position = point(
+                PaddedArea.second.x-ratio( MinimumScrollboxWidth ),
+                PaddedArea.first.y
+        );
 
         this->ScrollBar->SetSecondPosition( PaddedArea.second );
 
         //:: Update.
 
-        // HACK: Makes sure 'VisibleRatio' is updated.
+        // HACK: Makes sure all cached members are set.
         this->TextBox->OnRefresh( Reason );
+        
+        //:: Offset and size.
 
-        //:: Offset.
-
-        this->ScrollBar->ScrollViewzone = this->TextBox->VisibleRatio;
-        this->TextBox->SetOffset( this->ScrollBar->ScrollOffset );
+        this->ScrollBar->ScrollViewzoneSet( this->TextBox->TextViewzoneY() );
+        this->ScrollBar->ScrollLengthSet( this->TextBox->LineCount() );
+        this->TextBox->Offset = this->ScrollBar->ScrollOffsetGet();
         
         //:: Geomery.
         
@@ -127,8 +125,7 @@ void w_textscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         
         auto ScrollLines = dynamic_cast<we_scrolllines*>( EventPtr );
         if( ScrollLines ) {
-                const double LineRatio = 1.0/this->TextBox->LineCount();
-                this->ScrollBar->OffsetByRatio( -ScrollLines->Lines*LineRatio );
+                this->ScrollBar->Offset( -ScrollLines->Lines );
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
@@ -145,24 +142,21 @@ void w_textscrollbox::OnDraw()
 	this->gColor.Draw();
 }
 
-/*
+/**
  * @brief Set scroll offset as ratio.
  */
 void w_textscrollbox::SetScrollOffset( float Ratio )
 {
-	this->ScrollBar->ScrollOffset = clamp( Ratio, 0.0f, 1.0f );
+        this->ScrollBar->ScrollOffsetSet( Ratio*this->ScrollBar->MaximumOffset() );
 	this->Invalidate();
 }
 
-/*
+/**
  * @brief Set line index to be scrolled to the top of the scrollbox.
  */
 void w_textscrollbox::SetScrollOffset( std::size_t Line )
 {
-	const w_textbox& TextBox = *this->TextBox;
-	const std::size_t ViewHeight = TextBox.TextAreaSize.y.ypixels() / TextBox.FontSize;
-	const float Offset = (float)Line/(float)(TextBox.LineCount()-ViewHeight);
-	this->SetScrollOffset( Offset );
+	this->ScrollBar->ScrollOffsetSet( (double)Line );
 }
 
 /**
@@ -173,6 +167,9 @@ void w_textscrollbox::SetScrollOffset( std::size_t Line )
 void w_textscrollbox::ScrollIntoView( std::size_t Line )
 {
         const w_textbox& TextBox = *this->TextBox;
+        
+        // TODO: Rewrite this, since scrollbox was rewritten and
+        //       uses text lines in this context.
         
         const double DLine = Line;
         
@@ -200,16 +197,7 @@ void w_textscrollbox::ScrollIntoView( std::size_t Line )
 
 float w_textscrollbox::GetScrollOffsetLines()
 {
-        const w_textbox& TextBox = *this->TextBox;
-        const float ViewHeight = (float)TextBox.TextAreaSize.y.ypixels() / (float)TextBox.FontSize;
-        if( this->ScrollBar->ScrollViewzone < 1.0f ) {
-                return
-                this->ScrollBar->ScrollOffset
-                *
-                ( (float)TextBox.LineCount() - (float)ViewHeight );
-        } else {
-                return 0.0f;
-        }
+        return this->ScrollBar->ScrollOffsetGet();
 
 }
 
