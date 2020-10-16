@@ -166,31 +166,20 @@ void w_textscrollbox::SetScrollOffset( std::size_t Line )
  */
 void w_textscrollbox::ScrollIntoView( std::size_t Line )
 {
-        const w_textbox& TextBox = *this->TextBox;
         
-        // TODO: Rewrite this, since scrollbox was rewritten and
-        //       uses text lines in this context.
-        
-        const double DLine = Line;
-        
-        const double ViewOffset   = this->GetScrollOffsetLines();
-        const double Viewzone     = TextBox.TextViewzoneY();
-        const double LastSeenLine = ViewOffset+Viewzone;
-        
-        const double ScrollLength = pixel(TextBox.FontSize).yratio() * TextBox.LineCount();
-        const double LineRatio    = (ScrollLength-TextBox.TextAreaSize.y.yratio())/TextBox.LineCount();
+        const double FirstVisibleLine = this->ScrollBar->ScrollOffsetGet();
+        const double LastVisibleLine  = FirstVisibleLine + this->ScrollBar->ScrollViewzoneGet();
         
         double TargetOffset;
-        
-        if( ViewOffset >= DLine ) {
-                TargetOffset = DLine-ViewOffset;
-        } else if( DLine >= floor(LastSeenLine) ) {
-                TargetOffset = DLine-LastSeenLine+1.0;
+        if( Line < ceil( FirstVisibleLine ) ) {
+                TargetOffset = Line;
+        } else if( floor(LastVisibleLine) <= Line ) {
+                TargetOffset = FirstVisibleLine-(LastVisibleLine-(double)Line)+1.0;
         } else {
                 return;
         }
         
-        this->ScrollBar->OffsetByRatio( TargetOffset * LineRatio );
+        this->ScrollBar->ScrollOffsetSet( TargetOffset );
         this->Invalidate( ValidityState::ParametersUpdated );
         
 }
