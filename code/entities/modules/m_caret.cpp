@@ -31,13 +31,30 @@ void m_caret::BumpCaret()
 /**
  * @brief Sets 'TextCaretPosition', but with position checks and caret bump.
  */
-void m_caret::SetCaretPosition( const std::size_t& NewPosition, const bool& BumpCaret )
+void m_caret::CaretPositionSet( const std::size_t& NewPosition, const bool& BumpCaret )
 {
 	this->TextCaretPosition = ToLineCoord( NewPosition, this->GetCaretLineMap() );
         this->FixupCaretPosition();
         if( BumpCaret ) {
                 this->BumpCaret();
         }
+}
+
+/**
+ * @brief Sets 'TextCaretPosition' as text_coord.
+ */
+void m_caret::CaretPositionSet( text_coord Position )
+{
+        this->TextCaretPosition = Position;
+        this->FixupCaretPosition();
+}
+
+/**
+ * @brief Get text caret position as caret_coord.
+ */
+caret_coord m_caret::CaretPositionGetDouble()
+{
+        return this->TextCaretPosition;
 }
 
 split_line m_caret::GetCurCaretLine()
@@ -64,7 +81,7 @@ void m_caret::CaretToLineEnd()
  * */
 void m_caret::CaretToBeginning()
 {
-	this->SetCaretPosition( 0, true );
+	this->CaretPositionSet( 0, true );
 }
 
 /**
@@ -286,6 +303,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                                 if( CaretAbs != 0 ) {
                                                         CaretTextPtr->erase( CaretAbs-1, 1 );
                                                         Lock->TextUpdated();
+                                                        // FIXME: Caret does funky stuff when text update causes re-split.
                                                         this->XMoveCaret( -1 );
                                                 } else {
                                                         return false;

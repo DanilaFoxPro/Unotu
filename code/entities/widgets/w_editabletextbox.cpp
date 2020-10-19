@@ -74,10 +74,10 @@ void w_editabletextbox::OnTick()
                 
                 const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 
-                if( TextCoord == this->TextCaretPosition )
+                if( TextCoord == this->CaretPositionGetDouble() )
                         return;
                 
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 
                 this->FixupCaretPosition();
                 this->BumpCaret();
@@ -105,7 +105,7 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
                         this->OutlineThickness
                 );
         
-        const std::pair< std::size_t, std::size_t > CaretCoordinates = this->TextCaretPosition;
+        const std::pair< std::size_t, std::size_t > CaretCoordinates = this->CaretPositionGetDouble();
         const float OffsetLines = (float)CaretCoordinates.first - this->GetScrollOffsetLines();
         // FIXME: Doesn't account for inserted newlines.
         const fpoint CaretOriginLocal =
@@ -139,7 +139,7 @@ void w_editabletextbox::OnDraw()
 
 void w_editabletextbox::OnKeyboardFocused()
 {
-        const std::size_t CurrentLine = this->TextCaretPosition.first;
+        const std::size_t CurrentLine = this->CaretPositionGetDouble().first;
         this->ScrollIntoView( CurrentLine );
 }
 
@@ -148,7 +148,7 @@ void w_editabletextbox::OnCharacterInput( const std::string& Input )
         if( this->ProcessCharacterInput( Input ) )
         {
                 this->Invalidate( ValidityState::ParametersUpdated );
-                const std::size_t CurrentLine = this->TextCaretPosition.first;
+                const std::size_t CurrentLine = this->CaretPositionGetDouble().first;
                 this->ScrollIntoView( CurrentLine );
         }
 }
@@ -158,7 +158,7 @@ void w_editabletextbox::OnKeyInput( const int& Key, const int& Modifiers )
         if( this->ProcessKeyInput( Key, Modifiers ) )
         {
                 this->Invalidate( ValidityState::ParametersUpdated );	
-                const std::size_t CurrentLine = this->TextCaretPosition.first;
+                const std::size_t CurrentLine = this->CaretPositionGetDouble().first;
                 this->ScrollIntoView( CurrentLine );
         }
 }
@@ -174,7 +174,7 @@ void w_editabletextbox::OnMousePressed( const int Button )
                 text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 
                 this->VoidCaretSelection();
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 this->BumpCaret();
                 
                 this->FixupCaretPosition();
@@ -192,7 +192,7 @@ void w_editabletextbox::OnMouseReleased( const int Button, const bool )
         if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
                 
                 const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 
                 this->FixupCaretPosition();
                 this->BumpCaret();

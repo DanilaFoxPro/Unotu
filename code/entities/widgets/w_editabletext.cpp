@@ -56,10 +56,10 @@ void w_editabletext::OnTick()
                 
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
-                if( TextCoord == this->TextCaretPosition )
+                if( TextCoord == this->CaretPositionGetDouble() )
                         return;
                 
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 this->FixupCaretPosition();
                 
                 this->BumpCaret();
@@ -138,7 +138,7 @@ void w_editabletext::OnRefresh( ValidityState_t )
 		const point CaretOrigin =
 		point
 		(
-			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)TextCaretPosition.second ),
+			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)CaretPositionGetDouble().second ),
 			Area.first.y
 		);
 		// Blinking caret.
@@ -203,7 +203,7 @@ void w_editabletext::OnMousePressed( const int Button )
                 const text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
                 this->VoidCaretSelection();
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 this->BumpCaret();
                 
                 this->FixupCaretPosition();
@@ -220,7 +220,7 @@ void w_editabletext::OnMouseReleased( const int Button, const bool )
         if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 this->FixupCaretPosition();
                 
                 this->BumpCaret();

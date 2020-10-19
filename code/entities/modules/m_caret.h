@@ -29,8 +29,10 @@ struct m_caret : public module
         double LastCaretBump = 0.0;
         /** @brief Target which text the caret will modify. */
         std::weak_ptr<m_text> Target;
+private:
         caret_coord TextCaretPosition = {0, 0};
         caret_coord TextSelectPosition = {-1, 0};
+public:
 
 //:: Functions.
 
@@ -38,7 +40,9 @@ struct m_caret : public module
 
         void BumpCaret();
 
-        void SetCaretPosition( const std::size_t&, const bool& = true );
+        void CaretPositionSet( const std::size_t&, const bool& = true );
+        void CaretPositionSet( text_coord Position );
+        caret_coord CaretPositionGetDouble();
         split_line GetCurCaretLine();
         void CaretToLineBeginning();
         void CaretToLineEnd();
