@@ -25,7 +25,7 @@ EditCard::EditCard( const indexed_card& Card )
         this->CardID = Card.ID;
         
         this->CardTitle->Text = Card.Title;
-        this->CardContent->SetText( Card.Content );
+        this->CardContent->TextSet( Card.Content );
 }
 
 void EditCard::CommonSetup()
@@ -64,7 +64,7 @@ void EditCard::SaveCard()
         if( this->bNewCard ) {
                 const card Card = card(
                         this->CardTitle->Text,
-                        this->CardContent->GetOriginalText()
+                        this->CardContent->OriginalTextGet()
                 );
                 
                 AddCard( Card );
@@ -72,7 +72,7 @@ void EditCard::SaveCard()
                 const indexed_card Card = indexed_card(
                         this->CardID,
                         this->CardTitle->Text,
-                        this->CardContent->GetOriginalText()
+                        this->CardContent->OriginalTextGet()
                 );
                 
                 const bool ReplacedCard = ReplaceCard( Card );

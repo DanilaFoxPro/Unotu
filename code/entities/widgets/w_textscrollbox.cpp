@@ -29,7 +29,7 @@ w_textscrollbox::w_textscrollbox
         Size = size_;
         
         //:: Textbox.
-        this->TextBox->SetText( text );
+        this->TextBox->TextSet( text );
         this->TextBox->FontSize = font_size;
         this->TextBox->FontColor = text_color;
         this->TextBox->BackgroundColor = rgba( color::black, 0.0f );
@@ -202,15 +202,15 @@ void w_textscrollbox::ScrollToBottom()
 
         //:: Text module.
 
-void w_textscrollbox::SetText( const std::string& Text )
+void w_textscrollbox::TextSet( const std::string& Text )
 {
-        this->TextBox->SetText( Text );
+        this->TextBox->TextSet( Text );
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-void w_textscrollbox::ClearText()
+void w_textscrollbox::TextClear()
 {
-        this->TextBox->ClearText();
+        this->TextBox->TextClear();
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
@@ -220,24 +220,24 @@ void w_textscrollbox::TextUpdated()
 }
 
 
-std::string w_textscrollbox::GetText()
+std::string w_textscrollbox::TextGet()
 {
-        return this->TextBox->GetText();
+        return this->TextBox->TextGet();
 }
 
-std::string* w_textscrollbox::GetTextRef()
+std::string* w_textscrollbox::TextGetRef()
 {
-        return this->TextBox->GetTextRef();
+        return this->TextBox->TextGetRef();
 }
 
-std::string w_textscrollbox::GetOriginalText()
+std::string w_textscrollbox::OriginalTextGet()
 {
-        return this->TextBox->GetOriginalText();
+        return this->TextBox->OriginalTextGet();
 }
 
-std::string* w_textscrollbox::GetOriginalTextRef()
+std::string* w_textscrollbox::OriginalTextGetRef()
 {
-        return this->TextBox->GetOriginalTextRef();
+        return this->TextBox->OriginalTextGetRef();
 }
 
 

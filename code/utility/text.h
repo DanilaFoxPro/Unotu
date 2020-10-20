@@ -69,6 +69,11 @@ std::pair< size_t, size_t >     ToDoubleCoord(
 size_t ToStringCoord( const std::pair< size_t, size_t >& LineCoord, const std::vector<split_line>& Lines );
 size_t GetMaxStringCoord( const std::vector<split_line>& Lines );
 
+line_coord GetLineBeginning( line_coord, const std::string& );
+line_coord GetLineEnd( line_coord, const std::string& );
+
+line_coord YMoveLineCoord( line_coord, const std::ptrdiff_t, const std::string& );
+
 text_coord VerticallyOffsetTextCoord( const text_coord& TextCoord, const std::ptrdiff_t Offset );
 
 std::string AssembleText( const std::string& Text, const std::vector<split_line>& Lines );
@@ -89,6 +94,7 @@ std::string ToLower( const std::string& );
 std::string ToUpper( const std::string& );
 
 std::size_t CountCharacter( const std::string& String, const char Character );
+std::size_t CountCharacterBefore( const std::string& String, const char Character, const std::size_t Length );
 char* ZeroTerminate( const char*, const int );
 std::size_t LongestLine( const std::string& String );
 

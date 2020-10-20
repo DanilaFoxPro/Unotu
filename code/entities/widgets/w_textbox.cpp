@@ -117,10 +117,10 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         if( CaretPtr && CaretPtr->HasCaretSelection() ) {
                 
-                const text_coord First  = CaretPtr->FirstCaretSelection();
-                const text_coord Second = CaretPtr->SecondCaretSelection();
+                const text_coord First  = ToLineCoord( CaretPtr->FirstCaretSelection(), this->LineMapGet() );
+                const text_coord Second = ToLineCoord( CaretPtr->SecondCaretSelection(), this->LineMapGet() );
                 
-                      text_coord FirstOffset  = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
+                text_coord FirstOffset        = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
                 const text_coord SecondOffset = VerticallyOffsetTextCoord( Second, static_cast<std::ptrdiff_t>(-Offset) );
                 
                 const rgba InvFontColor = rgba( ~this->FontColor, this->FontColor.alpha );
@@ -188,12 +188,12 @@ void w_textbox::OnDraw()
 
 void w_textbox::SetOffset( const float& ratio )
 {
-	this->Offset = 
-	(
-		(float)(this->TotalLineCount)
-		*
-		clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
-	);
+        this->Offset = 
+        (
+                (float)(this->TotalLineCount)
+                *
+                clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
+        );
 }
 
 void w_textbox::SetOutlineColor( const rgba& Color )
@@ -206,19 +206,19 @@ void w_textbox::SetOutlineColor( const rgba& Color )
 
 std::size_t w_textbox::LineCount() const
 {
-	return this->TotalLineCount;
+        return this->TotalLineCount;
 }
 
 /** @brief Position in text coordinates based on on-screen position. */
 text_coord w_textbox::PositionToTextCoord( const fpoint Position ) const
 {
         const fpoint Pixel = pixel(1);
-              fpoint FFontSize = FontSize*Pixel;
-              FFontSize.x /= 2.0f;
+        fpoint FFontSize = FontSize*Pixel;
+        FFontSize.x /= 2.0f;
         
         fpoint LocalPosition = Localize( this->Position, Position );
         
-        const auto &LineMap = this->GetLineMap();
+        const auto &LineMap = this->LineMapGet();
         
         if( LineMap.size() == 0 ) {
                 return {0, 0};
@@ -260,13 +260,13 @@ float w_textbox::TextViewzoneY() const
 
         //:: Text module.
 
-void w_textbox::SetText( const std::string& Text )
+void w_textbox::TextSet( const std::string& Text )
 {
         this->Text = Text;
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-void w_textbox::ClearText()
+void w_textbox::TextClear()
 {
         this->Text.clear();
         this->Invalidate( ValidityState::ParametersUpdated );
@@ -278,22 +278,22 @@ void w_textbox::TextUpdated()
 }
 
 
-std::string w_textbox::GetOriginalText()
+std::string w_textbox::OriginalTextGet()
 {
         return this->Text;
 }
 
-std::string* w_textbox::GetOriginalTextRef()
+std::string* w_textbox::OriginalTextGetRef()
 {
         return &this->Text;
 }
 
-std::string w_textbox::GetText()
+std::string w_textbox::TextGet()
 {
         return AssembleText( this->Text, this->SplitTextCache );
 }
 
-std::vector<split_line> w_textbox::GetLineMap() const
+std::vector<split_line> w_textbox::LineMapGet() const
 {
         return this->SplitTextCache;
 }

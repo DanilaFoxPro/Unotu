@@ -72,10 +72,10 @@ struct w_editabletext : public widget, public m_caret, public m_text
         int FontSize();
         text_coord PositionToTextCoord( const fpoint Position );
         
-        virtual void SetText( const std::string& );
-        virtual void ClearText();
-        virtual std::string GetText();
-        virtual std::string* GetTextRef();
+        virtual void TextSet( const std::string& );
+        virtual void TextClear();
+        virtual std::string TextGet();
+        virtual std::string* TextGetRef();
                 
 };
 

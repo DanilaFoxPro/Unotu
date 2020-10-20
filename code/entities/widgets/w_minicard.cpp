@@ -219,7 +219,7 @@ void w_minicard::SetTitle( const std::string& Title )
 
 void w_minicard::SetContent( const std::string& Content )
 {
-        this->ContentText->SetText( Content );
+        this->ContentText->TextSet( Content );
         
 }
 

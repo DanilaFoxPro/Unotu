@@ -55,7 +55,7 @@ struct w_textbox : public widget, public m_textlines
         {
                 
                 //:: Text.
-                this->SetText( Text );
+                this->TextSet( Text );
                 this->FontSize	= FontSize;
                 this->FontColor	= FontColor;
                 
@@ -92,16 +92,16 @@ struct w_textbox : public widget, public m_textlines
         
 //:: Text module.
         
-        virtual void SetText( const std::string& );
-        virtual void ClearText();
+        virtual void TextSet( const std::string& );
+        virtual void TextClear();
         virtual void TextUpdated();
         
-        virtual std::string GetOriginalText();
-        virtual std::string* GetOriginalTextRef();
+        virtual std::string OriginalTextGet();
+        virtual std::string* OriginalTextGetRef();
         
-        virtual std::string GetText();
+        virtual std::string TextGet();
 
-        virtual std::vector<split_line> GetLineMap() const;
+        virtual std::vector<split_line> LineMapGet() const;
 };
 
 #endif
