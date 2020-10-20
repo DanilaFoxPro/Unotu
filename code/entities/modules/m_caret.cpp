@@ -416,13 +416,12 @@ void m_caret::CaretFixupPosition()
 caret_coord m_caret::Normalize( caret_coord Coord )
 {
         const std::shared_ptr<m_text> Lock = this->Target.lock();
-        const std::string Lines = Lock->TextGet();
         
-        if( !Lock || Lines.size() == 0 ) {
+        if( !Lock || Lock->TextGetSize() == 0 ) {
                 return 0;
         }
         
-        const caret_coord Last = Lines.size()-1;
+        const caret_coord Last = Lock->TextGetSize();
         const caret_coord OutputCoord = clamp( Coord, caret_coord(0), Last );
         
         return OutputCoord;
