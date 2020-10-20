@@ -54,8 +54,8 @@ std::vector<split_line> CutLines(
         const std::size_t Offset = 0
 );
 
-std::pair< size_t, size_t > ToLineCoord( const std::size_t StringCoord, const std::vector<split_line>& Lines );
-std::pair< size_t, size_t > GetMaxLineCoord( const std::vector<split_line>& Lines );
+text_coord ToTextCoord( const std::size_t StringCoord, const std::vector<split_line>& Lines );
+text_coord GetMaxTextCoord( const std::vector<split_line>& Lines );
 
 size_t                          ToSingleCoord(
         const std::pair< size_t, size_t >& Coord,

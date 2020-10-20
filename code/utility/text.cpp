@@ -187,7 +187,7 @@ std::vector<split_line> CutLines( const std::vector<split_line>& Lines, const si
 }
 
 /** @brief Convert position in the source string to line coordinate. */
-std::pair<size_t, size_t> ToLineCoord( const std::size_t StrCoord, const std::vector<split_line>& Lines )
+text_coord ToTextCoord( const std::size_t StrCoord, const std::vector<split_line>& Lines )
 {
         
         // TODO: May not work.
@@ -209,7 +209,7 @@ std::pair<size_t, size_t> ToLineCoord( const std::size_t StrCoord, const std::ve
         
 }
 
-std::pair<size_t, size_t> GetMaxLineCoord(const std::vector<split_line>& Lines)
+text_coord GetMaxTextCoord(const std::vector<split_line>& Lines)
 {
         if( Lines.size() == 0 ) {
                 return {0, 0};

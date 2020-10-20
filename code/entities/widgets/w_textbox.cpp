@@ -117,8 +117,8 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         if( CaretPtr && CaretPtr->HasCaretSelection() ) {
                 
-                const text_coord First  = ToLineCoord( CaretPtr->FirstCaretSelection(), this->LineMapGet() );
-                const text_coord Second = ToLineCoord( CaretPtr->SecondCaretSelection(), this->LineMapGet() );
+                const text_coord First  = ToTextCoord( CaretPtr->FirstCaretSelection(), this->LineMapGet() );
+                const text_coord Second = ToTextCoord( CaretPtr->SecondCaretSelection(), this->LineMapGet() );
                 
                 text_coord FirstOffset        = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
                 const text_coord SecondOffset = VerticallyOffsetTextCoord( Second, static_cast<std::ptrdiff_t>(-Offset) );

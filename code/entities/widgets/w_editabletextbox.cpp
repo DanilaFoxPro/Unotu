@@ -74,7 +74,7 @@ void w_editabletextbox::OnTick()
                 
                 const text_coord TextCoord = this->TextBox->PositionToTextCoord( MousePosition() );
                 
-                if( TextCoord == ToLineCoord( this->CaretPositionGet(), this->LineMapGet() ) )
+                if( TextCoord == ToTextCoord( this->CaretPositionGet(), this->LineMapGet() ) )
                         return;
                 
                 this->CaretPositionSet( TextCoord );
@@ -105,7 +105,7 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
                         this->OutlineThickness
                 );
         
-        const std::pair< std::size_t, std::size_t > CaretCoordinates = ToLineCoord( this->CaretPositionGet(), this->LineMapGet() );
+        const text_coord CaretCoordinates = ToTextCoord( this->CaretPositionGet(), this->LineMapGet() );
         const float OffsetLines = (float)CaretCoordinates.first - this->GetScrollOffsetLines();
         // FIXME: Doesn't account for inserted newlines.
         const fpoint CaretOriginLocal =

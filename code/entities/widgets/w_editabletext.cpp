@@ -106,8 +106,8 @@ void w_editabletext::OnRefresh( ValidityState_t )
                         
                         if( this->HasCaretSelection() ) {
                                 
-                                text_coord First  = ToLineCoord( this->FirstCaretSelection(), this->GetCaretLineMap() );
-                                text_coord Second = ToLineCoord( this->SecondCaretSelection(), this->GetCaretLineMap() );
+                                text_coord First  = ToTextCoord( this->FirstCaretSelection(), this->GetCaretLineMap() );
+                                text_coord Second = ToTextCoord( this->SecondCaretSelection(), this->GetCaretLineMap() );
                                 
                                 const rgba Inverse = rgba( ~this->TextColor, this->TextColor.alpha );
                                 
@@ -136,10 +136,12 @@ void w_editabletext::OnRefresh( ValidityState_t )
                 
 		// Caret.
 		
+		// TODO: Fix this horror.
+		
 		const point CaretOrigin =
 		point
 		(
-			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)(ToLineCoord( CaretPositionGet(), this->GetCaretLineMap() )).second ),
+			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)(ToTextCoord( CaretPositionGet(), this->GetCaretLineMap() )).second ),
 			Area.first.y
 		);
 		// Blinking caret.
