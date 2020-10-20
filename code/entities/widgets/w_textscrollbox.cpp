@@ -240,4 +240,9 @@ std::string* w_textscrollbox::OriginalTextGetRef()
         return this->TextBox->OriginalTextGetRef();
 }
 
+std::vector<split_line> w_textscrollbox::LineMapGet() const
+{
+        return this->TextBox->LineMapGet();
+}
+
 

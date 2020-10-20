@@ -66,6 +66,9 @@ struct w_textscrollbox : public widget, public m_textlines
         
         virtual std::string OriginalTextGet();
         virtual std::string* OriginalTextGetRef();
+        
+        virtual std::vector<split_line> LineMapGet() const;
+        
 };
 
 

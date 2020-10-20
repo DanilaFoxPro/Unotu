@@ -107,13 +107,11 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
         
         const text_coord CaretCoordinates = ToTextCoord( this->CaretPositionGet(), this->LineMapGet() );
         const float OffsetLines = (float)CaretCoordinates.first - this->GetScrollOffsetLines();
-        // FIXME: Doesn't account for inserted newlines.
-        const fpoint CaretOriginLocal =
-                        fpoint
-                        (
-                                (float)(CaretCoordinates.second*this->TextBox->FontSize)/2.0f*Pixel.x,
-                                -OffsetLines*this->TextBox->FontSize*Pixel.y
-                        );
+        
+        const fpoint CaretOriginLocal = fpoint (
+                (float)(CaretCoordinates.second*this->TextBox->FontSize)/2.0f*Pixel.x,
+                -OffsetLines*this->TextBox->FontSize*Pixel.y
+        );
         const fpoint CaretOrigin = PaddedArea.first + CaretOriginLocal;
         
         this->gText.AddText(

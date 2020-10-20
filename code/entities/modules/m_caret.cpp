@@ -141,8 +141,18 @@ void m_caret::CaretToEnd()
  * */
 bool m_caret::XMoveCaret( const std::ptrdiff_t Offset, const bool  )
 {
+        const std::shared_ptr<m_text> Lock = this->Target.lock();
+        if( !Lock ) {
+                return false;
+        }
         
-        this->TextCaretPosition += Offset;
+        const std::ptrdiff_t Target = this->CaretPositionGet()+Offset;
+        
+        this->CaretPositionSet( clamp(
+                Target,
+                (std::ptrdiff_t)0,
+                (std::ptrdiff_t)Lock->TextGetSize()
+        ) );
         this->CaretFixupPosition();
         this->BumpCaret();
         
