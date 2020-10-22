@@ -80,29 +80,29 @@ void w_textbox::OnRefresh( ValidityState_t )
         //:: Text
         
         const fpoint Pixel = pixel(1);
-        const fpoint fFontSize = fpoint( FontSize/2.0f, FontSize ) * Pixel;
         
         // Padding.
         
         this->TextAreaSize = AreaSize( TextArea.first, TextArea.second );
         
         // How much the textbox can hold, in characters.
-        const float SpaceWidth = TextAreaSize.x.xratio() / fFontSize.x;
-        const float SpaceHeight = TextAreaSize.y.yratio() / fFontSize.y;
-
-        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
+        const float SpaceWidth  = this->TextViewzoneX();
+        const float SpaceHeight = this->TextViewzoneY();
+        
         const int HeightLimit = ceilf( SpaceHeight );
         
-        const float TopCut = modf( Offset, nullptr );
-        const float BottomCut = clamp( (float)modf( this->TotalLineCount-Offset-SpaceHeight, nullptr ), 0.0f, 1.0f );
-        const float Cuts = TopCut+BottomCut;
+        const auto CutPair = TextCutsFromArea( this->TotalLineCount, SpaceHeight, Offset );
+        
+        const float& TopCut    = CutPair.first;
+        const float& BottomCut = CutPair.second;
+        const float  Cuts      = TopCut+BottomCut;
         
         std::size_t NeededLinesCnt = (size_t)HeightLimit;
         if( Cuts >= 1.0f ) {
-                NeededLinesCnt++;
+                NeededLinesCnt += 1;
         }
         
-        // +1 to height limit to accomodate cuts.
+        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
         const std::vector<split_line> CutLinesLoc = CutLines( SplitTextCache, NeededLinesCnt, (size_t)Offset );
         
         this->TotalLineCount = SplitTextCache.size();
@@ -117,10 +117,10 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         if( CaretPtr && CaretPtr->HasCaretSelection() ) {
                 
-                const text_coord First  = CaretPtr->FirstCaretSelection();
-                const text_coord Second = CaretPtr->SecondCaretSelection();
+                const text_coord First  = ToTextCoord( CaretPtr->FirstCaretSelection(), this->LineMapGet() );
+                const text_coord Second = ToTextCoord( CaretPtr->SecondCaretSelection(), this->LineMapGet() );
                 
-                      text_coord FirstOffset  = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
+                text_coord FirstOffset        = VerticallyOffsetTextCoord( First, static_cast<std::ptrdiff_t>(-Offset) );
                 const text_coord SecondOffset = VerticallyOffsetTextCoord( Second, static_cast<std::ptrdiff_t>(-Offset) );
                 
                 const rgba InvFontColor = rgba( ~this->FontColor, this->FontColor.alpha );
@@ -188,12 +188,12 @@ void w_textbox::OnDraw()
 
 void w_textbox::SetOffset( const float& ratio )
 {
-	this->Offset = 
-	(
-		(float)(this->TotalLineCount)
-		*
-		clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
-	);
+        this->Offset = 
+        (
+                (float)(this->TotalLineCount)
+                *
+                clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
+        );
 }
 
 void w_textbox::SetOutlineColor( const rgba& Color )
@@ -206,19 +206,19 @@ void w_textbox::SetOutlineColor( const rgba& Color )
 
 std::size_t w_textbox::LineCount() const
 {
-	return this->TotalLineCount;
+        return this->TotalLineCount;
 }
 
 /** @brief Position in text coordinates based on on-screen position. */
-text_coord w_textbox::PositionToTextCoord( const fpoint Position )
+text_coord w_textbox::PositionToTextCoord( const fpoint Position ) const
 {
         const fpoint Pixel = pixel(1);
-              fpoint FFontSize = FontSize*Pixel;
-              FFontSize.x /= 2.0f;
+        fpoint FFontSize = FontSize*Pixel;
+        FFontSize.x /= 2.0f;
         
         fpoint LocalPosition = Localize( this->Position, Position );
         
-        const auto &LineMap = this->GetLineMap();
+        const auto &LineMap = this->LineMapGet();
         
         if( LineMap.size() == 0 ) {
                 return {0, 0};
@@ -245,16 +245,28 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position )
         
 }
 
+/** @brief How many characters can fit vertically. */
+float w_textbox::TextViewzoneX() const
+{
+        return TextAreaSize.x.xratio() / (pixel(this->FontSize).xratio()/2.0);
+}
+
+/** @brief How many lines of text can fit horizontally. */
+float w_textbox::TextViewzoneY() const
+{
+        return TextAreaSize.y.yratio() / pixel(this->FontSize).yratio();
+}
+
 
         //:: Text module.
 
-void w_textbox::SetText( const std::string& Text )
+void w_textbox::TextSet( const std::string& Text )
 {
         this->Text = Text;
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-void w_textbox::ClearText()
+void w_textbox::TextClear()
 {
         this->Text.clear();
         this->Invalidate( ValidityState::ParametersUpdated );
@@ -266,22 +278,22 @@ void w_textbox::TextUpdated()
 }
 
 
-std::string w_textbox::GetOriginalText()
+std::string w_textbox::OriginalTextGet()
 {
         return this->Text;
 }
 
-std::string* w_textbox::GetOriginalTextRef()
+std::string* w_textbox::OriginalTextGetRef()
 {
         return &this->Text;
 }
 
-std::string w_textbox::GetText()
+std::string w_textbox::TextGet()
 {
         return AssembleText( this->Text, this->SplitTextCache );
 }
 
-std::vector<split_line> w_textbox::GetLineMap()
+std::vector<split_line> w_textbox::LineMapGet() const
 {
         return this->SplitTextCache;
 }

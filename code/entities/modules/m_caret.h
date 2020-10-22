@@ -8,7 +8,7 @@
 #include <string> // 'std::string::npos', 'std::size_t'.
 #include <memory>
 
-using caret_coord = text_coord;
+using caret_coord = line_coord;
 
 /**
  * @brief Tries to aid in adding caret to things as much as possible.
@@ -29,8 +29,12 @@ struct m_caret : public module
         double LastCaretBump = 0.0;
         /** @brief Target which text the caret will modify. */
         std::weak_ptr<m_text> Target;
-        caret_coord TextCaretPosition = {0, 0};
-        caret_coord TextSelectPosition = {-1, 0};
+private:
+        static const caret_coord InvalidSelectionPosition = caret_coord(-1);
+        
+        caret_coord TextCaretPosition = 0;
+        caret_coord TextSelectPosition = InvalidSelectionPosition;
+public:
 
 //:: Functions.
 
@@ -38,16 +42,25 @@ struct m_caret : public module
 
         void BumpCaret();
 
-        void SetCaretPosition( const std::size_t&, const bool& = true );
-        split_line GetCurCaretLine();
+        void CaretPositionSet( const std::size_t&, const bool& = true );
+        void CaretPositionSet( text_coord Position );
+        
+        caret_coord CaretPositionGet() const;
+        std::size_t CaretOffsetGet() const;
+        std::size_t CaretCurrentLineIndexGet() const;
+        split_line  CaretCurrentLineGet();
+        std::size_t CaretCurrentLineGetBeginning() const;
+        std::size_t CaretCurrentLineGetEnd() const;
+        
         void CaretToLineBeginning();
         void CaretToLineEnd();
         void CaretToBeginning();
         void CaretToEnd();
-        void FixupCaretPosition();
+        void CaretFixupPosition();
+        
         caret_coord Normalize( caret_coord Coord );
         
-        bool HasCaretSelection();
+        bool HasCaretSelection() const;
         void VoidCaretSelection();
         void StartSelection(const bool = true);
         caret_coord& FirstCaretSelection();

@@ -14,7 +14,7 @@ struct w_textbox : public widget, public m_textlines
         std::string Text;
         int FontSize = 16;
         rgba FontColor = TheTheme.Text;
-        float Offset = 0.0f;
+        double Offset = 0.0f;
 
         rgba BackgroundColor    = color::transparent;
         
@@ -55,7 +55,7 @@ struct w_textbox : public widget, public m_textlines
         {
                 
                 //:: Text.
-                this->SetText( Text );
+                this->TextSet( Text );
                 this->FontSize	= FontSize;
                 this->FontColor	= FontColor;
                 
@@ -84,21 +84,24 @@ struct w_textbox : public widget, public m_textlines
 
         void SetOffset( const float& ratio );
         void SetOutlineColor( const rgba& Color );
+        
         std::size_t LineCount() const;
-        text_coord PositionToTextCoord( const fpoint Position );
+        text_coord PositionToTextCoord( const fpoint Position ) const;
+        float TextViewzoneX() const;
+        float TextViewzoneY() const;
         
 //:: Text module.
         
-        virtual void SetText( const std::string& );
-        virtual void ClearText();
+        virtual void TextSet( const std::string& );
+        virtual void TextClear();
         virtual void TextUpdated();
         
-        virtual std::string GetOriginalText();
-        virtual std::string* GetOriginalTextRef();
+        virtual std::string OriginalTextGet();
+        virtual std::string* OriginalTextGetRef();
         
-        virtual std::string GetText();
+        virtual std::string TextGet();
 
-        virtual std::vector<split_line> GetLineMap();
+        virtual std::vector<split_line> LineMapGet() const;
 };
 
 #endif

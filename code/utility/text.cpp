@@ -1,6 +1,7 @@
 #include <utility\text.h>
 
 #include <cassert>
+#include <cmath>
 
 #include <entities\ent_window.h>
 
@@ -186,8 +187,22 @@ std::vector<split_line> CutLines( const std::vector<split_line>& Lines, const si
         
 }
 
+/**
+ * @brief Calculate top and bottom cut based on offset and space height.
+ * @param SpaceHeight Height of text space, in characters.
+ */
+std::pair<float, float> TextCutsFromArea( const std::size_t LineCount, const float SpaceHeight, const double Offset )
+{
+        const float TopCut    = modf( Offset, nullptr );
+        const float BottomCut = clamp( (float)modf( LineCount-Offset-SpaceHeight, nullptr ), 0.0f, 1.0f );
+        
+        return { TopCut, BottomCut };
+        
+}
+
+
 /** @brief Convert position in the source string to line coordinate. */
-std::pair<size_t, size_t> ToLineCoord( const std::size_t StrCoord, const std::vector<split_line>& Lines )
+text_coord ToTextCoord( const std::size_t StrCoord, const std::vector<split_line>& Lines )
 {
         
         // TODO: May not work.
@@ -209,7 +224,7 @@ std::pair<size_t, size_t> ToLineCoord( const std::size_t StrCoord, const std::ve
         
 }
 
-std::pair<size_t, size_t> GetMaxLineCoord(const std::vector<split_line>& Lines)
+text_coord GetMaxTextCoord(const std::vector<split_line>& Lines)
 {
         if( Lines.size() == 0 ) {
                 return {0, 0};
@@ -282,6 +297,24 @@ size_t ToStringCoord( const std::pair<size_t, size_t>& LineCoord, const std::vec
         
 }
 
+line_coord GetLineBeginning( line_coord LineCoord, const std::string& Text )
+{
+        while( LineCoord != 0 && Text[LineCoord-1] != '\n' ) {
+                LineCoord--;
+        }
+        
+        return LineCoord;
+}
+
+line_coord GetLineEnd( line_coord LineCoord, const std::string& Text )
+{
+        while( LineCoord != Text.size() && Text[LineCoord] != '\n' ) {
+                LineCoord++;
+        }
+        
+        return LineCoord;
+}
+
 size_t GetMaxStringCoord( const std::vector<split_line>& Lines )
 {
         // TODO: May not work.
@@ -291,6 +324,45 @@ size_t GetMaxStringCoord( const std::vector<split_line>& Lines )
         }
         return Offset;
 }
+
+line_coord YMoveLineCoord( line_coord LineCoord, const std::ptrdiff_t Offset, const std::string& Text )
+{
+        
+        std::size_t Line = CountCharacterBefore( Text, '\n', LineCoord ) + 1;
+        
+        const std::size_t LastLine   = CountCharacter( Text, '\n' ) + 1;
+        const std::size_t TargetLine = clamp(
+                (std::ptrdiff_t)Line+Offset,
+                (std::ptrdiff_t)0,
+                (std::ptrdiff_t)LastLine
+        );
+        
+        const std::size_t LineOffset = LineCoord-GetLineBeginning( LineCoord, Text );
+        
+        if( TargetLine < Line ) {
+                while( TargetLine != Line ) {
+                        LineCoord = GetLineBeginning( LineCoord, Text )-1;
+                        Line--;
+                }
+        } else if( TargetLine > Line ) {
+                while( TargetLine != Line ) {
+                        LineCoord = GetLineEnd( LineCoord, Text )+1;
+                        Line++;
+                }
+        }
+        
+        const std::size_t Limit          = GetLineEnd( LineCoord, Text );
+        const std::size_t UnclampedCaret = GetLineBeginning( LineCoord, Text ) + LineOffset;
+        
+        LineCoord = clamp( UnclampedCaret, (size_t)0, Limit );
+        
+        // Just to be sure.
+        LineCoord = clamp( LineCoord, (size_t)0, Text.size() );
+        
+        return LineCoord;
+        
+}
+
 
 /**
  * @brief Vertically offsets text coordinate by offset specified.
@@ -516,7 +588,7 @@ std::string ToUpper( const std::string& String )
 
 std::size_t CountCharacter( const std::string& String, const char Character )
 {
-        int Count = 0;
+        std::size_t Count = 0;
         for( char c : String ) {
                 if( c == Character ) {
                         Count++;
@@ -524,6 +596,19 @@ std::size_t CountCharacter( const std::string& String, const char Character )
         }
         return Count;
 }
+
+std::size_t CountCharacterBefore(const std::string& String, const char Character, const std::size_t Length)
+{
+        std::size_t Count = 0;
+        for( std::size_t i = 0; i < String.length() && i < Length; i++ ) {
+                const char& CurrentCharacter = String[i];
+                if( CurrentCharacter == Character ) {
+                        Count++;
+                }
+        }
+        return Count;
+}
+
 
 char* ZeroTerminate( const char* String, const int Length )
 {

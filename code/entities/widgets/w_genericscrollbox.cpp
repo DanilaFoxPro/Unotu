@@ -43,9 +43,7 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
         InvalidateWidgets( this->Items, Reason );
         
         const double VisibleItems = this->VisibleItemsCount();
-        const double TotalScrollHeight = this->ScrollLength();
-        const double Offset =
-                clamp( this->Scrollbar->ScrollOffset * ( TotalScrollHeight - this->Size.y.yratio() ), 0.0, TotalScrollHeight );
+        const double Offset = this->Scrollbar->ScrollOffsetGet();
         
         const std::pair< std::size_t, std::size_t > Visible = std::make_pair( this->NextItem( Offset-this->ItemHeight.yratio() ), ((std::size_t)VisibleItems)+2 );
         
@@ -69,7 +67,8 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
         
         // Update scrollbar.
         
-        this->Scrollbar->ScrollViewzone = clamp( this->Size.y.yratio()/TotalScrollHeight, 0.0, 1.0 );
+        this->Scrollbar->ScrollLengthSet( this->ScrollLength() );
+        this->Scrollbar->ScrollViewzoneSet( this->Size.y.yratio() );
         
 }
 
@@ -84,8 +83,8 @@ void w_genericscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         
         we_scrolllines* ScrollLines = dynamic_cast<we_scrolllines*>(Event.get());
         if( ScrollLines ) {
-                this->Scrollbar->OffsetByRatio(
-                        -(this->ItemHeightRatio()+this->ItemYPaddingRatio()) * ScrollLines->Lines
+                this->Scrollbar->Offset(
+                        -(this->ItemHeight.yratio()+pixel(this->ItemPadding).yratio()) * ScrollLines->Lines
                 );
                 this->Invalidate( ValidityState::ParametersUpdated );
                 Event->Handle();

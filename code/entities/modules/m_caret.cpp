@@ -31,30 +31,86 @@ void m_caret::BumpCaret()
 /**
  * @brief Sets 'TextCaretPosition', but with position checks and caret bump.
  */
-void m_caret::SetCaretPosition( const std::size_t& NewPosition, const bool& BumpCaret )
+void m_caret::CaretPositionSet( const std::size_t& NewPosition, const bool& BumpCaret )
 {
-	this->TextCaretPosition = ToLineCoord( NewPosition, this->GetCaretLineMap() );
-        this->FixupCaretPosition();
+	this->TextCaretPosition = NewPosition;
+        this->CaretFixupPosition();
         if( BumpCaret ) {
                 this->BumpCaret();
         }
 }
 
-split_line m_caret::GetCurCaretLine()
+/**
+ * @brief Sets 'TextCaretPosition' as text_coord.
+ */
+void m_caret::CaretPositionSet( text_coord Position )
 {
-        return this->GetCaretLineMap()[this->TextCaretPosition.first];
+        this->TextCaretPosition = ToStringCoord( Position, this->GetCaretLineMap() );
+        this->CaretFixupPosition();
+        this->BumpCaret();
 }
+
+/**
+ * @brief Get text caret position as caret_coord.
+ */
+caret_coord m_caret::CaretPositionGet() const
+{
+        return this->TextCaretPosition;
+}
+
+/** @brief Get offset of caret from the line beginning, in characters. */
+std::size_t m_caret::CaretOffsetGet() const
+{
+        return this->CaretPositionGet() - this->CaretCurrentLineGetBeginning();
+}
+
+std::size_t m_caret::CaretCurrentLineIndexGet() const
+{
+        const std::shared_ptr<m_text> Lock = this->Target.lock();
+        if( !Lock ) {
+                return 0;
+        }
+        
+        return CountCharacterBefore( Lock->TextGet(), '\n', this->TextCaretPosition );
+}
+
+split_line m_caret::CaretCurrentLineGet()
+{
+        return this->GetCaretLineMap()[ this->CaretCurrentLineIndexGet() ];
+}
+
+std::size_t m_caret::CaretCurrentLineGetBeginning() const
+{
+        const std::shared_ptr<m_text> Lock = this->Target.lock();
+        if( !Lock ) {
+                return 0;
+        }
+        
+        return GetLineBeginning( this->TextCaretPosition, Lock->TextGet() );
+        
+}
+
+std::size_t m_caret::CaretCurrentLineGetEnd() const
+{
+        const std::shared_ptr<m_text> Lock = this->Target.lock();
+        if( !Lock ) {
+                return 0;
+        }
+        
+        return GetLineEnd( this->TextCaretPosition, Lock->TextGet() );
+        
+}
+
 
 void m_caret::CaretToLineBeginning()
 {
-        this->TextCaretPosition.second = 0;
+        this->CaretPositionSet( this->CaretCurrentLineGetBeginning() );
         this->BumpCaret();
 }
 
 void m_caret::CaretToLineEnd()
 {
-        const split_line Line = this->GetCurCaretLine();
-        this->TextCaretPosition.second = Line.Length();
+        this->CaretPositionSet( this->CaretCurrentLineGetEnd() );
         this->BumpCaret();
 }
 
@@ -64,7 +120,7 @@ void m_caret::CaretToLineEnd()
  * */
 void m_caret::CaretToBeginning()
 {
-	this->SetCaretPosition( 0, true );
+	this->CaretPositionSet( 0 );
 }
 
 /**
@@ -76,11 +132,8 @@ void m_caret::CaretToEnd()
         if( !Lock ) {
                 return;
         }
-
-        const auto Lines = this->GetCaretLineMap();
-        const auto Max = GetMaxLineCoord( Lines );
         
-        this->TextCaretPosition = Max;
+        this->TextCaretPosition = Lock->TextGetSize();
         
         this->BumpCaret();
         
@@ -92,77 +145,22 @@ void m_caret::CaretToEnd()
  * 
  * @param Offset Offset by which to shift. Left is minus.
  * */
-bool m_caret::XMoveCaret( const std::ptrdiff_t Offset, const bool bAllowOverflow )
+bool m_caret::XMoveCaret( const std::ptrdiff_t Offset, const bool  )
 {
-        /* TODO: Consider replacing those if statements with convertion to single
-         *       coordinate, operating upon it, and then converting back to double.
-         */
-        
-        auto& CaretPos = this->TextCaretPosition;
-        
-        const auto Lines = this->GetCaretLineMap();
-        const split_line Line = Lines[CaretPos.first];
-        
-        if( Lines.size() == 0 ) {
-                this->FixupCaretPosition();
-                return true;
+        const std::shared_ptr<m_text> Lock = this->Target.lock();
+        if( !Lock ) {
+                return false;
         }
         
-        const std::ptrdiff_t Offseted = CaretPos.second+Offset;
-        if( Offseted < 0 ) {
-                if( CaretPos.first == 0 ) {
-                        CaretPos.second = 0;
-                        //printf( "-Final offset: [%i, %i]\n", (int)CaretPos.first, (int)CaretPos.second );
-                        return true;
-                }
-                
-                CaretPos.first--;
-                // '+1' since jumping lines.
-                const std::ptrdiff_t NewOffset = CaretPos.second+Offset+1;
-                const split_line NewLine = Lines[this->TextCaretPosition.first];
-                
-                CaretPos.second = NewLine.Length();
-                this->XMoveCaret( NewOffset );
-                
-        } else if( Offseted > (std::ptrdiff_t)Line.Length() ) {
-                
-                if( bAllowOverflow ) {
-                        CaretPos.second = Offseted;
-                        /*printf(
-                                "#Final offset: [%i, %i/%i]\n",
-                               (int)CaretPos.first,
-                               (int)CaretPos.second,
-                               (int)Line.Length()
-                        );*/
-                        return true;
-                }
-                
-                if( CaretPos.first == Lines.size()-1 ) {
-                        CaretPos.second = Line.Length();
-                        /*printf(
-                                "+Final offset: [%i, %i/%i]\n",
-                               (int)CaretPos.first,
-                               (int)CaretPos.second,
-                               (int)Line.Length()
-                        );*/
-                        return true;
-                }
-                
-                CaretPos.first++;
-                
-                // TODO: Fix the offset here. It should change when changing the lines, but I'm puzzled by how much.
-                
-                const std::size_t DistanceToEnd = Line.Length()-CaretPos.second;
-                // '-1' due to jumping the lines.
-                const std::ptrdiff_t NewOffset = Offset-DistanceToEnd-1;
-                
-                CaretPos.second = 0;
-                this->XMoveCaret( NewOffset );
-                
-        } else {
-                CaretPos.second = Offseted;
-                //printf( "Final offset: [%i, %i]\n", (int)CaretPos.first, (int)CaretPos.second );
-        }
+        const std::ptrdiff_t Target = this->CaretPositionGet()+Offset;
+        
+        this->CaretPositionSet( clamp(
+                Target,
+                (std::ptrdiff_t)0,
+                (std::ptrdiff_t)Lock->TextGetSize()
+        ) );
+        this->CaretFixupPosition();
+        this->BumpCaret();
         
         return Offset != 0;
 }
@@ -180,23 +178,10 @@ bool m_caret::YMoveCaret( const std::ptrdiff_t Offset )
         }
         this->BumpCaret();
         
-        const auto Lines = this->GetCaretLineMap();
-        auto& CaretPos = this->TextCaretPosition;
+        const std::size_t OldLine = this->CaretCurrentLineIndexGet();
+        this->CaretPositionSet( YMoveLineCoord( this->CaretPositionGet(), Offset, Lock->TextGet() ) );
         
-        const std::size_t OldLine = CaretPos.first;
-        const std::ptrdiff_t NewLine = OldLine+Offset;
-        
-        if( NewLine < 0 || Lines.size() == 0 ) {
-                CaretPos.first = 0;
-        } else if( NewLine >= (std::ptrdiff_t)Lines.size() ) {
-                CaretPos.first = Lines.size()-1;
-        } else {
-                CaretPos.first = NewLine;
-        }
-        
-        this->FixupCaretPosition();
-        
-        return OldLine != CaretPos.first;
+        return OldLine != this->CaretCurrentLineIndexGet();
         
 }
 
@@ -211,18 +196,16 @@ bool m_caret::ProcessCharacterInput( const std::string& Input )
         std::shared_ptr<m_text> Lock = this->Target.lock();
         std::string* CaretTextPtr = nullptr;
         
-        if( !Lock || !(CaretTextPtr = Lock->GetOriginalTextRef()) ) {
+        if( !Lock || !(CaretTextPtr = Lock->OriginalTextGetRef()) ) {
                 return false;
         }
         
         this->DeleteCaretSelection();
         
         // Don't assume caret position was valid.
-        this->FixupCaretPosition();
+        this->CaretFixupPosition();
         
-        auto Line = this->GetCurCaretLine();
-        
-        CaretTextPtr->insert( Line[this->TextCaretPosition.second], Input );
+        CaretTextPtr->insert( this->CaretPositionGet(), Input );
         if( CaretTextPtr->size() > this->TextMaxLength ) {
                 CaretTextPtr->resize( this->TextMaxLength );
         }
@@ -242,7 +225,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
 {
         const std::shared_ptr<m_text> Lock = this->Target.lock();
         std::string* CaretTextPtr = nullptr;
-        if( !Lock || !(CaretTextPtr = Lock->GetOriginalTextRef()) ) {
+        if( !Lock || !(CaretTextPtr = Lock->OriginalTextGetRef()) ) {
                 return false;
         }
         
@@ -277,7 +260,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                         break;
                                 case GLFW_KEY_BACKSPACE:
                                 {
-                                        this->FixupCaretPosition();
+                                        this->CaretFixupPosition();
                                         this->BumpCaret();
                                         if( this->HasCaretSelection() ) {
                                                 this->DeleteCaretSelection();
@@ -286,6 +269,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                                 if( CaretAbs != 0 ) {
                                                         CaretTextPtr->erase( CaretAbs-1, 1 );
                                                         Lock->TextUpdated();
+                                                        // FIXME: Caret does funky stuff when text update causes re-split.
                                                         this->XMoveCaret( -1 );
                                                 } else {
                                                         return false;
@@ -295,7 +279,7 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
                                 }
                                 case GLFW_KEY_DELETE:
                                 {
-                                        this->FixupCaretPosition();
+                                        this->CaretFixupPosition();
                                         this->BumpCaret();
                                         
                                         if( this->HasCaretSelection() ) {
@@ -426,11 +410,11 @@ bool m_caret::ProcessKeyInput( const int& Key, const int& Modifiers )
         }// switch( Modifiers )
         
         // Only reaches this point if case not default, thus input was handled.
-        this->FixupCaretPosition();
+        this->CaretFixupPosition();
         return true;
 }
 
-void m_caret::FixupCaretPosition()
+void m_caret::CaretFixupPosition()
 {
         this->TextCaretPosition = this->Normalize( this->TextCaretPosition );
 }
@@ -438,41 +422,29 @@ void m_caret::FixupCaretPosition()
 caret_coord m_caret::Normalize( caret_coord Coord )
 {
         const std::shared_ptr<m_text> Lock = this->Target.lock();
-        const std::vector<split_line> Lines = this->GetCaretLineMap();
         
-        if( !Lock || Lines.size() == 0 ) {
-                return {0, 0};
+        if( !Lock || Lock->TextGetSize() == 0 ) {
+                return 0;
         }
         
-        const size_t Last = Lines.size()-1;
-        
-        caret_coord OutputCoord = Coord;
-        
-        if( OutputCoord.first > Last ) {
-                OutputCoord.first = Last;
-        }
-        
-        const split_line Line = Lines[OutputCoord.first];
-        
-        if( OutputCoord.second > Line.Length() ) {
-                OutputCoord.second = Line.Length();
-        }
+        const caret_coord Last = Lock->TextGetSize();
+        const caret_coord OutputCoord = clamp( Coord, caret_coord(0), Last );
         
         return OutputCoord;
         
 }
 
-bool m_caret::HasCaretSelection()
+bool m_caret::HasCaretSelection() const
 {
         const auto Caret = this->TextCaretPosition;
         const auto Select = this->TextSelectPosition;
         
-        return Select.first != (std::size_t)(-1) && Caret != Select;
+        return Select != m_caret::InvalidSelectionPosition && Caret != Select;
 }
 
 void m_caret::VoidCaretSelection()
 {
-        this->TextSelectPosition.first = -1;
+        this->TextSelectPosition = m_caret::InvalidSelectionPosition;
 }
 
 void m_caret::StartSelection( const bool bOnlyIfVoid )
@@ -488,13 +460,7 @@ void m_caret::StartSelection( const bool bOnlyIfVoid )
 
 caret_coord& m_caret::FirstCaretSelection()
 {
-        if( this->TextCaretPosition.first == this->TextSelectPosition.first ) {
-                if( this->TextCaretPosition.second < this->TextSelectPosition.second ) {
-                        return this->TextCaretPosition;
-                } else {
-                        return this->TextSelectPosition;
-                }
-        } else if( this->TextCaretPosition.first < this->TextSelectPosition.first ) {
+        if( this->TextCaretPosition < this->TextSelectPosition ) {
                 return this->TextCaretPosition;
         } else {
                 return this->TextSelectPosition;
@@ -503,13 +469,7 @@ caret_coord& m_caret::FirstCaretSelection()
 
 caret_coord& m_caret::SecondCaretSelection()
 {
-        if( this->TextCaretPosition.first == this->TextSelectPosition.first ) {
-                if( this->TextCaretPosition.second > this->TextSelectPosition.second ) {
-                        return this->TextCaretPosition;
-                } else {
-                        return this->TextSelectPosition;
-                }
-        } else if( this->TextCaretPosition.first > this->TextSelectPosition.first ) {
+        if( this->TextCaretPosition > this->TextSelectPosition ) {
                 return this->TextCaretPosition;
         } else {
                 return this->TextSelectPosition;
@@ -525,12 +485,12 @@ std::string m_caret::GetSelectedSubstring()
         std::shared_ptr<m_text> Lock = this->Target.lock();
         std::string* CaretTextPtr = nullptr;
         
-        if( !Lock || !(CaretTextPtr = Lock->GetOriginalTextRef()) ) {
+        if( !Lock || !(CaretTextPtr = Lock->OriginalTextGetRef()) ) {
                 return "";
         }
         
-        const std::size_t First = ToStringCoord( this->FirstCaretSelection(), this->GetCaretLineMap() );
-        const std::size_t Second = ToStringCoord( this->SecondCaretSelection(), this->GetCaretLineMap() );
+        const std::size_t First  = this->FirstCaretSelection();
+        const std::size_t Second = this->SecondCaretSelection();
         const std::size_t Length = Second-First;
         
         return CaretTextPtr->substr( First, Length );
@@ -548,12 +508,12 @@ void m_caret::DeleteCaretSelection()
         std::shared_ptr<m_text> Lock = this->Target.lock();
         std::string* CaretTextPtr = nullptr;
         
-        if( !Lock || !(CaretTextPtr = Lock->GetOriginalTextRef()) ) {
+        if( !Lock || !(CaretTextPtr = Lock->OriginalTextGetRef()) ) {
                 return;
         }
         
-        const std::size_t First = ToStringCoord( this->FirstCaretSelection(), this->GetCaretLineMap() );
-        const std::size_t Second = ToStringCoord( this->SecondCaretSelection(), this->GetCaretLineMap() );
+        const std::size_t First  = this->FirstCaretSelection();
+        const std::size_t Second = this->SecondCaretSelection();
         const std::size_t Length = Second-First;
         
         if( this->TextCaretPosition != this->FirstCaretSelection() ) {
@@ -569,12 +529,7 @@ void m_caret::DeleteCaretSelection()
 
 size_t m_caret::GetCaretStrPos()
 {
-        const std::shared_ptr<m_text> Lock = this->Target.lock();
-        auto Multi = dynamic_cast<m_textlines*>( Lock.get() );
-        if( !Lock || !Multi ) {
-                return this->TextCaretPosition.second;
-        }
-        return ToStringCoord( this->TextCaretPosition, this->GetCaretLineMap() );
+        return this->TextCaretPosition;
 }
 
 std::vector<split_line> m_caret::GetCaretLineMap()
@@ -585,9 +540,9 @@ std::vector<split_line> m_caret::GetCaretLineMap()
                 return {split_line(0, 0)};
         }
         if( Multi ) {
-                return Multi->GetLineMap();
+                return Multi->LineMapGet();
         } else {
-                return {split_line( 0, Lock->GetText().size() )};
+                return {split_line( 0, Lock->TextGet().size() )};
         }
 }
 

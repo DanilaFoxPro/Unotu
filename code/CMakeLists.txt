@@ -3,13 +3,9 @@ target_sources_local(
   PUBLIC
     coordinates.h
     font_symbols.h
-    item.h
     types.h
-    write.h
   PRIVATE
-    item.cpp
     types.cpp
-    write.cpp
 )
 
 add_subdirectory( entities )

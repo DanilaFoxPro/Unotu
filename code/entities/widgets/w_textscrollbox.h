@@ -57,15 +57,18 @@ struct w_textscrollbox : public widget, public m_textlines
         float GetScrollOffsetLines();
 
 //:: Text module.
-        virtual void SetText( const std::string& );
-        virtual void ClearText();
+        virtual void TextSet( const std::string& );
+        virtual void TextClear();
         virtual void TextUpdated();
         
-        virtual std::string GetText();
-        virtual std::string* GetTextRef();
+        virtual std::string TextGet();
+        virtual std::string* TextGetRef();
         
-        virtual std::string GetOriginalText();
-        virtual std::string* GetOriginalTextRef();
+        virtual std::string OriginalTextGet();
+        virtual std::string* OriginalTextGetRef();
+        
+        virtual std::vector<split_line> LineMapGet() const;
+        
 };
 
 

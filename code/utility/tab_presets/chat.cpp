@@ -60,7 +60,7 @@ void Chat::OnEvent( std::shared_ptr<widget_event> Event )
                         printf( "Chat connection null!\n" );
                         return;
                 }
-                this->OutputLog->TextBox->SetText( this->ChatConnection->GetLog() );
+                this->OutputLog->TextBox->TextSet( this->ChatConnection->GetLog() );
                 this->OutputLog->Invalidate();
                 return Event->Handle();
         }

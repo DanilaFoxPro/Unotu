@@ -5,6 +5,7 @@
 
 /** Type to use for text coordinates, in YX format. */
 using text_coord = std::pair<std::size_t, std::size_t>;
+using line_coord = std::size_t;
 
 struct rgb
 {

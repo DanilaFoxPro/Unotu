@@ -55,12 +55,13 @@ void w_editabletext::OnTick()
 	if( this->bBegunClickSelection ) {
                 
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
+                line_coord LineCoord = ToStringCoord( TextCoord, this->GetCaretLineMap() );
                 
-                if( TextCoord == this->TextCaretPosition )
+                if( LineCoord == this->CaretPositionGet() )
                         return;
                 
-                this->TextCaretPosition = TextCoord;
-                this->FixupCaretPosition();
+                this->CaretPositionSet( TextCoord );
+                this->CaretFixupPosition();
                 
                 this->BumpCaret();
                 this->Invalidate();
@@ -105,8 +106,8 @@ void w_editabletext::OnRefresh( ValidityState_t )
                         
                         if( this->HasCaretSelection() ) {
                                 
-                                caret_coord First = this->FirstCaretSelection();
-                                caret_coord Second = this->SecondCaretSelection();
+                                text_coord First  = ToTextCoord( this->FirstCaretSelection(), this->GetCaretLineMap() );
+                                text_coord Second = ToTextCoord( this->SecondCaretSelection(), this->GetCaretLineMap() );
                                 
                                 const rgba Inverse = rgba( ~this->TextColor, this->TextColor.alpha );
                                 
@@ -124,7 +125,7 @@ void w_editabletext::OnRefresh( ValidityState_t )
                         } else {
                                 this->gText.AddText(
                                         this->Text,
-                                        {{0, Limit}},
+                                        {split_line{0, Limit}},
                                         FontSize,
                                         Area.first,
                                         {{{0, 0}, this->TextColor}}
@@ -135,10 +136,12 @@ void w_editabletext::OnRefresh( ValidityState_t )
                 
 		// Caret.
 		
+		// TODO: Fix this horror.
+		
 		const point CaretOrigin =
 		point
 		(
-			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)TextCaretPosition.second ),
+			Area.first.x.xratio() + ( pixel(FontSize).xratio()/2.0f * (float)(ToTextCoord( CaretPositionGet(), this->GetCaretLineMap() )).second ),
 			Area.first.y
 		);
 		// Blinking caret.
@@ -203,10 +206,10 @@ void w_editabletext::OnMousePressed( const int Button )
                 const text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
                 this->VoidCaretSelection();
-                this->TextCaretPosition = TextCoord;
+                this->CaretPositionSet( TextCoord );
                 this->BumpCaret();
                 
-                this->FixupCaretPosition();
+                this->CaretFixupPosition();
                 this->StartSelection();
                 
                 this->Invalidate();
@@ -220,8 +223,8 @@ void w_editabletext::OnMouseReleased( const int Button, const bool )
         if( Button == GLFW_MOUSE_BUTTON_1 && this->bBegunClickSelection ) {
                 text_coord TextCoord = this->PositionToTextCoord( MousePosition() );
                 
-                this->TextCaretPosition = TextCoord;
-                this->FixupCaretPosition();
+                this->CaretPositionSet( TextCoord );
+                this->CaretFixupPosition();
                 
                 this->BumpCaret();
                 this->Invalidate();
@@ -237,7 +240,7 @@ void w_editabletext::CommitText()
 {
         this->ThrowEvent( std::make_shared<we_textcommit>( &this->Text ) );
         if( this->bClearOnCommit ) {
-                this->ClearText();
+                this->TextClear();
         }
 }
 
@@ -268,27 +271,27 @@ text_coord w_editabletext::PositionToTextCoord( const fpoint Position )
 }
 
 
-void w_editabletext::SetText( const std::string& Text )
+void w_editabletext::TextSet( const std::string& Text )
 {
         this->Text = Text;
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
 
-void w_editabletext::ClearText()
+void w_editabletext::TextClear()
 {
         this->Text.clear();
         this->ThrowEvent( std::make_shared<we_textupdated>() );
-        this->FixupCaretPosition();
+        this->CaretFixupPosition();
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-std::string w_editabletext::GetText()
+std::string w_editabletext::TextGet()
 {
         return this->Text;
 }
 
-std::string* w_editabletext::GetTextRef()
+std::string* w_editabletext::TextGetRef()
 {
         return &this->Text;
 }

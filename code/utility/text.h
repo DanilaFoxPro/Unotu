@@ -54,20 +54,29 @@ std::vector<split_line> CutLines(
         const std::size_t Offset = 0
 );
 
-std::pair< size_t, size_t > ToLineCoord( const std::size_t StringCoord, const std::vector<split_line>& Lines );
-std::pair< size_t, size_t > GetMaxLineCoord( const std::vector<split_line>& Lines );
+std::pair< float, float > TextCutsFromArea( const std::size_t LineCount, const float SpaceHeight, const double Offset );
 
-size_t                          ToSingleCoord(
+text_coord ToTextCoord( const std::size_t StringCoord, const std::vector<split_line>& Lines );
+text_coord GetMaxTextCoord( const std::vector<split_line>& Lines );
+
+size_t
+ToSingleCoord(
         const std::pair< size_t, size_t >& Coord,
         const std::vector<split_line>& Lines
 );
-std::pair< size_t, size_t >     ToDoubleCoord(
+std::pair< size_t, size_t >
+ToDoubleCoord(
         const std::size_t Coord,
         const std::vector<split_line>& Lines
 );
 
 size_t ToStringCoord( const std::pair< size_t, size_t >& LineCoord, const std::vector<split_line>& Lines );
 size_t GetMaxStringCoord( const std::vector<split_line>& Lines );
+
+line_coord GetLineBeginning( line_coord, const std::string& );
+line_coord GetLineEnd( line_coord, const std::string& );
+
+line_coord YMoveLineCoord( line_coord, const std::ptrdiff_t, const std::string& );
 
 text_coord VerticallyOffsetTextCoord( const text_coord& TextCoord, const std::ptrdiff_t Offset );
 
@@ -89,6 +98,7 @@ std::string ToLower( const std::string& );
 std::string ToUpper( const std::string& );
 
 std::size_t CountCharacter( const std::string& String, const char Character );
+std::size_t CountCharacterBefore( const std::string& String, const char Character, const std::size_t Length );
 char* ZeroTerminate( const char*, const int );
 std::size_t LongestLine( const std::string& String );
 

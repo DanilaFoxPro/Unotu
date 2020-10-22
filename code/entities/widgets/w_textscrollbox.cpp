@@ -4,40 +4,42 @@
 #include <workers\window_worker.h>
 #include <utility\widget.h>
 
+#include <math.h> // floor
+
 w_textscrollbox::w_textscrollbox
 (
-	const point& position_,
-	const point& size_,
-	
-	const std::string&	text,
-	const int&			font_size,
-	const rgba&			text_color,
-	
-	const rgba& background_color_,
-	const rgba& outline_color_,
-	const int&	outline_thickness_
+        const point& position_,
+        const point& size_,
+        
+        const std::string&	text,
+        const int&			font_size,
+        const rgba&			text_color,
+        
+        const rgba& background_color_,
+        const rgba& outline_color_,
+        const int&	outline_thickness_
 )
 {
-	//:: Them pointers.
-	this->TextBox = std::make_shared<w_textbox>();
-	this->ScrollBar = std::make_shared<w_scrollbar>();
-	
-	//:: Widget base.
-	Position = position_;
-	Size = size_;
-	
-	//:: Textbox.
-	this->TextBox->SetText( text );
-	this->TextBox->FontSize = font_size;
-	this->TextBox->FontColor = text_color;
-	this->TextBox->BackgroundColor = rgba( color::black, 0.0f );
-	this->TextBox->OutlineThickness = 0;
-	
-	//:: Text scrollbox.
-	   BackgroundColor = background_color_;
-	   OutlineColor = outline_color_;
-	   OutlineThickness = outline_thickness_;
-	
+        //:: Them pointers.
+        this->TextBox = std::make_shared<w_textbox>();
+        this->ScrollBar = std::make_shared<w_scrollbar>();
+        
+        //:: Widget base.
+        Position = position_;
+        Size = size_;
+        
+        //:: Textbox.
+        this->TextBox->TextSet( text );
+        this->TextBox->FontSize = font_size;
+        this->TextBox->FontColor = text_color;
+        this->TextBox->BackgroundColor = rgba( color::black, 0.0f );
+        this->TextBox->OutlineThickness = 0;
+        
+        //:: Text scrollbox.
+        BackgroundColor = background_color_;
+        OutlineColor = outline_color_;
+        OutlineThickness = outline_thickness_;
+        
 }
 
 void w_textscrollbox::PostConstruct()
@@ -58,33 +60,31 @@ void w_textscrollbox::OnRefresh( ValidityState_t Reason )
         
         const fpoint Pixel = point( pixel(1) );
 
-        const float min_scrollbox_width = Pixel.x*32;
+        const float MinimumScrollboxWidth = Pixel.x*w_scrollbar::IdealWidth;
 
         this->TextBox->Position = PaddedArea.first;
-        this->TextBox->SetSecondPosition(
-                point(
+        this->TextBox->SetSecondPosition( point(
                         PaddedArea.second.x,
                         PaddedArea.second.y
-                )
-        );
+        ) );
 
-        this->ScrollBar->Position = 
-                point(
-                        PaddedArea.second.x-ratio( min_scrollbox_width ),
-                        PaddedArea.first.y
-                );
+        this->ScrollBar->Position = point(
+                PaddedArea.second.x-ratio( MinimumScrollboxWidth ),
+                PaddedArea.first.y
+        );
 
         this->ScrollBar->SetSecondPosition( PaddedArea.second );
 
         //:: Update.
 
-        // HACK: Makes sure 'VisibleRatio' is updated.
+        // HACK: Makes sure all cached members are set.
         this->TextBox->OnRefresh( Reason );
+        
+        //:: Offset and size.
 
-        //:: Offset.
-
-        this->ScrollBar->ScrollViewzone = this->TextBox->VisibleRatio;
-        this->TextBox->SetOffset( this->ScrollBar->ScrollOffset );
+        this->ScrollBar->ScrollViewzoneSet( this->TextBox->TextViewzoneY() );
+        this->ScrollBar->ScrollLengthSet( this->TextBox->LineCount() );
+        this->TextBox->Offset = this->ScrollBar->ScrollOffsetGet();
         
         //:: Geomery.
         
@@ -125,8 +125,7 @@ void w_textscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         
         auto ScrollLines = dynamic_cast<we_scrolllines*>( EventPtr );
         if( ScrollLines ) {
-                const double LineRatio = 1.0/this->TextBox->LineCount();
-                this->ScrollBar->OffsetByRatio( -ScrollLines->Lines*LineRatio );
+                this->ScrollBar->Offset( -ScrollLines->Lines );
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
@@ -143,91 +142,75 @@ void w_textscrollbox::OnDraw()
 	this->gColor.Draw();
 }
 
-/*
+/**
  * @brief Set scroll offset as ratio.
  */
 void w_textscrollbox::SetScrollOffset( float Ratio )
 {
-	this->ScrollBar->ScrollOffset = clamp( Ratio, 0.0f, 1.0f );
+        this->ScrollBar->ScrollOffsetSet( Ratio*this->ScrollBar->MaximumOffset() );
 	this->Invalidate();
 }
 
-/*
+/**
  * @brief Set line index to be scrolled to the top of the scrollbox.
  */
 void w_textscrollbox::SetScrollOffset( std::size_t Line )
 {
-	const w_textbox& TextBox = *this->TextBox;
-	const std::size_t ViewHeight = TextBox.TextAreaSize.y.ypixels() / TextBox.FontSize;
-	const float Offset = (float)Line/(float)(TextBox.LineCount()-ViewHeight);
-	this->SetScrollOffset( Offset );
+	this->ScrollBar->ScrollOffsetSet( (double)Line );
 }
 
-/*
+/**
  * @brief Scroll line into view.
+ *        Makes sure the line falls between beginning and end of the viewzone, with minimal amount of scrolling.
+ *        Doesn't scroll if line is already fully visible.
  */
 void w_textscrollbox::ScrollIntoView( std::size_t Line )
 {
-	const std::size_t HalfHeight = this->TextBox->TextAreaSize.x.xpixels()/this->TextBox->FontSize/2;
-	const std::size_t EndHalfHeight =
-		(this->TextBox->TotalLineCount >= HalfHeight)
-			?
-		this->TextBox->TotalLineCount-HalfHeight
-			:
-		this->TextBox->TotalLineCount;
-	if( Line < HalfHeight )
-	{
-		return this->SetScrollOffset( 0.0f );
-	}
-	else if ( Line > EndHalfHeight )
-	{
-		return this->SetScrollOffset( 1.0f );
-	}
-	else
-	{
-		return this->SetScrollOffset( Line-HalfHeight );
-	}
+        
+        const double FirstVisibleLine = this->ScrollBar->ScrollOffsetGet();
+        const double LastVisibleLine  = FirstVisibleLine + this->ScrollBar->ScrollViewzoneGet();
+        
+        double TargetOffset;
+        if( Line < ceil( FirstVisibleLine ) ) {
+                TargetOffset = Line;
+        } else if( floor(LastVisibleLine) <= Line ) {
+                TargetOffset = FirstVisibleLine-(LastVisibleLine-(double)Line)+1.0;
+        } else {
+                return;
+        }
+        
+        this->ScrollBar->ScrollOffsetSet( TargetOffset );
+        this->Invalidate( ValidityState::ParametersUpdated );
+        
 }
 
 float w_textscrollbox::GetScrollOffsetLines()
 {
-    const w_textbox& TextBox = *this->TextBox;
-    const float ViewHeight = (float)TextBox.TextAreaSize.y.ypixels() / (float)TextBox.FontSize;
-    if( this->ScrollBar->ScrollViewzone < 1.0f )
-    {
-        return
-            this->ScrollBar->ScrollOffset
-            *
-            ( (float)TextBox.LineCount() - (float)ViewHeight );
-    }
-    else
-    {
-        return 0.0f;
-    }
-    
+        return this->ScrollBar->ScrollOffsetGet();
+
 }
 
 void w_textscrollbox::ScrollToTop()
 {
-    this->SetScrollOffset( 0.0f );
+        this->SetScrollOffset( 0.0f );
 }
 
 void w_textscrollbox::ScrollToBottom()
 {
-    this->SetScrollOffset( 1.0f );
+        this->SetScrollOffset( 1.0f );
 }
 
         //:: Text module.
 
-void w_textscrollbox::SetText( const std::string& Text )
+void w_textscrollbox::TextSet( const std::string& Text )
 {
-        this->TextBox->SetText( Text );
+        this->TextBox->TextSet( Text );
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
-void w_textscrollbox::ClearText()
+void w_textscrollbox::TextClear()
 {
-        this->TextBox->ClearText();
+        this->TextBox->TextClear();
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
@@ -237,24 +220,29 @@ void w_textscrollbox::TextUpdated()
 }
 
 
-std::string w_textscrollbox::GetText()
+std::string w_textscrollbox::TextGet()
 {
-        return this->TextBox->GetText();
+        return this->TextBox->TextGet();
 }
 
-std::string* w_textscrollbox::GetTextRef()
+std::string* w_textscrollbox::TextGetRef()
 {
-        return this->TextBox->GetTextRef();
+        return this->TextBox->TextGetRef();
 }
 
-std::string w_textscrollbox::GetOriginalText()
+std::string w_textscrollbox::OriginalTextGet()
 {
-        return this->TextBox->GetOriginalText();
+        return this->TextBox->OriginalTextGet();
 }
 
-std::string* w_textscrollbox::GetOriginalTextRef()
+std::string* w_textscrollbox::OriginalTextGetRef()
 {
-        return this->TextBox->GetOriginalTextRef();
+        return this->TextBox->OriginalTextGetRef();
+}
+
+std::vector<split_line> w_textscrollbox::LineMapGet() const
+{
+        return this->TextBox->LineMapGet();
 }
 
 
