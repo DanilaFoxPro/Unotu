@@ -87,22 +87,23 @@ void w_textbox::OnRefresh( ValidityState_t )
         this->TextAreaSize = AreaSize( TextArea.first, TextArea.second );
         
         // How much the textbox can hold, in characters.
-        const float SpaceWidth = TextAreaSize.x.xratio() / fFontSize.x;
-        const float SpaceHeight = TextAreaSize.y.yratio() / fFontSize.y;
-
-        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
+        const float SpaceWidth  = this->TextViewzoneX();
+        const float SpaceHeight = this->TextViewzoneY();
+        
         const int HeightLimit = ceilf( SpaceHeight );
         
-        const float TopCut = modf( Offset, nullptr );
-        const float BottomCut = clamp( (float)modf( this->TotalLineCount-Offset-SpaceHeight, nullptr ), 0.0f, 1.0f );
-        const float Cuts = TopCut+BottomCut;
+        const auto CutPair = TextCutsFromArea( this->TotalLineCount, SpaceHeight, Offset );
+        
+        const float& TopCut    = CutPair.first;
+        const float& BottomCut = CutPair.second;
+        const float  Cuts      = TopCut+BottomCut;
         
         std::size_t NeededLinesCnt = (size_t)HeightLimit;
         if( Cuts >= 1.0f ) {
-                NeededLinesCnt++;
+                NeededLinesCnt += 1;
         }
         
-        // +1 to height limit to accomodate cuts.
+        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
         const std::vector<split_line> CutLinesLoc = CutLines( SplitTextCache, NeededLinesCnt, (size_t)Offset );
         
         this->TotalLineCount = SplitTextCache.size();

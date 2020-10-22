@@ -14,13 +14,13 @@ w_editabletextbox::w_editabletextbox
         const point& Position,
         const point& Size,
         
-        const std::string&	Text,
-        const int&			FontSize,
-        const rgba&			TextColor,
+        const std::string& Text,
+        const int&         FontSize,
+        const rgba&        TextColor,
         
         const rgba& BackgroundColor,
         const rgba& OutlineColor,
-        const int&	OutlineThickness
+        const int&  OutlineThickness
 )
 {
         //:: Boring.

@@ -1,6 +1,7 @@
 #include <utility\text.h>
 
 #include <cassert>
+#include <cmath>
 
 #include <entities\ent_window.h>
 
@@ -186,6 +187,20 @@ std::vector<split_line> CutLines( const std::vector<split_line>& Lines, const si
         
 }
 
+/**
+ * @brief Calculate top and bottom cut based on offset and space height.
+ * @param SpaceHeight Height of text space, in characters.
+ */
+std::pair<float, float> TextCutsFromArea( const std::size_t LineCount, const float SpaceHeight, const double Offset )
+{
+        const float TopCut    = modf( Offset, nullptr );
+        const float BottomCut = clamp( (float)modf( LineCount-Offset-SpaceHeight, nullptr ), 0.0f, 1.0f );
+        
+        return { TopCut, BottomCut };
+        
+}
+
+
 /** @brief Convert position in the source string to line coordinate. */
 text_coord ToTextCoord( const std::size_t StrCoord, const std::vector<split_line>& Lines )
 {
@@ -316,7 +331,6 @@ line_coord YMoveLineCoord( line_coord LineCoord, const std::ptrdiff_t Offset, co
         std::size_t Line = CountCharacterBefore( Text, '\n', LineCoord ) + 1;
         
         const std::size_t LastLine   = CountCharacter( Text, '\n' ) + 1;
-        const std::size_t OldLine    = Line;
         const std::size_t TargetLine = clamp(
                 (std::ptrdiff_t)Line+Offset,
                 (std::ptrdiff_t)0,

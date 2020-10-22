@@ -14,7 +14,7 @@ struct w_textbox : public widget, public m_textlines
         std::string Text;
         int FontSize = 16;
         rgba FontColor = TheTheme.Text;
-        float Offset = 0.0f;
+        double Offset = 0.0f;
 
         rgba BackgroundColor    = color::transparent;
         
