@@ -58,6 +58,12 @@ caret_coord m_caret::CaretPositionGet() const
         return this->TextCaretPosition;
 }
 
+/** @brief Get offset of caret from the line beginning, in characters. */
+std::size_t m_caret::CaretOffsetGet() const
+{
+        return this->CaretPositionGet() - this->CaretCurrentLineGetBeginning();
+}
+
 std::size_t m_caret::CaretCurrentLineIndexGet() const
 {
         const std::shared_ptr<m_text> Lock = this->Target.lock();
@@ -65,7 +71,7 @@ std::size_t m_caret::CaretCurrentLineIndexGet() const
                 return 0;
         }
         
-        return CountCharacterBefore( Lock->TextGet(), '\n', this->TextCaretPosition ) + 1;
+        return CountCharacterBefore( Lock->TextGet(), '\n', this->TextCaretPosition );
 }
 
 split_line m_caret::CaretCurrentLineGet()

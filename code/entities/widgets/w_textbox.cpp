@@ -80,7 +80,6 @@ void w_textbox::OnRefresh( ValidityState_t )
         //:: Text
         
         const fpoint Pixel = pixel(1);
-        const fpoint fFontSize = fpoint( FontSize/2.0f, FontSize ) * Pixel;
         
         // Padding.
         

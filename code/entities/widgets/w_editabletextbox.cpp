@@ -99,27 +99,62 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
         const fpoint Pixel = point( pixel(1) );
         
         const std::pair< fpoint, fpoint > PaddedArea =
-                OutlineAdjustedArea(
-                        Position,
-                        SecondPosition( Position, Size ),
-                        this->OutlineThickness
+        OutlineAdjustedArea(
+                Position,
+                SecondPosition( Position, Size ),
+                this->OutlineThickness
+        );
+        
+        // TODO: Make a cleanup pass on this mess.
+        
+        const std::size_t CaretLine      = this->CaretCurrentLineIndexGet();
+        const std::size_t CaretCharacter = this->CaretOffsetGet();
+        
+        const float OffsetLines = (float)CaretLine - this->GetScrollOffsetLines();
+        
+        const double& TextOffset = this->TextBox->Offset;
+        
+        const std::size_t LineCount = CountCharacter( this->TextGet(), '\n' )+1;
+        
+        const auto   CutPair   = TextCutsFromArea( LineCount, this->TextBox->TextViewzoneY(), TextOffset );
+        const float& TopCut    = CutPair.first;
+        const float& BottomCut = CutPair.second;
+        
+        const std::ptrdiff_t CaretRelativeY = ceil( OffsetLines );
+        std::size_t          LastLine       = ceil( this->TextBox->TextViewzoneY() )-1;
+        
+        if( TopCut + BottomCut > 1.0f ) {
+                LastLine += 1;
+        }
+        
+        float FinalTopCut = 0.0f;
+        float FinalBottomCut = 0.0f;
+        
+        if( CaretRelativeY >= 0 && CaretRelativeY <= (ptrdiff_t)LastLine ) {
+                if( CaretRelativeY == 0 ) {
+                        FinalTopCut = TopCut;
+                }
+                
+                if( CaretRelativeY == (ptrdiff_t)LastLine ) {
+                        FinalBottomCut = BottomCut;
+                }
+                
+                const fpoint CaretOriginLocal = fpoint (
+                        (float)(CaretCharacter*this->TextBox->FontSize)/2.0f*Pixel.x,
+                        (-OffsetLines-FinalTopCut)*this->TextBox->FontSize*Pixel.y
                 );
-        
-        const text_coord CaretCoordinates = ToTextCoord( this->CaretPositionGet(), this->LineMapGet() );
-        const float OffsetLines = (float)CaretCoordinates.first - this->GetScrollOffsetLines();
-        
-        const fpoint CaretOriginLocal = fpoint (
-                (float)(CaretCoordinates.second*this->TextBox->FontSize)/2.0f*Pixel.x,
-                -OffsetLines*this->TextBox->FontSize*Pixel.y
-        );
-        const fpoint CaretOrigin = PaddedArea.first + CaretOriginLocal;
-        
-        this->gText.AddText(
-                std::string( 1, fsym::caret ),
-                this->TextBox->FontSize,
-                CaretOrigin,
-                this->TextBox->FontColor
-        );
+                const fpoint CaretOrigin = PaddedArea.first + CaretOriginLocal;
+                
+                this->gText.AddText(
+                        std::string( 1, fsym::caret ),
+                        this->TextBox->FontSize,
+                        CaretOrigin,
+                        this->TextBox->FontColor,
+                        FinalTopCut,
+                        FinalBottomCut
+                );
+                
+        }
         
         this->gText.Update();
         

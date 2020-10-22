@@ -46,6 +46,7 @@ public:
         void CaretPositionSet( text_coord Position );
         
         caret_coord CaretPositionGet() const;
+        std::size_t CaretOffsetGet() const;
         std::size_t CaretCurrentLineIndexGet() const;
         split_line  CaretCurrentLineGet();
         std::size_t CaretCurrentLineGetBeginning() const;
