@@ -114,7 +114,7 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
         
         const double& TextOffset = this->TextBox->Offset;
         
-        const std::size_t LineCount = CountCharacter( this->TextGet(), '\n' )+1;
+        const std::size_t LineCount = this->TextBox->LineCountGet();
         
         const auto   CutPair   = TextCutsFromArea( LineCount, this->TextBox->TextViewzoneY(), TextOffset );
         const float& TopCut    = CutPair.first;

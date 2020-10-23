@@ -14,7 +14,7 @@
 #include <stdio.h> //TODO: DEBUG.
 #include <cmath>
 
-void w_textbox::OnRefresh( ValidityState_t )
+void w_textbox::OnRefresh( ValidityState_t Reason )
 {
         
         const point Position2 = SecondPosition( Position, Size );
@@ -25,7 +25,6 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         std::pair< point, point > Area = OutlineAdjustedArea( Position, Position2, this->OutlineThickness );
         std::pair< point, point > TextArea = ApplyPadding( Area.first, Area.second, TextPadding );
-        
         
         gColor.Clear();
         gText.Clear();
@@ -79,14 +78,14 @@ void w_textbox::OnRefresh( ValidityState_t )
         
         //:: Text
         
-        const fpoint Pixel = pixel(1);
+        if( Reason & ValidityState::Resized ) {
+                // Text has to be split. So all cache has expired.
+                this->TextUpdated();
+        }
         
-        // Padding.
-        
-        this->TextAreaSize = AreaSize( TextArea.first, TextArea.second );
+        this->ReadyText();
         
         // How much the textbox can hold, in characters.
-        const float SpaceWidth  = this->TextViewzoneX();
         const float SpaceHeight = this->TextViewzoneY();
         
         const int HeightLimit = ceilf( SpaceHeight );
@@ -102,15 +101,7 @@ void w_textbox::OnRefresh( ValidityState_t )
                 NeededLinesCnt += 1;
         }
         
-        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
-        const std::vector<split_line> CutLinesLoc = CutLines( SplitTextCache, NeededLinesCnt, (size_t)Offset );
-        
-        this->TotalLineCount = SplitTextCache.size();
-        this->VisibleRatio = clamp (
-                SpaceHeight / (float)(TotalLineCount),
-                0.0f,
-                1.0f
-        );
+        const std::vector<split_line> CutLinesLoc = CutLines( this->SplitTextCache, NeededLinesCnt, (size_t)Offset );
         
         // Hax!
         const auto CaretPtr = dynamic_cast<m_caret*>( this->Parent.lock().get() );
@@ -158,20 +149,42 @@ void w_textbox::OnRefresh( ValidityState_t )
                 
 }
 
+/** @brief Re-calculates all text-related cache entries. */
 void w_textbox::UpdateSplitText()
 {
-        const point TextPadding = point( pixel(3), 0 );
-        const fpoint Pixel = pixel(1);
+        const point  TextPadding = point( pixel(3), 0 );
+        const fpoint Pixel       = pixel(1);
         
-        const point Position2 = SecondPosition( Position, Size );
+        const point Position2    = SecondPosition( Position, Size );
+        const float SpaceHeight  = this->TextViewzoneY();
         
-        std::pair< point, point > Area = OutlineAdjustedArea( Position, Position2, this->OutlineThickness );
+        std::pair< point, point > Area     = OutlineAdjustedArea( Position, Position2, this->OutlineThickness );
         std::pair< point, point > TextArea = ApplyPadding( Area.first, Area.second, TextPadding );
         
         const fpoint fFontSize = fpoint( FontSize/2.0f, FontSize ) * Pixel;
-        this->TextAreaSize = AreaSize( TextArea.first, TextArea.second );
+        
+        this->TextAreaSize = AreaSize( TextArea.first, TextArea.second );     // !!!
+        
         const float SpaceWidth = TextAreaSize.x.xratio() / fFontSize.x;
-        SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth );
+        
+        this->SplitTextCache = SplitTextNew( Text, (std::size_t)SpaceWidth ); // !!!
+        
+        this->TotalLineCount = SplitTextCache.size();
+        this->VisibleRatio = clamp (
+                SpaceHeight / (float)(TotalLineCount),
+                0.0f,
+                1.0f
+        );
+        
+}
+
+/** @brief Prepares all text-related cache entries. If needed. */
+void w_textbox::ReadyText()
+{
+        if( this->bTextInvalidated ) {
+                this->UpdateSplitText();
+                this->bTextInvalidated = false;
+        }
 }
 
 
@@ -186,13 +199,14 @@ void w_textbox::OnDraw()
 
 }
 
-void w_textbox::SetOffset( const float& ratio )
+void w_textbox::SetOffset( const double Ratio )
 {
+        this->ReadyText();
         this->Offset = 
         (
-                (float)(this->TotalLineCount)
+                (this->TotalLineCount)
                 *
-                clamp( ratio * (1.0f-this->VisibleRatio), 0.0f, 1.0f )
+                clamp( Ratio * (1.0-this->VisibleRatio), 0.0, 1.0 )
         );
 }
 
@@ -204,13 +218,14 @@ void w_textbox::SetOutlineColor( const rgba& Color )
         this->OutlineColorBottom = Color;
 }
 
-std::size_t w_textbox::LineCount() const
+std::size_t w_textbox::LineCount()
 {
+        this->ReadyText();
         return this->TotalLineCount;
 }
 
 /** @brief Position in text coordinates based on on-screen position. */
-text_coord w_textbox::PositionToTextCoord( const fpoint Position ) const
+text_coord w_textbox::PositionToTextCoord( const fpoint Position )
 {
         const fpoint Pixel = pixel(1);
         fpoint FFontSize = FontSize*Pixel;
@@ -245,13 +260,13 @@ text_coord w_textbox::PositionToTextCoord( const fpoint Position ) const
         
 }
 
-/** @brief How many characters can fit vertically. */
+/** @brief How many characters can fit horizontally. */
 float w_textbox::TextViewzoneX() const
 {
         return TextAreaSize.x.xratio() / (pixel(this->FontSize).xratio()/2.0);
 }
 
-/** @brief How many lines of text can fit horizontally. */
+/** @brief How many lines of text can fit vertically. */
 float w_textbox::TextViewzoneY() const
 {
         return TextAreaSize.y.yratio() / pixel(this->FontSize).yratio();
@@ -263,6 +278,7 @@ float w_textbox::TextViewzoneY() const
 void w_textbox::TextSet( const std::string& Text )
 {
         this->Text = Text;
+        this->TextUpdated();
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
@@ -274,9 +290,8 @@ void w_textbox::TextClear()
 
 void w_textbox::TextUpdated()
 {
-        this->UpdateSplitText();
+        this->bTextInvalidated = true;
 }
-
 
 std::string w_textbox::OriginalTextGet()
 {
@@ -285,15 +300,26 @@ std::string w_textbox::OriginalTextGet()
 
 std::string* w_textbox::OriginalTextGetRef()
 {
+        // Just to be safe.
+        this->TextUpdated();
         return &this->Text;
 }
 
 std::string w_textbox::TextGet()
 {
+        this->ReadyText();
         return AssembleText( this->Text, this->SplitTextCache );
 }
 
-std::vector<split_line> w_textbox::LineMapGet() const
+std::vector<split_line> w_textbox::LineMapGet()
 {
+        this->ReadyText();
         return this->SplitTextCache;
 }
+
+std::size_t w_textbox::LineCountGet()
+{
+        this->ReadyText();
+        return this->SplitTextCache.size();
+}
+

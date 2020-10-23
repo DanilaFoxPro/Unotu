@@ -10,8 +10,10 @@
 struct w_textbox : public widget, public m_textlines
 {
         //Data.
-
+private:
         std::string Text;
+        bool bTextInvalidated = true;
+public:
         int FontSize = 16;
         rgba FontColor = TheTheme.Text;
         double Offset = 0.0f;
@@ -30,12 +32,14 @@ struct w_textbox : public widget, public m_textlines
         color_geometry gColor;
         text_geometry gText;
 
-        //Cache.
-        /** Split text cache. Useless here, but used in 'w_editabletextbox'. */
+        // Cache.
+        /** Cache of some things that need to be re-used. */
+private:
         std::vector<split_line> SplitTextCache;
         float VisibleRatio = 0.0f;
         std::size_t TotalLineCount = 0;
         point TextAreaSize = point();
+public:
 
 //:: Constructors.
 
@@ -77,16 +81,18 @@ struct w_textbox : public widget, public m_textlines
         virtual void OnRefresh( ValidityState_t );
 
         // Internal.
-        
+private:
         void UpdateSplitText();
+        void ReadyText();
+public:
         
         // Helpers.
-
-        void SetOffset( const float& ratio );
+        
+        void SetOffset( const double Ratio );
         void SetOutlineColor( const rgba& Color );
         
-        std::size_t LineCount() const;
-        text_coord PositionToTextCoord( const fpoint Position ) const;
+        std::size_t LineCount();
+        text_coord PositionToTextCoord( const fpoint Position );
         float TextViewzoneX() const;
         float TextViewzoneY() const;
         
@@ -101,7 +107,8 @@ struct w_textbox : public widget, public m_textlines
         
         virtual std::string TextGet();
 
-        virtual std::vector<split_line> LineMapGet() const;
+        virtual std::vector<split_line> LineMapGet();
+        virtual std::size_t LineCountGet();
 };
 
 #endif

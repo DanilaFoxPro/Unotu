@@ -27,9 +27,10 @@ struct m_text
 
 struct m_textlines : public m_text
 {
-        virtual std::string LineGet() const { return ""; }
-        virtual std::vector<std::string> LinesGet() const { return {}; }
-        virtual std::vector<split_line> LineMapGet() const { return {}; }
+        virtual std::string LineGet( const std::size_t ) { return ""; }
+        virtual std::vector<std::string> LinesGet() { return {}; }
+        virtual std::vector<split_line>  LineMapGet() { return {}; }
+        virtual std::size_t LineCountGet() { return this->LinesGet().size(); }
 };
 
 #endif
