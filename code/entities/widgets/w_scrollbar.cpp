@@ -283,6 +283,7 @@ void w_scrollbar::OffsetByRatio( double Ratio )
 void w_scrollbar::ScrollLengthSet( const double ScrollLength )
 {
         this->ScrollLength = ScrollLength < 0.0 ? 0.0 : ScrollLength;
+        this->ScrollOffset = clamp( this->ScrollOffset, 0.0, this->MaximumOffset() );
         this->Invalidate( ValidityState::ParametersUpdated );
 }
 
