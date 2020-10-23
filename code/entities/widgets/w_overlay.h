@@ -14,7 +14,7 @@ struct w_overlay : widget
 //:: Settings.
         bool bDisplayFPS = true;
         bool bDisplayCurrentWindow = false;
-        bool bDisplayFrameCount = true;
+        bool bDisplayFrameCount = false;
         bool bDisplayMouse = true;
         
         enum {

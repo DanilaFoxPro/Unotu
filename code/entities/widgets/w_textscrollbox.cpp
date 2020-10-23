@@ -78,7 +78,7 @@ void w_textscrollbox::OnRefresh( ValidityState_t Reason )
         //:: Update.
 
         // HACK: Makes sure all cached members are set.
-        this->TextBox->OnRefresh( Reason );
+        this->TextBox->TextUpdated();
         
         //:: Offset and size.
 

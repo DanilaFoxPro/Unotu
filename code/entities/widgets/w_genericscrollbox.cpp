@@ -40,6 +40,13 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
                 this->Scrollbar->Invalidate( ValidityState::ParametersUpdated );
         }
         
+        // Update scrollbar.
+        
+        this->Scrollbar->ScrollLengthSet( this->ScrollLength() );
+        this->Scrollbar->ScrollViewzoneSet( this->Size.y.yratio() );
+        
+        // Prepare.
+        
         InvalidateWidgets( this->Items, Reason );
         
         const double VisibleItems = this->VisibleItemsCount();
@@ -64,11 +71,6 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
                 
                 Current->Invalidate( ValidityState::Resized );
         }
-        
-        // Update scrollbar.
-        
-        this->Scrollbar->ScrollLengthSet( this->ScrollLength() );
-        this->Scrollbar->ScrollViewzoneSet( this->Size.y.yratio() );
         
 }
 

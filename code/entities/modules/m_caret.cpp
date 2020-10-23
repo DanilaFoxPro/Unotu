@@ -522,6 +522,7 @@ void m_caret::DeleteCaretSelection()
         
         CaretTextPtr->erase( First, Length );
         
+        Lock->TextUpdated();
         this->VoidCaretSelection();
         
 }

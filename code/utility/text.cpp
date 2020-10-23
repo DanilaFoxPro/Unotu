@@ -209,7 +209,7 @@ text_coord ToTextCoord( const std::size_t StrCoord, const std::vector<split_line
         
         for( std::size_t i = 0; i < Lines.size(); i++ ) {
                 const split_line Line = Lines[i];
-                if( Line.Begin <= StrCoord && Line.End() >= StrCoord ) {
+                if( Line.Begin <= StrCoord && Line.Limit >= StrCoord ) {
                         return std::make_pair( i, StrCoord-Line.Begin );
                 }
         }
