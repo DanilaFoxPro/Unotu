@@ -7,6 +7,7 @@
 #include <entities\modules\m_text.h>
 
 #include <utility\colors.h>
+#include <utility\classes\simple_timer.h>
 
 struct w_textscrollbox : public widget, public m_textlines
 {
@@ -14,6 +15,11 @@ struct w_textscrollbox : public widget, public m_textlines
         std::shared_ptr<w_textbox> TextBox;
         std::shared_ptr<w_scrollbar> ScrollBar;
 
+                /** How many milliseconds it takes for scrolling to arrive at target. */
+        unsigned int ScrollSpeed = 50;
+        simple_timer ScrollTimer;
+        double ScrollOffset = 0.0f;
+        
         rgba BackgroundColor;
         rgba OutlineColor;
 
@@ -41,6 +47,7 @@ struct w_textscrollbox : public widget, public m_textlines
         virtual ~w_textscrollbox() = default;
 
 //:: Overrides.
+        virtual void OnTick();
         virtual void OnRefresh( ValidityState_t );
         virtual void OnDraw();
 

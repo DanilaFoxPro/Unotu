@@ -2,7 +2,9 @@
 
 #include <workers\widget_worker.h>
 #include <workers\window_worker.h>
+
 #include <utility\widget.h>
+#include <utility\shortcuts.h>
 
 #include <math.h> // floor
 
@@ -49,6 +51,31 @@ void w_textscrollbox::PostConstruct()
 	this->AddChild( this->ScrollBar );
 }
 
+void w_textscrollbox::OnTick()
+{
+        // Update scroll.
+        
+        const auto ElapsedMilliseconds = this->ScrollTimer.ElapsedMilliseconds();
+        
+        if( ElapsedMilliseconds < this->ScrollSpeed ) {
+                const double Offset = lerp(
+                        this->ScrollOffset,
+                        this->ScrollBar->ScrollOffsetGet(),
+                        (double)ElapsedMilliseconds/(double)this->ScrollSpeed
+                );
+                
+                this->ScrollOffset = Offset;
+                this->Invalidate( ValidityState::ParametersUpdated );
+                
+        } else if( this->ScrollOffset != this->ScrollBar->ScrollOffsetGet() ) {
+                
+                this->ScrollOffset = this->ScrollBar->ScrollOffsetGet();
+                this->Invalidate( ValidityState::ParametersUpdated );
+                
+        }
+}
+
+
 void w_textscrollbox::OnRefresh( ValidityState_t Reason )
 {
 	
@@ -84,7 +111,7 @@ void w_textscrollbox::OnRefresh( ValidityState_t Reason )
 
         this->ScrollBar->ScrollViewzoneSet( this->TextBox->TextViewzoneY() );
         this->ScrollBar->ScrollLengthSet( this->TextBox->LineCount() );
-        this->TextBox->Offset = this->ScrollBar->ScrollOffsetGet();
+        this->TextBox->Offset = this->ScrollOffset;
         
         //:: Geomery.
         
@@ -126,12 +153,14 @@ void w_textscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         auto ScrollLines = dynamic_cast<we_scrolllines*>( EventPtr );
         if( ScrollLines ) {
                 this->ScrollBar->Offset( -ScrollLines->Lines );
+                this->ScrollTimer.Start();
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
         auto ScrollPages = dynamic_cast<we_scrollpages*>( EventPtr );
         if( ScrollPages ) {
                 this->ScrollBar->OffsetByViewzone( -ScrollPages->Pages );
+                this->ScrollTimer.Start();
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
@@ -186,7 +215,7 @@ void w_textscrollbox::ScrollIntoView( std::size_t Line )
 
 float w_textscrollbox::GetScrollOffsetLines()
 {
-        return this->ScrollBar->ScrollOffsetGet();
+        return this->ScrollOffset;
 
 }
 

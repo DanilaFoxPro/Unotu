@@ -110,9 +110,8 @@ void w_editabletextbox::OnRefresh( ValidityState_t Reason )
         const std::size_t CaretLine      = this->CaretCurrentLineIndexGet();
         const std::size_t CaretCharacter = this->CaretOffsetGet();
         
-        const float OffsetLines = (float)CaretLine - this->GetScrollOffsetLines();
-        
-        const double& TextOffset = this->TextBox->Offset;
+        const double& TextOffset = this->ScrollOffset;
+        const float OffsetLines  = (float)CaretLine - TextOffset;
         
         const std::size_t LineCount = this->TextBox->LineCountGet();
         
