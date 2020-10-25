@@ -3,22 +3,21 @@
 
 #include <chrono>
 
-namespace chrono = std::chrono;
-
 struct simple_timer
 {
+        
         //:: Constructors.
         
         simple_timer();
         
         //:: Data.
-        chrono::time_point<chrono::high_resolution_clock> InternalStartTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> InternalStartTime;
         
         //:: Functions.
         
         void Start();
         
-        chrono::high_resolution_clock::duration ElapsedTime();
+        std::chrono::high_resolution_clock::duration ElapsedTime();
         
         uint32_t ElapsedMilliseconds();
         uint32_t ElapsedMicroseconds();

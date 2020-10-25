@@ -97,7 +97,7 @@ GLchar* loadShaderSource( std::string filepath )
 	
 }
 
-GLuint compileAndLinkShaders( GLchar* vertexShaderSource, GLchar* fragmentShaderSource, std::string optional_comment = "" )
+GLuint compileAndLinkShaders( GLchar* vertexShaderSource, GLchar* fragmentShaderSource, std::string optional_comment )
 {
 	
 	if( optional_comment.length() )

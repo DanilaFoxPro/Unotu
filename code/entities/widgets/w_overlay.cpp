@@ -10,6 +10,9 @@
 
 void w_overlay::CheckpointFrame()
 {
+        
+        namespace chrono = std::chrono;
+        
         const chrono::high_resolution_clock::duration AvgPeriod =
                 this->FrameTimer.ElapsedTime()/this->FPSAverageStep;
         this->AverageFPS = chrono::seconds(1)/AvgPeriod;

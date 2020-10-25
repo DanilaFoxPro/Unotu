@@ -20,6 +20,30 @@ void w_genericscrollbox::PostConstruct()
         this->bAcceptExternalScroll = true;
 }
 
+void w_genericscrollbox::OnTick()
+{
+        // Update scroll.
+        
+        const auto ElapsedMilliseconds = this->ScrollTimer.ElapsedMilliseconds();
+        
+        if( ElapsedMilliseconds < this->ScrollSpeed ) {
+                const double Offset = lerp(
+                        this->ScrollOffset,
+                        this->Scrollbar->ScrollOffsetGet(),
+                        (double)ElapsedMilliseconds/(double)this->ScrollSpeed
+                );
+                
+                this->ScrollOffset = Offset;
+                this->Invalidate( ValidityState::ParametersUpdated );
+                
+        } else if( this->ScrollOffset != this->Scrollbar->ScrollOffsetGet() ) {
+                
+                this->ScrollOffset = this->Scrollbar->ScrollOffsetGet();
+                this->Invalidate( ValidityState::ParametersUpdated );
+                
+        }
+}
+
 void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
 {
         
@@ -50,7 +74,7 @@ void w_genericscrollbox::OnRefresh( ValidityState_t Reason )
         InvalidateWidgets( this->Items, Reason );
         
         const double VisibleItems = this->VisibleItemsCount();
-        const double Offset = this->Scrollbar->ScrollOffsetGet();
+        const double Offset = this->ScrollOffset;
         
         const std::pair< std::size_t, std::size_t > Visible = std::make_pair( this->NextItem( Offset-this->ItemHeight.yratio() ), ((std::size_t)VisibleItems)+2 );
         
@@ -88,6 +112,7 @@ void w_genericscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
                 this->Scrollbar->Offset(
                         -(this->ItemHeight.yratio()+pixel(this->ItemPadding).yratio()) * ScrollLines->Lines
                 );
+                this->ScrollTimer.Start();
                 this->Invalidate( ValidityState::ParametersUpdated );
                 Event->Handle();
         }
@@ -95,6 +120,7 @@ void w_genericscrollbox::OnEvent( std::shared_ptr<widget_event> Event )
         auto ScrollPages = dynamic_cast<we_scrollpages*>( Event.get() );
         if( ScrollPages ) {
                 this->Scrollbar->OffsetByViewzone( -ScrollPages->Pages );
+                this->ScrollTimer.Start();
                 this->Invalidate( ValidityState::ParametersUpdated );
         }
         
@@ -124,7 +150,7 @@ void w_genericscrollbox::ClearItems()
 float w_genericscrollbox::ItemHeightRatio()
 {
         const float fItemHeight = this->ItemHeight.yratio();
-        const float ItemRatio = fItemHeight/this->ScrollLength();
+        const float ItemRatio   = fItemHeight/this->ScrollLength();
         return ItemRatio;
 }
 
