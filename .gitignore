@@ -23,3 +23,6 @@ _deps
 
 # Me.
 \my_build
+
+# Doxygen
+\doc

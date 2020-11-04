@@ -3,10 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include <utility\deps\opengl_includes.h>
 
-#include "..\coordinates.h" // For coordinates. Come on. (Unit, point.)
+#include <coordinates.h> // For coordinates. Come on. (Unit, point.)
 
         //:: Textures.
 unsigned int loadTexture( const uint8_t* Data, int Length, GLint internal_format, GLenum format, const std::string& = "NO_NAME", bool mipmaps = true );
@@ -18,7 +19,7 @@ GLFWimage LoadGLFWImage( const uint8_t* Data, const std::size_t Length );
 GLchar* loadShaderSource( std::string );
 GLuint compileAndLinkShaders( GLchar*, GLchar*, std::string = "" );
 
-        //:: Point
+        //:: Point.
 
 point Localize( const point& origin, const point& position );
 

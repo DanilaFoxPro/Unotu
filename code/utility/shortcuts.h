@@ -30,6 +30,13 @@ T clamp( const T& Value, const T& Min, const T& Max )
 }
 
 template< class T >
+T lerp( const T& Value, const T& Target, const T& Alpha )
+{
+        const T Difference = Target-Value;
+        return Value + Difference * Alpha;
+}
+
+template< class T >
 int GreatestCommonDivisor( T a, T b ) 
 { 
     if ( b == T(0) )

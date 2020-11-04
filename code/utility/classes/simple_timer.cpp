@@ -1,5 +1,7 @@
 #include <utility\classes\simple_timer.h>
 
+namespace chrono = std::chrono;
+
 simple_timer::simple_timer()
 {
         this->Start();
