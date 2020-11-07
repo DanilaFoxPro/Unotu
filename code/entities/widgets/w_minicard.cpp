@@ -1,10 +1,5 @@
 #include <entities\widgets\w_minicard.h>
 
-#include <unotui\entities\ent_opengl.h>
-#include <unotui\utility\widget.h>
-
-#include <unotui\utility\colors.h>
-
 const int TITLE_FONT            = 24;
 const int CONTENT_FONT          = 18;
 
@@ -69,22 +64,22 @@ void w_minicard::CommonSetup()
         
         this->bInvalidateOnMousePass = true; // For highlight to update.
         
-        this->TitleText = std::make_shared<w_text>();
-        this->ContentText = std::make_shared<w_textbox>();
+        this->TitleText = std::make_shared<unotui::w_text>();
+        this->ContentText = std::make_shared<unotui::w_textbox>();
         
         this->TitleText->font_size = TITLE_FONT;
         this->ContentText->FontSize = CONTENT_FONT;
         
-        this->TitleText->color = color::black;
+        this->TitleText->color = unotui::color::black;
         
-        this->ContentText->FontColor = color::black;
-        this->ContentText->BackgroundColor = color::white;
+        this->ContentText->FontColor = unotui::color::black;
+        this->ContentText->BackgroundColor = unotui::color::white;
         this->ContentText->OutlineThickness = 2;
         
-        this->ContentText->OutlineColorLeft   = TheTheme.PrimaryLit;
-        this->ContentText->OutlineColorRight  = TheTheme.PrimaryBack;
-        this->ContentText->OutlineColorTop    = TheTheme.PrimaryBack;
-        this->ContentText->OutlineColorBottom = TheTheme.PrimaryLit;
+        this->ContentText->OutlineColorLeft   = unotui::TheTheme.PrimaryLit;
+        this->ContentText->OutlineColorRight  = unotui::TheTheme.PrimaryBack;
+        this->ContentText->OutlineColorTop    = unotui::TheTheme.PrimaryBack;
+        this->ContentText->OutlineColorBottom = unotui::TheTheme.PrimaryLit;
         
 }
 
@@ -99,42 +94,42 @@ void w_minicard::OnTick()
         if( this->Size.x.xpixels() < MIN_WIDTH )
         {
                 this->Size.x = MIN_WIDTH;
-                this->Invalidate( ValidityState::Resized );
+                this->Invalidate( unotui::ValidityState::Resized );
         }
         
         if( this->Size.y.ypixels() < MIN_HEIGHT )
         {
                 this->Size.y = MIN_HEIGHT;
-                this->Invalidate( ValidityState::Resized );
+                this->Invalidate( unotui::ValidityState::Resized );
         }
                 
 }
 
-void w_minicard::OnRefresh( ValidityState_t Reason )
+void w_minicard::OnRefresh( unotui::ValidityState_t Reason )
 {
         
         const fpoint FPosition = this->Position;
-        const fpoint FPosition2= SecondPosition( this->Position, this->Size );
+        const fpoint FPosition2= unotui::SecondPosition( this->Position, this->Size );
         
         //:: Own geometry.
         
         this->gColor.Clear();
         
         this->gColor.AddRectangle(
-                colored_rectangle(
+                unotui::colored_rectangle(
                         FPosition,
                         FPosition2,
-                        this->bMouseOver ? TheTheme.Highlight : TheTheme.Primary
+                        this->bMouseOver ? unotui::TheTheme.Highlight : unotui::TheTheme.Primary
                 )
         );
         
-        const rgba OutlineColor1 = TheTheme.PrimaryLit;
-        const rgba OutlineColor2 = TheTheme.PrimaryBack;
-        const rgba OutlineColor2Light = color::gray * 0.8f;
+        const rgba OutlineColor1 = unotui::TheTheme.PrimaryLit;
+        const rgba OutlineColor2 = unotui::TheTheme.PrimaryBack;
+        const rgba OutlineColor2Light = unotui::color::gray * 0.8f;
         
         if( this->bMouseOver ) {
                 this->gColor.AddOutline(
-                        rectangle( FPosition, FPosition2 ),
+                        unotui::rectangle( FPosition, FPosition2 ),
                         -4,
                         OutlineColor1,
                         OutlineColor2Light,
@@ -143,7 +138,7 @@ void w_minicard::OnRefresh( ValidityState_t Reason )
                 );
         } else {
                 this->gColor.AddOutline(
-                        rectangle( FPosition, FPosition2 ),
+                        unotui::rectangle( FPosition, FPosition2 ),
                         -4,
                         OutlineColor2,
                         OutlineColor1,
@@ -203,9 +198,9 @@ void w_minicard::OnDraw()
 void w_minicard::OnMousePressed( const int Button )
 {
         if( Button == GLFW_MOUSE_BUTTON_LEFT ) {
-                this->ThrowEvent( std::make_shared<we_click>( 1, "Edit", Button ) );
+                this->ThrowEvent( std::make_shared<unotui::we_click>( 1, "Edit", Button ) );
         } else if( Button == GLFW_MOUSE_BUTTON_RIGHT ) {
-                this->ThrowEvent( std::make_shared<we_click>( 0, "Delete", Button ) );
+                this->ThrowEvent( std::make_shared<unotui::we_click>( 0, "Delete", Button ) );
         }
 }
 

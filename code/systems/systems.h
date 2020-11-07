@@ -1,11 +1,11 @@
-#ifndef __SYSTEMS_H_
-#define __SYSTEMS_H_
+#ifndef __UNOTU_SYSTEMS_SYSTEMS_H_
+#define __UNOTU_SYSTEMS_SYSTEMS_H_
 
 #include <stdint.h>
 
 #include <utility\executable_enum.h>
 
-#include <unotui.h>
+#include <utility\deps\unotui_includes.h>
 
 class unotui_bridge : public unotui::ent_interface
 {
@@ -15,6 +15,6 @@ class unotui_bridge : public unotui::ent_interface
 namespace systems
 {
 	void entry( uint8_t Executable = Executable::Undefined );
-}// Namepsace system.
+}// namespace systems
 
 #endif

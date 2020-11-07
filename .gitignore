@@ -26,3 +26,6 @@ _deps
 
 # Doxygen
 \doc
+
+# GLEW
+glew.pc

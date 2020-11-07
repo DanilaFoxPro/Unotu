@@ -1,15 +1,8 @@
 #include <utility\tab_presets\test.h>
 
 #include <entities\widgets\w_minicard.h>
-#include <entities\widgets\w_editabletextbox.h>
-#include <entities\widgets\w_editabletext.h>
-#include <entities\widgets\w_button.h>
-#include <entities\widgets\w_genericscrollbox.h>
-#include <entities\widgets\w_horizontalbox.h>
 #include <utility\tab_presets\edit_card.h>
 #include <utility\tab_presets\card_search.h>
-#include <utility\widget.h>
-#include <workers\window_worker.h>
 
 
 namespace TabPresets
@@ -32,13 +25,13 @@ void Test::PostConstruct()
                 "Exit"
         };
         
-        std::shared_ptr<w_horizontalbox> HorizontalBox = this->AddChild( new w_horizontalbox() );
+        std::shared_ptr<unotui::w_horizontalbox> HorizontalBox = this->AddChild( new unotui::w_horizontalbox() );
         HorizontalBox->Position = point( 0.1f, ratio(1.0f)-pixel(30) );
         HorizontalBox->Size = point( 0.8f, 32 );
         
         for( std::size_t i = 0; i < Options.size(); i++ ) {
                 HorizontalBox->AddChild(
-                        new w_button(
+                        new unotui::w_button(
                                 Options[i],
                                 (int)i
                         )
@@ -59,7 +52,7 @@ void Test::PostConstruct()
         "And if the being was always there, why we couldn't have always existed? What is existance? Shit.";
         
         auto Buffer = this->AddChild(
-                new w_buffer(
+                new unotui::w_buffer(
                         point( pixel(20), ratio(1.0f)-pixel(160) ),
                         point( 0.7f, 0.7f )
                 )
@@ -76,26 +69,26 @@ void Test::PostConstruct()
         
 }
 
-void Test::OnEvent ( std::shared_ptr<widget_event> Event )
+void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
 {
-        auto* ClickEvent = dynamic_cast<we_click*>( Event.get() );
+        auto* ClickEvent = dynamic_cast<unotui::we_click*>( Event.get() );
         if( ClickEvent ) {
                 switch( ClickEvent->ActionID ) {
                         case 0: {
-                                TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard );
                                 break;
                         }
                         case 1: {
-                                CreatePendingWindow();
+                                unotui::CreatePendingWindow();
                                 break;
                         }
                         case 2: {
-                                TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
                                 break;
                         }
                         case 3: {
                                 printf( "--===<<< Widget Hierarchy >>>===--\n\n" );
-                                PrintWidgetHierarchy( TheWindowManager.Cur().ActiveTab.Widgets );
+                                unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().ActiveTab.Widgets );
                                 printf( "\n--===<<< End >>>===--\n" );
                         }
                 }

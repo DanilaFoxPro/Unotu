@@ -1,12 +1,11 @@
 #ifndef CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 #define CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 
-#include <unotui\entities\widgets\widget.h>
-#include <unotui\entities\widgets\w_text.h>
-#include <unotui\entities\widgets\w_textbox.h>
 #include <utility\classes\card.h>
 
-struct w_minicard: public widget {
+#include <utility\deps\unotui_includes.h>
+
+struct w_minicard: public unotui::widget {
 	
 	//:: Constructors. / Destructor.
 	
@@ -37,15 +36,15 @@ struct w_minicard: public widget {
 	
         int CardID = -1;
         
-	std::shared_ptr<w_text> TitleText;
-	std::shared_ptr<w_textbox> ContentText;
+	std::shared_ptr<unotui::w_text> TitleText;
+	std::shared_ptr<unotui::w_textbox> ContentText;
 	
-	color_geometry gColor;
+	unotui::color_geometry gColor;
 	
 	//:: Overrides.
 	
 	virtual void OnTick();
-	virtual void OnRefresh( ValidityState_t );
+	virtual void OnRefresh( unotui::ValidityState_t );
 	virtual void OnDraw();
         
         virtual void OnMousePressed( const int );
