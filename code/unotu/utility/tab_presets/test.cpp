@@ -1,8 +1,8 @@
-#include <utility\tab_presets\test.h>
+#include <unotu\utility\tab_presets\test.h>
 
-#include <entities\widgets\w_minicard.h>
-#include <utility\tab_presets\edit_card.h>
-#include <utility\tab_presets\card_search.h>
+#include <unotu\entities\widgets\w_minicard.h>
+#include <unotu\utility\tab_presets\edit_card.h>
+#include <unotu\utility\tab_presets\card_search.h>
 
 
 namespace TabPresets

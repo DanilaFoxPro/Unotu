@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include <utility\executable_enum.h>
+#include <unotu\utility\executable_enum.h>
 
-#include <utility\deps\unotui_includes.h>
+#include <unotu\utility\deps\unotui_includes.h>
 
 class unotui_bridge : public unotui::ent_interface
 {

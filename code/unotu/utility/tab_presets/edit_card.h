@@ -1,9 +1,9 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 
-#include <utility\classes\card.h>
+#include <unotu\utility\classes\card.h>
 
-#include <utility\deps\unotui_includes.h>
+#include <unotu\utility\deps\unotui_includes.h>
 
 namespace TabPresets
 {

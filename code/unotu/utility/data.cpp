@@ -1,8 +1,8 @@
-#include <utility\data.h>
+#include <unotu\utility\data.h>
 
-#include <utility\deps\sqlite_includes.h>
+#include <unotu\utility\deps\sqlite_includes.h>
 
-#include <entities\ent_application.h>
+#include <unotu\entities\ent_application.h>
 #include <unotui\utility\text.h>
 
 /** @brief Split search query into parts. Currently does so on spaces.

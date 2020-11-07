@@ -1,4 +1,4 @@
-#include <entities\widgets\w_minicard.h>
+#include <unotu\entities\widgets\w_minicard.h>
 
 const int TITLE_FONT            = 24;
 const int CONTENT_FONT          = 18;
