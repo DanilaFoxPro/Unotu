@@ -1,9 +1,9 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_CHAT_SELECT_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_CHAT_SELECT_H_
 
-#include <entities\widgets\w_tab.h>
-#include <entities\widgets\w_button.h>
-#include <entities\widgets\w_text.h>
+#include <unotui\entities\widgets\w_tab.h>
+#include <unotui\entities\widgets\w_button.h>
+#include <unotui\entities\widgets\w_text.h>
 
 namespace TabPresets
 {

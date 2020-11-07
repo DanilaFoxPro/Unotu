@@ -1,9 +1,9 @@
 #include <entities\widgets\w_minicard.h>
 
-#include <entities\ent_opengl.h>
-#include <utility\widget.h>
+#include <unotui\entities\ent_opengl.h>
+#include <unotui\utility\widget.h>
 
-#include <utility\colors.h>
+#include <unotui\utility\colors.h>
 
 const int TITLE_FONT            = 24;
 const int CONTENT_FONT          = 18;

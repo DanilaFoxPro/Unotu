@@ -2,14 +2,12 @@ target_sources_local(
     ${APP_LIBRARY_NAME}
     PUBLIC
         card_search.h
-        chat.h
         chat_select.h
         edit_card.h
         test.h
         view_card.h
     PRIVATE
         card_search.cpp
-        chat.cpp
         chat_select.cpp
         edit_card.cpp
         test.cpp

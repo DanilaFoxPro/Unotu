@@ -1,11 +1,11 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 
-#include <entities\widgets\w_tab.h>
+#include <unotui\entities\widgets\w_tab.h>
 
-#include <entities\widgets\w_button.h>
-#include <entities\widgets\w_editabletext.h>
-#include <entities\widgets\w_editabletextbox.h>
+#include <unotui\entities\widgets\w_button.h>
+#include <unotui\entities\widgets\w_editabletext.h>
+#include <unotui\entities\widgets\w_editabletextbox.h>
 #include <utility\classes\card.h>
 
 namespace TabPresets

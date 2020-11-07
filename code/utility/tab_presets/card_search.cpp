@@ -1,12 +1,13 @@
 #include <utility\tab_presets\card_search.h>
 
+#include <unotui\entities\ent_window.h>
+#include <unotui\utility\widget.h>
+#include <unotui\utility\shortcuts.h>
+
 #include <entities\widgets\w_minicard.h>
 #include <entities\ent_application.h>
-#include <entities\ent_window.h>
 
 #include <utility\tab_presets\edit_card.h>
-#include <utility\widget.h>
-#include <utility\shortcuts.h>
 #include <utility\data.h>
 
 namespace TabPresets

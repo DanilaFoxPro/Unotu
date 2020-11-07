@@ -2,7 +2,6 @@
 #define __TAB_PRESETS_H_
 
 #include <utility\tab_presets\chat_select.h>
-#include <utility\tab_presets\chat.h>
 #include <utility\tab_presets\test.h>
 
 #include <utility\tab_presets\view_card.h>

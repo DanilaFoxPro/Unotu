@@ -1,9 +1,9 @@
 #ifndef CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 #define CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 
-#include <entities\widgets\widget.h>
-#include <entities\widgets\w_text.h>
-#include <entities\widgets\w_textbox.h>
+#include <unotui\entities\widgets\widget.h>
+#include <unotui\entities\widgets\w_text.h>
+#include <unotui\entities\widgets\w_textbox.h>
 #include <utility\classes\card.h>
 
 struct w_minicard: public widget {

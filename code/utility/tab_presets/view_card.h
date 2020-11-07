@@ -1,14 +1,14 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_VIEW_CARD_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_VIEW_CARD_H_
 
-#include <entities\widgets\w_tab.h>
+#include <unotui\entities\widgets\w_tab.h>
 
-#include <entities\widgets\w_textscrollbox.h>
+#include <unotui\entities\widgets\w_textscrollbox.h>
 
 namespace TabPresets
 {
 
-struct ViewCard : public w_tab
+struct ViewCard : public unotui::w_tab
 {
 //:: Constructors
         virtual void PostConstruct();
