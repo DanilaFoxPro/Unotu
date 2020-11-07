@@ -1,0 +1,3 @@
+[submodule "code/_dependencies/UnotUI"]
+	path = code/_dependencies/UnotUI
+	url = https://github.com/DanilaFoxPro/UnotUI
