@@ -79,7 +79,7 @@ void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                                 break;
                         }
                         case 1: {
-                                unotui::CreatePendingWindow();
+                                unotui::CreateWindow();
                                 break;
                         }
                         case 2: {

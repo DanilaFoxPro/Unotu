@@ -111,5 +111,19 @@ namespace systems
 void unotui_bridge::PostSetup()
 {
         systems::setup_database();
+        switch( TheApplication.Executable ) {
+                case Executable::Main: {
+                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch() );
+                        break;
+                }
+                case Executable::Test: {
+                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::Test() );
+                        break;
+                }
+                default: {
+                        printf( "Current executable doesn't have a default tab, falling back to CardSearch.\n" );
+                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch() );
+                }
+        }
 }
 
