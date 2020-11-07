@@ -5,6 +5,8 @@
 
 #include <unotu\utility\deps\unotui_includes.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
 	struct Test : public unotui::w_tab
@@ -14,5 +16,7 @@ namespace TabPresets
                 virtual void OnEvent( std::shared_ptr<unotui::widget_event> );
 	};
 }// namespace TabPresets
+
+} // namespace unotu
 
 #endif

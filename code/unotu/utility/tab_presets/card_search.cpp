@@ -10,6 +10,8 @@
 #include <unotu\utility\tab_presets\edit_card.h>
 #include <unotu\utility\data.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
 
@@ -113,3 +115,5 @@ void CardSearch::Search()
 
 
 } // namespace TabPresets
+
+} // namespace unotu

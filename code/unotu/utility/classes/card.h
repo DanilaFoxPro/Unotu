@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace unotu {
+
 struct card
 {
         card() = default;
@@ -18,5 +20,7 @@ struct indexed_card : public card
         indexed_card( int, const std::string& = "", const std::string& = "" );
         int ID = -1;
 };
+
+} // namespace unotu
 
 #endif

@@ -5,6 +5,8 @@
 
 #include <unotu\utility\deps\unotui_includes.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
 struct EditCard : public unotui::w_tab
@@ -33,5 +35,7 @@ struct EditCard : public unotui::w_tab
         virtual void OnEvent( std::shared_ptr<unotui::widget_event> );
 };
 }// namespace TabPresets
+
+} // namespace unotu
 
 #endif

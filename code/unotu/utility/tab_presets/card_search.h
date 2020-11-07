@@ -3,6 +3,8 @@
 
 #include <unotu\utility\deps\unotui_includes.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
         
@@ -26,5 +28,7 @@ struct CardSearch : public unotui::w_tab
 };
 
 }
+
+} // namespace unotu
 
 #endif

@@ -7,6 +7,8 @@
 
 #include <unotu\utility\deps\unotui_includes.h>
 
+namespace unotu {
+
 class unotui_bridge : public unotui::ent_interface
 {
         virtual void PostSetup() override;
@@ -18,5 +20,7 @@ namespace systems
 {
 	void entry( uint8_t Executable = Executable::Undefined );
 }// namespace systems
+
+} // namespace unotu
 
 #endif

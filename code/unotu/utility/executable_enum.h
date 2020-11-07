@@ -1,6 +1,8 @@
 #ifndef __UNOTU_UTILITY_EXECUTABLE_ENUM_H_
 #define __UNOTU_UTILITY_EXECUTABLE_ENUM_H_
 
+namespace unotu {
+
 namespace Executable
 {
     enum uint8_t
@@ -11,5 +13,7 @@ namespace Executable
         Chat
     };
 }// namespace Executable
+
+} // namespace unotu
 
 #endif

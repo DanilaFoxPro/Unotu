@@ -2,5 +2,6 @@
 #include <unotu\utility\executable_enum.h>
 
 int main(){
+        using namespace unotu;
         systems::entry( Executable::Test );
 }

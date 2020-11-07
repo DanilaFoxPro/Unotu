@@ -5,6 +5,8 @@
 
 #include <unotui\entities\widgets\w_textscrollbox.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
 
@@ -18,5 +20,7 @@ struct ViewCard : public unotui::w_tab
 };
 
 }// namespace TabPresets
+
+} // namespace unotu
 
 #endif

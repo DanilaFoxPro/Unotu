@@ -5,6 +5,8 @@
 
 #include <unotu\utility\deps\unotui_includes.h>
 
+namespace unotu {
+
 struct w_minicard: public unotui::widget {
 	
 	//:: Constructors. / Destructor.
@@ -55,5 +57,7 @@ struct w_minicard: public unotui::widget {
         void SetContent( const std::string& );
 	
 };
+
+} // namespace unotu
 
 #endif /* CODE_ENTITIES_WIDGETS_W_MINICARD_H_ */

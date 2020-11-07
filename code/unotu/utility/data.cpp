@@ -5,6 +5,8 @@
 #include <unotu\entities\ent_application.h>
 #include <unotui\utility\text.h>
 
+namespace unotu {
+
 /** @brief Split search query into parts. Currently does so on spaces.
  */
 std::vector<std::string> SplitSearchQuery( const std::string& Query )
@@ -159,5 +161,4 @@ bool RemoveCard( const int Index )
         }
 }
 
-
-
+} // namespace unotu

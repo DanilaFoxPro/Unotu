@@ -1,5 +1,7 @@
 #include <unotu\entities\widgets\w_minicard.h>
 
+namespace unotu {
+
 const int TITLE_FONT            = 24;
 const int CONTENT_FONT          = 18;
 
@@ -218,3 +220,4 @@ void w_minicard::SetContent( const std::string& Content )
         
 }
 
+} // namespace unotu

@@ -4,6 +4,7 @@
 #include <unotu\utility\tab_presets\edit_card.h>
 #include <unotu\utility\tab_presets\card_search.h>
 
+namespace unotu {
 
 namespace TabPresets
 {
@@ -97,3 +98,5 @@ void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
 }
 
 }// namespace TabPresets
+
+} // namespace unotu

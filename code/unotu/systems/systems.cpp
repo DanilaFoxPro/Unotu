@@ -13,6 +13,8 @@
 #include <unotu\utility\packed_data.h>
 #include <unotu\utility\tab_presets.h>
 
+namespace unotu {
+
 namespace systems
 {
         
@@ -141,4 +143,4 @@ void unotui_bridge::OnNewWindow(unotui::ent_window& Window)
         }
 }
 
-
+} // namespace unotu

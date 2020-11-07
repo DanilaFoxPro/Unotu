@@ -3,6 +3,8 @@
 #include <unotu\utility\data.h>
 #include <unotu\utility\tab_presets\card_search.h>
 
+namespace unotu {
+
 namespace TabPresets
 {
         //:: Constructors.
@@ -128,3 +130,5 @@ void TabPresets::EditCard::OnEvent( std::shared_ptr<unotui::widget_event> Event 
                 return Event->Handle();
         }
 }
+
+} // namespace unotu
