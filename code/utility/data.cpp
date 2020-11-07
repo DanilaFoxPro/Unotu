@@ -3,7 +3,7 @@
 #include <utility\deps\sqlite_includes.h>
 
 #include <entities\ent_application.h>
-#include <utility\text.h>
+#include <unotui\utility\text.h>
 
 /** @brief Split search query into parts. Currently does so on spaces.
  */
@@ -31,6 +31,9 @@ std::vector<std::string> SplitSearchQuery( const std::string& Query )
  *         Checks title and content.
  */
 bool MatchesQueries( const card& Card, const std::vector<std::string>& Queries ) {
+        
+        using namespace unotui;
+        
         for( std::string Part : Queries ) {
                 
                 const std::string LowPart = ToLower( Part );

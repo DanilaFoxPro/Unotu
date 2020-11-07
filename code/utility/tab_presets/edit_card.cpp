@@ -1,10 +1,7 @@
 #include <utility\tab_presets\edit_card.h>
 
 #include <utility\data.h>
-#include <utility\colors.h>
-
 #include <utility\tab_presets\card_search.h>
-
 
 namespace TabPresets
 {
@@ -30,17 +27,17 @@ EditCard::EditCard( const indexed_card& Card )
 
 void EditCard::CommonSetup()
 {
-        this->Background = color::gray;
+        this->Background = unotui::color::gray;
         
-        this->CardTitle     = std::make_shared<w_editabletext>();
-        this->CardContent   = std::make_shared<w_editabletextbox>();
+        this->CardTitle     = std::make_shared<unotui::w_editabletext>();
+        this->CardContent   = std::make_shared<unotui::w_editabletextbox>();
 }
 
 
 void EditCard::PostConstruct()
 {
-        this->ConfirmButton = this->AddChild( new w_button( "Confirm", 1 ) );
-        this->CancelButton  = this->AddChild( new w_button( "Cancel",  0 ) );
+        this->ConfirmButton = this->AddChild( new unotui::w_button( "Confirm", 1 ) );
+        this->CancelButton  = this->AddChild( new unotui::w_button( "Cancel",  0 ) );
         
         // Already created in constructor via 'CommonSetup'.
         this->AddChild( this->CardTitle );
@@ -85,9 +82,9 @@ void EditCard::SaveCard()
 
         //:: Overrides.
 
-void EditCard::OnRefresh( ValidityState_t Reason )
+void EditCard::OnRefresh( unotui::ValidityState_t Reason )
 {
-        if( !( Reason & ValidityState::Resized ) ){
+        if( !( Reason & unotui::ValidityState::Resized ) ){
                 return;
         }
         
@@ -120,14 +117,14 @@ void EditCard::OnRefresh( ValidityState_t Reason )
 
 } //namespace TabPresets
 
-void TabPresets::EditCard::OnEvent( std::shared_ptr<widget_event> Event )
+void TabPresets::EditCard::OnEvent( std::shared_ptr<unotui::widget_event> Event )
 {
-        auto* ClickEvent = dynamic_cast<we_click*>( Event.get() );
+        auto* ClickEvent = dynamic_cast<unotui::we_click*>( Event.get() );
         if( ClickEvent ) {
                 if( ClickEvent->ActionID == 1 ) {
                         this->bConfirmed = true;
                 }
-                TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
+                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
                 return Event->Handle();
         }
 }
