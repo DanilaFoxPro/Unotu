@@ -45,7 +45,7 @@ endfunction()
 #    ██    ██   ██ ███████     ██      ██   ██  ██████   █████  ███████  ██████    ██
 
 project ( Unotu CXX ASM )
-set( APP_NAME ${CMAKE_PROJECT_NAME} )
+set( APP_NAME ${PROJECT_NAME} )
 set( APP_LIBRARY_NAME ${APP_NAME}Library )
 
 add_library( ${APP_LIBRARY_NAME} STATIC )
