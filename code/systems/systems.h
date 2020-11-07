@@ -10,6 +10,8 @@
 class unotui_bridge : public unotui::ent_interface
 {
         virtual void PostSetup() override;
+        
+        virtual void OnNewWindow( unotui::ent_window& Window );
 };
 
 namespace systems

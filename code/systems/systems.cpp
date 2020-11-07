@@ -17,7 +17,8 @@ namespace systems
 {
         
         void setup_unotui();
-        void setup_database();
+        
+        void postsetup_database();
         
         void entry( uint8_t Executable )
         {
@@ -41,7 +42,7 @@ namespace systems
                 unotui::RunUnotUI();
         }
         
-        void setup_database()
+        void postsetup_database()
         {
                 
                 printf("Opening the database\n{\n");
@@ -119,20 +120,25 @@ namespace systems
 
 void unotui_bridge::PostSetup()
 {
-        systems::setup_database();
+        systems::postsetup_database();
+}
+
+void unotui_bridge::OnNewWindow(unotui::ent_window& Window)
+{
         switch( TheApplication.Executable ) {
                 case Executable::Main: {
-                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch() );
+                        Window.SwitchTab( new TabPresets::CardSearch() );
                         break;
                 }
                 case Executable::Test: {
-                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::Test() );
+                        Window.SwitchTab( new TabPresets::Test() );
                         break;
                 }
                 default: {
                         printf( "Current executable doesn't have a default tab, falling back to CardSearch.\n" );
-                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch() );
+                        Window.SwitchTab( new TabPresets::CardSearch() );
                 }
         }
 }
+
 
