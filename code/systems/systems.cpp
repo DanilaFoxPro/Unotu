@@ -3,7 +3,6 @@
 //::STD.
 #include <stdio.h>
 #include <system_error> // For throwing exceptions around.
-#include <cstdlib> // std::atexit
 
 //::SQLite.
 #include <utility\deps\sqlite_includes.h>
@@ -29,6 +28,16 @@ namespace systems
         void setup_unotui()
         {
                 unotui::RegisterInterface( std::unique_ptr<unotui::ent_interface>( new unotui_bridge() ) );
+                
+                //:: Load window icon.
+                
+                unotui::TheWindowManager.IconLayers.reserve(3);
+                unotui::TheWindowManager.IconLayers.push_back( unotui::LoadGLFWImage( DATA_UNOTU64_PNG, DATA_UNOTU64_PNG_SIZE ) );
+                unotui::TheWindowManager.IconLayers.push_back( unotui::LoadGLFWImage( DATA_UNOTU32_PNG, DATA_UNOTU32_PNG_SIZE ) );
+                unotui::TheWindowManager.IconLayers.push_back( unotui::LoadGLFWImage( DATA_UNOTU16_PNG, DATA_UNOTU16_PNG_SIZE ) );
+                
+                //:: Launch UnotUI main loop.
+                
                 unotui::RunUnotUI();
         }
         
@@ -106,7 +115,7 @@ namespace systems
                 printf( "}\n" );
                 
         }
-}// Namepsace system.
+}// namespace system
 
 void unotui_bridge::PostSetup()
 {
