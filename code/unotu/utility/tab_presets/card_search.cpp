@@ -1,8 +1,6 @@
 #include <unotu\utility\tab_presets\card_search.h>
 
-#include <unotui\entities\ent_window.h>
-#include <unotui\utility\widget.h>
-#include <unotui\utility\shortcuts.h>
+#include <unotu\utility\deps\unotui_includes.h>
 
 #include <unotu\entities\widgets\w_minicard.h>
 #include <unotu\entities\ent_application.h>
@@ -18,7 +16,7 @@ namespace TabPresets
 CardSearch::CardSearch()
 {
         this->Title = "Card Search";
-        this->Background = unotui::color::gray;
+        this->Background = unotui::TheTheme.Primary;
 }
 
 void CardSearch::PostConstruct()
