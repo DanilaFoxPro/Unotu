@@ -25,6 +25,8 @@ struct CardSearch : public unotui::w_tab
         virtual void OnEvent( std::shared_ptr<unotui::widget_event> );
 //:: Functions.
         void Search();
+        
+        void RemoveCardVisual( const int Identifier );
 };
 
 }

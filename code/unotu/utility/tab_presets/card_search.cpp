@@ -81,9 +81,8 @@ void CardSearch::OnEvent( std::shared_ptr<unotui::widget_event> Event )
                                 }
                                 case GLFW_MOUSE_BUTTON_RIGHT: {
                                         RemoveCard( MiniCard->CardID );
-                                        // TODO: Consider optimizing by removing only the removed card from the results.
-                                        // FIXME: This search causes a crash.
-                                        this->Search();
+                                        // Optimization. Doesn't refresh the search, only removes the card visual.
+                                        this->RemoveCardVisual( MiniCard->CardID );
                                         break;
                                 }
                         }
@@ -111,6 +110,20 @@ void CardSearch::Search()
                 this->Scrollbox->AddItem( Card );
         }
         
+}
+
+/** Removes card from search results, by Identifier. Visual only, doesn't touch the database. */
+void CardSearch::RemoveCardVisual(const int Identifier)
+{
+        auto& Items = this->Scrollbox->Items;
+        for( std::size_t i = 0; i < Items.size(); i++ ) {
+                const unotu::w_minicard* Card = dynamic_cast<unotu::w_minicard*>(Items[i].get());
+                if( Card && Card->CardID == Identifier ) {
+                        Items.erase( Items.begin()+i );
+                        this->Scrollbox->Invalidate( unotui::ValidityState::ParametersUpdated );
+                        return;
+                }
+        }
 }
 
 
