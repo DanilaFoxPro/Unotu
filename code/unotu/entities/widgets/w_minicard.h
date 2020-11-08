@@ -31,7 +31,7 @@ struct w_minicard: public unotui::widget {
                 const point& = point( 160, 80 )
         );
 	void PostConstruct();
-	virtual ~w_minicard();
+	virtual ~w_minicard() {};
         void CommonSetup();
 	
 	//:: Data.

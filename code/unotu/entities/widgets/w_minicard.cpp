@@ -85,9 +85,6 @@ void w_minicard::CommonSetup()
         
 }
 
-
-w_minicard::~w_minicard() {}
-
 void w_minicard::OnTick()
 {
         
