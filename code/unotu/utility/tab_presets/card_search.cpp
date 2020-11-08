@@ -33,6 +33,8 @@ void CardSearch::PostConstruct()
         
         this->SearchField->OutlineColor = unotui::color::gray * 0.5f;
         
+        this->Scrollbox->ItemHeight = pixel(48) + ratio(0.2);
+        
         this->Search();
         
 }
@@ -106,9 +108,9 @@ void CardSearch::Search()
         
         this->Scrollbox->ClearItems();
         for( indexed_card Cur : Results ) {
-                this->Scrollbox->AddItem(
-                        std::make_shared<w_minicard>( Cur )
-                );
+                std::shared_ptr<unotu::w_minicard> Card = std::make_shared<w_minicard>( Cur );
+                Card->bEnforceMinimumSize = false;
+                this->Scrollbox->AddItem( Card );
         }
         
 }

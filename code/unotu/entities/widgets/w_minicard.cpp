@@ -90,16 +90,20 @@ void w_minicard::OnTick()
         
         //:: Size fixup.
         
-        if( this->Size.xpixels() < MIN_WIDTH )
-        {
-                this->Size.x = MIN_WIDTH;
-                this->Invalidate( unotui::ValidityState::Resized );
-        }
-        
-        if( this->Size.ypixels() < MIN_HEIGHT )
-        {
-                this->Size.y = MIN_HEIGHT;
-                this->Invalidate( unotui::ValidityState::Resized );
+        if( this->bEnforceMinimumSize ) {
+                
+                if( this->Size.xpixels() < MIN_WIDTH )
+                {
+                        this->Size.x = MIN_WIDTH;
+                        this->Invalidate( unotui::ValidityState::Resized );
+                }
+                
+                if( this->Size.ypixels() < MIN_HEIGHT )
+                {
+                        this->Size.y = MIN_HEIGHT;
+                        this->Invalidate( unotui::ValidityState::Resized );
+                }
+                
         }
                 
 }

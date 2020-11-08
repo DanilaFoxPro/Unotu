@@ -42,6 +42,10 @@ struct w_minicard: public unotui::widget {
 	std::shared_ptr<unotui::w_textbox> ContentText;
 	
 	unotui::color_geometry gColor;
+        
+        //:: Options.
+        
+        bool bEnforceMinimumSize = true;
 	
 	//:: Overrides.
 	
