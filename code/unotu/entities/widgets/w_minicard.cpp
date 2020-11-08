@@ -66,16 +66,16 @@ void w_minicard::CommonSetup()
         
         this->bInvalidateOnMousePass = true; // For highlight to update.
         
-        this->TitleText = std::make_shared<unotui::w_text>();
+        this->TitleText   = std::make_shared<unotui::w_text>();
         this->ContentText = std::make_shared<unotui::w_textbox>();
         
-        this->TitleText->font_size = TITLE_FONT;
+        this->TitleText->FontSize   = TITLE_FONT;
         this->ContentText->FontSize = CONTENT_FONT;
         
-        this->TitleText->color = unotui::color::black;
+        this->TitleText->Color = unotui::TheTheme.Text;
         
-        this->ContentText->FontColor = unotui::color::black;
-        this->ContentText->BackgroundColor = unotui::color::white;
+        this->ContentText->TextColor        = unotui::TheTheme.Text;
+        this->ContentText->BackgroundColor  = unotui::color::white;
         this->ContentText->OutlineThickness = 2;
         
         this->ContentText->OutlineColorLeft   = unotui::TheTheme.PrimaryLit;
@@ -93,13 +93,13 @@ void w_minicard::OnTick()
         
         //:: Size fixup.
         
-        if( this->Size.x.xpixels() < MIN_WIDTH )
+        if( this->Size.xpixels() < MIN_WIDTH )
         {
                 this->Size.x = MIN_WIDTH;
                 this->Invalidate( unotui::ValidityState::Resized );
         }
         
-        if( this->Size.y.ypixels() < MIN_HEIGHT )
+        if( this->Size.ypixels() < MIN_HEIGHT )
         {
                 this->Size.y = MIN_HEIGHT;
                 this->Invalidate( unotui::ValidityState::Resized );
@@ -161,7 +161,7 @@ void w_minicard::OnRefresh( unotui::ValidityState_t Reason )
         );    
         
         this->TitleText->Position = this->Position + point( pixel(PADDING), -pixel(PADDING) );
-        const float TitleLowerYPos = this->TitleText->Position.y.yratio()-AvailableArea.y*0.15f;
+        const float TitleLowerYPos = this->TitleText->Position.yratio()-AvailableArea.y*0.15f;
         this->TitleText->SetSecondPosition
         (
                 point(
@@ -169,7 +169,7 @@ void w_minicard::OnRefresh( unotui::ValidityState_t Reason )
                         ratio(TitleLowerYPos)
                 )
         );
-        this->TitleText->font_size = this->TitleText->Size.y.ypixels();
+        this->TitleText->FontSize = this->TitleText->Size.ypixels();
         
         this->TitleText->Invalidate( Reason );
         
@@ -211,7 +211,7 @@ void w_minicard::OnMousePressed( const int Button )
 
 void w_minicard::SetTitle( const std::string& Title )
 {
-        this->TitleText->text = Title;
+        this->TitleText->Text = Title;
 }
 
 void w_minicard::SetContent( const std::string& Content )
