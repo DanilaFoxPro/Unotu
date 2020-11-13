@@ -129,16 +129,16 @@ void unotui_bridge::OnNewWindow(unotui::ent_window& Window)
 {
         switch( TheApplication.Executable ) {
                 case Executable::Main: {
-                        Window.SwitchTab( new TabPresets::CardSearch() );
+                        Window.SwitchTab( new TabPresets::card_search() );
                         break;
                 }
                 case Executable::Test: {
-                        Window.SwitchTab( new TabPresets::Test() );
+                        Window.SwitchTab( new TabPresets::test() );
                         break;
                 }
                 default: {
                         printf( "Current executable doesn't have a default tab, falling back to CardSearch.\n" );
-                        Window.SwitchTab( new TabPresets::CardSearch() );
+                        Window.SwitchTab( new TabPresets::card_search() );
                 }
         }
 }

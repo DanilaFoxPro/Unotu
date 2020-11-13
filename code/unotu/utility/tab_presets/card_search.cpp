@@ -13,13 +13,13 @@ namespace unotu {
 namespace TabPresets
 {
 
-CardSearch::CardSearch()
+card_search::card_search()
 {
         this->Title = "Card Search";
         this->Background = unotui::TheTheme.Primary;
 }
 
-void CardSearch::PostConstruct()
+void card_search::PostConstruct()
 {
         this->TopBox      = this->AddChild( new unotui::w_horizontalbox() );
         this->SearchField = this->TopBox->AddChild( new unotui::w_editabletext() );
@@ -37,7 +37,7 @@ void CardSearch::PostConstruct()
         
 }
 
-void CardSearch::OnRefresh( unotui::ValidityState_t Reason )
+void card_search::OnRefresh( unotui::ValidityState_t Reason )
 {
         const fpoint FPosition  = this->Position;
         const fpoint FPosition2 = SecondPosition( this->Position, this->Size );
@@ -56,20 +56,20 @@ void CardSearch::OnRefresh( unotui::ValidityState_t Reason )
         
 }
 
-void CardSearch::OnEvent( std::shared_ptr<unotui::widget_event> Event )
+void card_search::OnEvent( std::shared_ptr<unotui::widget_event> Event )
 {
         auto Thrower = Event->Thrower.lock();
         auto ClickEvent = dynamic_cast<unotui::we_click*>( Event.get() );
         if( ClickEvent ) {
                 const auto MiniCard = dynamic_cast<w_minicard*>( Thrower.get() );
                 if( Thrower == this->AddCard ) {
-                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard );
+                        unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::edit_card );
                 } else if( MiniCard ) {
                         switch( ClickEvent->Button ) {
                                 case GLFW_MOUSE_BUTTON_LEFT: {
                                         try {
                                                 const indexed_card Card = GetCard( MiniCard->CardID );
-                                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard( Card ) );
+                                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::edit_card( Card ) );
                                         } catch( std::exception& Except ) {
                                                 printf( "%s -- Error while trying to edit a card (ID %i): %s\n",
                                                         ClassName( *this ).c_str(),
@@ -99,7 +99,7 @@ void CardSearch::OnEvent( std::shared_ptr<unotui::widget_event> Event )
 
 //:: Functions.
 
-void CardSearch::Search()
+void card_search::Search()
 {
         std::vector<indexed_card> Results = SearchCards( this->SearchField->Text );
         
@@ -113,7 +113,7 @@ void CardSearch::Search()
 }
 
 /** Removes card from search results, by Identifier. Visual only, doesn't touch the database. */
-void CardSearch::RemoveCardVisual(const int Identifier)
+void card_search::RemoveCardVisual(const int Identifier)
 {
         auto& Items = this->Scrollbox->Items;
         for( std::size_t i = 0; i < Items.size(); i++ ) {

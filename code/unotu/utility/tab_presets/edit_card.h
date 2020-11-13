@@ -9,14 +9,14 @@ namespace unotu {
 
 namespace TabPresets
 {
-struct EditCard : public unotui::w_tab
+struct edit_card : public unotui::w_tab
 {
 //:: Constructors.
-        EditCard();
-        EditCard( const indexed_card& );
+        edit_card();
+        edit_card( const indexed_card& );
         void CommonSetup();
         virtual void PostConstruct();
-        ~EditCard();
+        ~edit_card();
 //:: Widgets.
         std::shared_ptr<unotui::w_button> ConfirmButton;
         std::shared_ptr<unotui::w_button> CancelButton;

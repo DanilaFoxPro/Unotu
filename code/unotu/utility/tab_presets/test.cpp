@@ -9,13 +9,13 @@ namespace unotu {
 namespace TabPresets
 {
 
-Test::Test()
+test::test()
 {
         this->Title = "Testing";
 }
 
 
-void Test::PostConstruct()
+void test::PostConstruct()
 {
         
         const std::vector<std::string> Options = {
@@ -70,13 +70,13 @@ void Test::PostConstruct()
         
 }
 
-void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
+void test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
 {
         auto* ClickEvent = dynamic_cast<unotui::we_click*>( Event.get() );
         if( ClickEvent ) {
                 switch( ClickEvent->ActionID ) {
                         case 0: {
-                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::edit_card );
                                 break;
                         }
                         case 1: {
@@ -84,7 +84,7 @@ void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                                 break;
                         }
                         case 2: {
-                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::card_search );
                                 break;
                         }
                         case 3: {

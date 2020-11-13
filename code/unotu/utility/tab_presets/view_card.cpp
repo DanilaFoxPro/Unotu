@@ -7,12 +7,12 @@ namespace TabPresets
 
         //:: Constructors.
 
-void ViewCard::PostConstruct()
+void view_card::PostConstruct()
 {
         
 }
 
-ViewCard::~ViewCard()
+view_card::~view_card()
 {
         
 }

@@ -8,10 +8,10 @@ namespace unotu {
 namespace TabPresets
 {
         
-struct CardSearch : public unotui::w_tab
+struct card_search : public unotui::w_tab
 {
 //:: Constructors.
-        CardSearch();
+        card_search();
         virtual void PostConstruct();
 //:: Data.
         std::shared_ptr<unotui::w_horizontalbox> TopBox;

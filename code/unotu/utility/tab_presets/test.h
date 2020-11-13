@@ -9,9 +9,9 @@ namespace unotu {
 
 namespace TabPresets
 {
-	struct Test : public unotui::w_tab
+	struct test : public unotui::w_tab
 	{
-                Test();
+                test();
 		virtual void PostConstruct();
                 virtual void OnEvent( std::shared_ptr<unotui::widget_event> );
 	};

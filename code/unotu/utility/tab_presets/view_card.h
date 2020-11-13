@@ -10,11 +10,11 @@ namespace unotu {
 namespace TabPresets
 {
 
-struct ViewCard : public unotui::w_tab
+struct view_card : public unotui::w_tab
 {
 //:: Constructors
         virtual void PostConstruct();
-        virtual ~ViewCard();
+        virtual ~view_card();
 //:: Data.
         // TODO: Some kind of 'w_scrollable'.
 };
