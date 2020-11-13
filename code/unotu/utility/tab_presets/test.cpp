@@ -1,8 +1,7 @@
 #include <unotu\utility\tab_presets\test.h>
 
 #include <unotu\entities\widgets\w_minicard.h>
-#include <unotu\utility\tab_presets\edit_card.h>
-#include <unotu\utility\tab_presets\card_search.h>
+#include <unotu\utility\tab_presets.h>
 
 namespace unotu {
 
@@ -91,6 +90,9 @@ void test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                                 printf( "--===<<< Widget Hierarchy >>>===--\n\n" );
                                 unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().ActiveTab.Widgets );
                                 printf( "\n--===<<< End >>>===--\n" );
+                        }
+                        case 4: {
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::filter_editor );
                         }
                 }
                 return Event->Handle();

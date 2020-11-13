@@ -1,9 +1,7 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_VIEW_CARD_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_VIEW_CARD_H_
 
-#include <unotui\entities\widgets\w_tab.h>
-
-#include <unotui\entities\widgets\w_textscrollbox.h>
+#include <unotu\utility\deps\unotui_includes.h>
 
 namespace unotu {
 

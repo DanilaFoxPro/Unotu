@@ -3,11 +3,13 @@ target_sources_local(
     PUBLIC
         card_search.h
         edit_card.h
+        filter_editor.h
         test.h
         view_card.h
     PRIVATE
         card_search.cpp
         edit_card.cpp
+        filter_editor.cpp
         test.cpp
         view_card.cpp
 )
