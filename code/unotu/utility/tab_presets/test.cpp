@@ -21,9 +21,9 @@ void Test::PostConstruct()
         const std::vector<std::string> Options = {
                 "Edit Card Tab",
                 "New Window",
-                "Options",
-                "Credits",
-                "Exit"
+                "Card Search",
+                "Print Hierarchy",
+                "Filter Editor"
         };
         
         std::shared_ptr<unotui::w_horizontalbox> HorizontalBox = this->AddChild( new unotui::w_horizontalbox() );
@@ -38,7 +38,7 @@ void Test::PostConstruct()
                         )
                 );
         }
-        HorizontalBox->Weights = { 1.5f, 1.25f, 1.0f, 1.0f, 0.5f };
+        HorizontalBox->Weights = { 1.25f, 1.0f, 1.0f, 1.3f, 1.2f };
         HorizontalBox->Padding = point( 5, 0 );
         
         const std::string Text =
