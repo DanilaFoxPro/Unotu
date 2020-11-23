@@ -5,5 +5,4 @@ target_sources_local(
                 graph.h
         PRIVATE
                 card.cpp
-                graph.cpp
 )
