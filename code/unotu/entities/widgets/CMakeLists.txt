@@ -1,7 +1,9 @@
 target_sources_local(
   ${APP_LIBRARY_NAME}
   PUBLIC
+    w_filtergraph.h
     w_minicard.h
   PRIVATE
+    w_filtergraph.cpp
     w_minicard.cpp
 )
