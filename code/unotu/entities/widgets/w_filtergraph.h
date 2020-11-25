@@ -8,6 +8,11 @@
 namespace unotu
 {
 
+struct filter_node
+{
+        
+};
+
 struct w_filtergraph : public unotui::widget
 {
         const double MinimumViewzone = 0.2;
@@ -17,7 +22,7 @@ struct w_filtergraph : public unotui::widget
         
         std::pair<double, double> Position = { 0.0, 0.0 };
         
-        node_graph< int, int > Graph;
+        node_graph< filter_node*, void > Graph;
 };
 
 } // namespace unotu
