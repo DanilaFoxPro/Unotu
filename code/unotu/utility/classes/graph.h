@@ -33,6 +33,7 @@ public:
         
         void NodeAdd( std::shared_ptr<graph_node<node_data, edge_data>> Node );
         void NodeRemove( std::shared_ptr<graph_node<node_data, edge_data>> Node );
+        void NodeRemove( graph_node<node_data, edge_data>* Node );
         void NodeRemoveAll();
         
         std::set< graph_node_shared > NodeGetAll();
@@ -62,9 +63,9 @@ public:
         node_graph<node_data, edge_data>* GraphGet();
         void GraphCut();
         
-        std::set<graph_node_weak> ConnectedGet();
-        std::set<graph_node_weak> ConnectedOutgoingGet();
-        std::set<graph_node_weak> ConnectedIncomingGet();
+        std::set<graph_node_shared> ConnectedGet();
+        std::set<graph_node_shared> ConnectedOutgoingGet();
+        std::set<graph_node_shared> ConnectedIncomingGet();
         
         std::set<graph_edge_shared> EdgesGet( graph_node_shared Node );
         std::set<graph_edge_shared> EdgesGet();
@@ -88,6 +89,7 @@ class graph_edge
 {
         using graph_node_shared = std::shared_ptr<graph_node<node_data, edge_data>>;
         using graph_node_weak   = std::weak_ptr<graph_node<node_data, edge_data>>;
+        using graph_node_ptr    = graph_node<node_data, edge_data>*;
         
 public:
         
@@ -98,6 +100,8 @@ public:
         
         graph_node_weak SourceGet();
         graph_node_weak DestinationGet();
+        graph_node_weak OtherGet( graph_node_shared Node );
+        graph_node_weak OtherGet( graph_node_ptr Node );
         void SourceSet( const graph_node_shared );
         void DestinationSet( const graph_node_shared );
 private:
@@ -106,6 +110,8 @@ private:
 };
 
         //:: Implementation.
+
+        // Graph.
 
 template<typename node_data, typename edge_data>
 void node_graph<node_data, edge_data>::NodeAdd(
@@ -137,6 +143,16 @@ void node_graph<node_data, edge_data>::NodeRemove(
 }
 
 template<typename node_data, typename edge_data>
+void node_graph<node_data, edge_data>::NodeRemove(
+        graph_node<node_data, edge_data>* Node
+)
+{
+        // Works because shared_ptr comparisons compare stored pointers, and std::set should respect that.
+        return this->NodeRemove( std::shared_ptr<graph_node<node_data, edge_data>>( Node ) );
+}
+
+
+template<typename node_data, typename edge_data>
 void node_graph<node_data, edge_data>::NodeRemoveAll()
 {
         for( auto& Node : this->Nodes ) {
@@ -147,8 +163,135 @@ void node_graph<node_data, edge_data>::NodeRemoveAll()
         
 }
 
+        // Graph node.
 
-
+template<typename node_data, typename edge_data>
+node_data graph_node<node_data, edge_data>::DataGet()
+{
+        return this->Data;
 }
+
+template<typename node_data, typename edge_data>
+void graph_node<node_data, edge_data>::DataSet( const node_data Data )
+{
+        this->Data = Data;
+}
+
+template<typename node_data, typename edge_data>
+node_graph<node_data, edge_data>* graph_node<node_data, edge_data>::GraphGet()
+{
+        return this->ParentGraph;
+}
+
+template<typename node_data, typename edge_data>
+void graph_node<node_data, edge_data>::GraphCut()
+{
+        if( this->ParentGraph ) {
+                this->ParentGraph->NodeRemove( this );
+        }
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_node<node_data, edge_data>>>
+graph_node<node_data, edge_data>::ConnectedGet()
+{
+        std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Connected;
+        for( auto Edge : this->Edges ) {
+                std::shared_ptr<graph_node<node_data, edge_data>> OtherNode = Edge->GetOther( this ).lock();
+                if( OtherNode ) {
+                        Connected.push_back( OtherNode );
+                }
+        }
+        return Connected;
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_node<node_data, edge_data>>>
+graph_node<node_data, edge_data>::ConnectedIncomingGet()
+{
+        std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Connected;
+        for( auto Edge : this->Edges ) {
+                std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
+                // This supports self-connection.
+                if( Destination == this  ) {
+                        Connected.push_back( Source );
+                }
+        }
+        Connected.erase( {} );
+        return Connected;
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_node<node_data, edge_data>>>
+graph_node<node_data, edge_data>::ConnectedOutgoingGet()
+{
+        std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Connected;
+        for( auto Edge : this->Edges ) {
+                std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
+                // This supports self-connection.
+                if( Source == this  ) {
+                        Connected.push_back( Destination );
+                }
+        }
+        Connected.erase( {} );
+        return Connected;
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_edge<node_data, edge_data>>>
+graph_node<node_data, edge_data>::EdgesGet(
+        graph_node_shared Node
+)
+{
+        std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Connected;
+        for( auto Edge : this->Edges ) {
+                std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
+                if( Source == Node || Destination == Node ) {
+                        Connected.push_back( Destination );
+                }
+        }
+        Connected.erase( {} );
+        return Connected;
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_edge<node_data, edge_data>>>
+graph_node<node_data, edge_data>::EdgesGet()
+{
+        return this->Edges;
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_edge<node_data, edge_data>>>
+graph_node<node_data, edge_data>::EdgesIncomingGet()
+{
+        
+}
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_edge<node_data, edge_data>>>
+graph_node<node_data, edge_data>::EdgesOutgoingGet()
+{
+        
+}
+
+template<typename node_data, typename edge_data>
+bool graph_node<node_data, edge_data>::ConnectTo(std::shared_ptr<graph_node<node_data, edge_data>> Destination)
+{
+        
+}
+
+
+
+template<typename node_data, typename edge_data>
+void graph_node<node_data, edge_data>::Disconnect(std::shared_ptr<graph_node<node_data, edge_data>> Node)
+{
+        
+}
+
+} // namespace unotu
 
 #endif
