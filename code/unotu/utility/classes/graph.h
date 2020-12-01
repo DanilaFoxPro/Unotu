@@ -85,6 +85,7 @@ private:
         std::set< graph_edge_shared > Edges;
         
         friend node_graph<node_data, edge_data>;
+        friend graph_edge<node_data, edge_data>;
         
 };
 
@@ -135,7 +136,8 @@ void node_graph<node_data, edge_data>::NodeAdd(
                 Node->ParentGraph->NodeRemove( Node );
         }
         
-        Node->ParentGraph = &this;
+        this->Nodes.insert( Node );
+        Node->ParentGraph = this;
         
 }
 
@@ -169,6 +171,14 @@ void node_graph<node_data, edge_data>::NodeRemoveAll()
         this->Nodes.clear();
         
 }
+
+template<typename node_data, typename edge_data>
+std::set<std::shared_ptr<graph_node<node_data, edge_data>>>
+node_graph<node_data, edge_data>::NodeGetAll()
+{
+        return this->Nodes;
+}
+
 
         // Graph node.
 
@@ -419,8 +429,8 @@ template<typename node_data, typename edge_data>
 void
 graph_edge<node_data, edge_data>::Cut()
 {
-        const graph_node<node_data, edge_data>* LockSource      = this->Source.lock().get();
-        const graph_node<node_data, edge_data>* LockDestination = this->Destination.lock().get();
+        graph_node<node_data, edge_data>* LockSource      = this->Source.lock().get();
+        graph_node<node_data, edge_data>* LockDestination = this->Destination.lock().get();
         
         if( LockSource )
                 LockSource->Edges.erase( std::shared_ptr<graph_edge<node_data, edge_data>>(this) );
