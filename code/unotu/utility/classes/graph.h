@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <set>
+#include <stdexcept>
 
   /////////////////////////////////
  /// Simple directional graph. ///
@@ -57,6 +58,9 @@ class graph_node
         
 public:
         
+        graph_node( const node_data Data );
+        ~graph_node();
+        
         node_data DataGet();
         void DataSet( const node_data Data );
         
@@ -109,6 +113,7 @@ public:
 private:
         graph_node_weak Source;
         graph_node_weak Destination;
+        edge_data Data;
 };
 
         //:: Implementation.
@@ -166,6 +171,23 @@ void node_graph<node_data, edge_data>::NodeRemoveAll()
 }
 
         // Graph node.
+
+template<typename node_data, typename edge_data>
+graph_node<node_data, edge_data>::graph_node(
+        const node_data Data
+)
+{
+        this->Data = Data;
+}
+
+template<typename node_data, typename edge_data>
+graph_node<node_data, edge_data>::~graph_node()
+{
+        for( auto Edge : this->Edges ) {
+                Edge->Cut();
+        }
+}
+
 
 template<typename node_data, typename edge_data>
 node_data graph_node<node_data, edge_data>::DataGet()
@@ -334,6 +356,78 @@ void graph_node<node_data, edge_data>::Disconnect(
         for( auto Edge : RelevantEdges ) {
                 Edge->Cut();
         }
+}
+
+        // Graph edge.
+
+template<typename node_data, typename edge_data>
+graph_edge<node_data, edge_data>::graph_edge(
+        std::shared_ptr<graph_node<node_data, edge_data>> Source,
+        std::shared_ptr<graph_node<node_data, edge_data>> Destination,
+        const edge_data Data
+)
+{
+        if( !Source || !Destination )
+                throw std::invalid_argument("Tried to create an edge between nodes, but one of the passed nodes is null.");
+        
+        this->Source      = Source;
+        this->Destination = Destination;
+        this->Data        = Data;
+}
+
+template<typename node_data, typename edge_data>
+std::weak_ptr<graph_node<node_data, edge_data>>
+graph_edge<node_data, edge_data>::SourceGet()
+{
+        return this->Source;
+}
+
+template<typename node_data, typename edge_data>
+std::weak_ptr<graph_node<node_data, edge_data>>
+graph_edge<node_data, edge_data>::DestinationGet()
+{
+        return this->Destination;
+}
+
+template<typename node_data, typename edge_data>
+std::weak_ptr<graph_node<node_data, edge_data>>
+graph_edge<node_data, edge_data>::OtherGet(
+        std::shared_ptr<graph_node<node_data, edge_data>> Node
+)
+{
+        if( Node == Source.lock() ) {
+                return Destination;
+        } else {
+                return Source;
+        }
+}
+
+template<typename node_data, typename edge_data>
+std::weak_ptr<graph_node<node_data, edge_data>>
+graph_edge<node_data, edge_data>::OtherGet(
+        graph_node<node_data, edge_data>* Node
+)
+{
+        if( Node == Source.lock() ) {
+                return Destination;
+        } else {
+                return Source;
+        }
+}
+
+template<typename node_data, typename edge_data>
+void
+graph_edge<node_data, edge_data>::Cut()
+{
+        const graph_node<node_data, edge_data>* LockSource      = this->Source.lock().get();
+        const graph_node<node_data, edge_data>* LockDestination = this->Destination.lock().get();
+        
+        if( LockSource )
+                LockSource->Edges.erase( std::shared_ptr<graph_edge<node_data, edge_data>>(this) );
+        
+        if( LockDestination )
+                LockDestination->Edges.erase( std::shared_ptr<graph_edge<node_data, edge_data>>(this) );
+        
 }
 
 } // namespace unotu
