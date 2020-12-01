@@ -10,6 +10,13 @@ namespace unotu
 
 struct filter_node
 {
+        filter_node() = default;
+        filter_node(
+                dpoint Position,
+                std::string Name = "No name"
+        ) : Position{Position}, Name{Name} {};
+        
+        dpoint Position;
         std::string Name = "No name";
 };
 
@@ -23,7 +30,7 @@ struct w_filtergraph : public unotui::widget
         
         double Viewzone = 1.0;
         
-        std::pair<double, double> ViewOrigin = { 0.0, 0.0 };
+        dpoint ViewOrigin = { 0.0, 0.0 };
         
         node_graph< filter_node, void* > Graph;
         
@@ -35,6 +42,7 @@ struct w_filtergraph : public unotui::widget
         w_filtergraph();
         
         void OnRefresh( unotui::ValidityState_t ) override;
+        void OnDraw() override;
         
 };
 
