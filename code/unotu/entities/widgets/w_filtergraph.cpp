@@ -27,7 +27,6 @@ namespace unotu
         
         void w_filtergraph::OnTick()
         {
-                
         }
         
         void w_filtergraph::OnRefresh( unotui::ValidityState_t )
@@ -36,8 +35,6 @@ namespace unotu
                 
                 gText.Clear();
                 gColor.Clear();
-                
-                printf( "%i nodes total!\n", (int)Nodes.size() );
                 
                 for( auto Node : Nodes ) {
                         const filter_node Data = Node->DataGet();
@@ -59,21 +56,48 @@ namespace unotu
         
         void w_filtergraph::OnMousePressed( const int Button )
         {
-                
+                switch( Button ) {
+                        case GLFW_MOUSE_BUTTON_MIDDLE: {
+                                this->StartDragging();
+                        }
+                }
         }
         
         void w_filtergraph::OnMouseReleased( const int Button, const bool )
         {
-                
+                switch( Button ) {
+                        case GLFW_MOUSE_BUTTON_MIDDLE: {
+                                this->StopDragging();
+                        }
+                }
         }
         
         point w_filtergraph::ToRealPosition( const dpoint NodePosition )
         {
-                const double MagicNumber = 512;
-                const point WindowSize = point(1.0f);
-                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/MagicNumber;
+                const point WindowSize   = point(1.0f);
+                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/w_filtergraph::PixelsPerGraphUnit;
+                
                 const dpoint ShiftedPosition = NodePosition - ViewOrigin;
+                
                 return point( ShiftedPosition / Ratio / this->Viewzone );
+        }
+        
+        dpoint w_filtergraph::ToImaginaryPosition( const point Position )
+        {
+                const point WindowSize   = point(1.0f);
+                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/w_filtergraph::PixelsPerGraphUnit;
+                const dpoint ShiftedPosition = (dpoint)Position * Ratio * this->Viewzone;
+                return ShiftedPosition - ViewOrigin;
+        }
+        
+        void w_filtergraph::StartDragging()
+        {
+                
+        }
+        
+        void w_filtergraph::StopDragging()
+        {
+                
         }
         
 } // namespace unotu

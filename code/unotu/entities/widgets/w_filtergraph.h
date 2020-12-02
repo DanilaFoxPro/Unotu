@@ -25,12 +25,16 @@ struct w_filtergraph : public unotui::widget
         
         //:: Data.
         
+        const static int PixelsPerGraphUnit = 512;
+        
         const double MinimumViewzone = 0.2;
         const double MaximumViewzone = 20.0;
         
         double Viewzone = 1.0;
         
         dpoint ViewOrigin = { -0.5, -0.5 };
+        
+        //
         
         node_graph< filter_node, void* > Graph;
         
@@ -52,7 +56,11 @@ struct w_filtergraph : public unotui::widget
         
         //:: Helpers.
         
-        point ToRealPosition( const dpoint NodePosition );
+        point  ToRealPosition( const dpoint NodePosition );
+        dpoint ToImaginaryPosition( const point Position );
+        
+        void StartDragging();
+        void StopDragging();
         
 };
 

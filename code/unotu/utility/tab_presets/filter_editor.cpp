@@ -13,7 +13,9 @@ filter_editor::filter_editor()
 
 void filter_editor::PostConstruct()
 {
-        this->AddChild( new w_filtergraph() );
+        std::shared_ptr<w_filtergraph> Graph = this->AddChild( new w_filtergraph() );
+        Graph->Position = point(0, 1.0f);
+        Graph->Size = point(1.0f, 1.0f);
 }
 
 
