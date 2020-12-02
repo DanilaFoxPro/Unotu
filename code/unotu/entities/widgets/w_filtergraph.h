@@ -36,6 +36,12 @@ struct w_filtergraph : public unotui::widget
         
         //
         
+        bool bDragging = false;
+        dpoint DragOrigin{};
+        dpoint OldOrigin{};
+        
+        //
+        
         node_graph< filter_node, void* > Graph;
         
         unotui::color_geometry gColor;
@@ -53,14 +59,21 @@ struct w_filtergraph : public unotui::widget
         
         void OnMousePressed( const int Button ) override;
         void OnMouseReleased( const int Button, const bool bFocusingClick ) override;
+        void OnKeyInput( const int& Action, const int& Key, const int& Modifiers ) override;
         
         //:: Helpers.
         
         point  ToRealPosition( const dpoint NodePosition );
         dpoint ToImaginaryPosition( const point Position );
+        dpoint MousePositionInGraphCoordinates();
         
         void StartDragging();
         void StopDragging();
+        
+        void AdjustViewToDrag();
+        
+        dpoint DragOffset();
+        dpoint OriginDifference();
         
 };
 
