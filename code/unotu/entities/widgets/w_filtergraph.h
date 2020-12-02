@@ -41,8 +41,14 @@ struct w_filtergraph : public unotui::widget
         
         w_filtergraph();
         
+        void OnTick() override;
         void OnRefresh( unotui::ValidityState_t ) override;
         void OnDraw() override;
+        
+        //:: Input.
+        
+        void OnMousePressed( const int Button ) override;
+        void OnMouseReleased( const int Button, const bool bFocusingClick ) override;
         
         //:: Helpers.
         

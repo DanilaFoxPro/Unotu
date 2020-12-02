@@ -25,6 +25,11 @@ namespace unotu
                 );
         }
         
+        void w_filtergraph::OnTick()
+        {
+                
+        }
+        
         void w_filtergraph::OnRefresh( unotui::ValidityState_t )
         {
                 auto Nodes = Graph.NodeGetAll();
@@ -50,6 +55,16 @@ namespace unotu
         void w_filtergraph::OnDraw()
         {
                 gText.Draw();
+        }
+        
+        void w_filtergraph::OnMousePressed( const int Button )
+        {
+                
+        }
+        
+        void w_filtergraph::OnMouseReleased( const int Button, const bool )
+        {
+                
         }
         
         point w_filtergraph::ToRealPosition( const dpoint NodePosition )
