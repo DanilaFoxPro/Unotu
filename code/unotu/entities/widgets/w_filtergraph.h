@@ -30,7 +30,7 @@ struct w_filtergraph : public unotui::widget
         
         double Viewzone = 1.0;
         
-        dpoint ViewOrigin = { 0.0, 0.0 };
+        dpoint ViewOrigin = { -0.5, -0.5 };
         
         node_graph< filter_node, void* > Graph;
         
@@ -43,6 +43,10 @@ struct w_filtergraph : public unotui::widget
         
         void OnRefresh( unotui::ValidityState_t ) override;
         void OnDraw() override;
+        
+        //:: Helpers.
+        
+        point ToRealPosition( const dpoint NodePosition );
         
 };
 

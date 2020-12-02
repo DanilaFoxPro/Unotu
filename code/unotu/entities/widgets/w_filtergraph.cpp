@@ -2,6 +2,7 @@
 
 namespace unotu
 {
+        
         w_filtergraph::w_filtergraph()
         {
                 Graph.NodeAdd(
@@ -38,7 +39,7 @@ namespace unotu
                         gText.AddText(
                                 Data.Name,
                                 32,
-                                Data.Position
+                                this->ToRealPosition( Data.Position )
                         );
                 }
                 
@@ -50,4 +51,14 @@ namespace unotu
         {
                 gText.Draw();
         }
+        
+        point w_filtergraph::ToRealPosition( const dpoint NodePosition )
+        {
+                const double MagicNumber = 512;
+                const point WindowSize = point(1.0f);
+                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/MagicNumber;
+                const dpoint ShiftedPosition = NodePosition - ViewOrigin;
+                return point( ShiftedPosition / Ratio / this->Viewzone );
+        }
+        
 } // namespace unotu
