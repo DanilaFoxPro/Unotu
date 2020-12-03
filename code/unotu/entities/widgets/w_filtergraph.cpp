@@ -6,7 +6,8 @@ namespace unotu
         w_filtergraph::w_filtergraph()
         {
                 
-                this->bKeyboardFocusable = true;
+                this->bKeyboardFocusable    = true;
+                this->bAcceptExternalScroll = true;
                 
                 Graph.NodeAdd(
                         std::make_shared<graph_node<filter_node, void*>>( filter_node(
@@ -42,11 +43,13 @@ namespace unotu
                 gText.Clear();
                 gColor.Clear();
                 
+                const int TextSize = int( 32 / this->Viewzone );
+                
                 for( auto Node : Nodes ) {
                         const filter_node Data = Node->DataGet();
                         gText.AddText(
                                 Data.Name,
-                                32,
+                                TextSize,
                                 this->ToRealPosition( Data.Position )
                         );
                 }
@@ -65,6 +68,23 @@ namespace unotu
         void w_filtergraph::OnDraw()
         {
                 gText.Draw();
+        }
+        
+        void w_filtergraph::OnEvent( std::shared_ptr<unotui::widget_event> Event )
+        {
+                auto ScrollLines = dynamic_cast<unotui::we_scrolllines*>(Event.get());
+                
+                if( ScrollLines ) {
+                        this->ZoomBy( 0.2 * ScrollLines->Lines );
+                        Event->Handle();
+                }
+                
+                auto ScrollPages = dynamic_cast<unotui::we_scrollpages*>(Event.get());
+                if( ScrollPages ) {
+                        this->ZoomBy( 0.5 * ScrollPages->Pages );
+                        Event->Handle();
+                }
+                
         }
         
         void w_filtergraph::OnMousePressed( const int Button )
@@ -177,6 +197,22 @@ namespace unotu
         dpoint w_filtergraph::OriginDifference()
         {
                 return this->ViewOrigin - this->OldOrigin;
+        }
+        
+        void w_filtergraph::ZoomBy( double Amount )
+        {
+                const double NewViewzone = unotui::clamp( this->Viewzone - Amount, 0.2, 20.0 );
+                
+                // Somehow the dragging code also compensates for zoom offset.
+                if( !bDragging ) {
+                        this->StartDragging();
+                        this->Viewzone = NewViewzone;
+                        this->StopDragging();
+                } else {
+                        this->Viewzone = NewViewzone;
+                }
+                
+                this->Invalidate( unotui::ValidityState::ParametersUpdated );
         }
         
 } // namespace unotu

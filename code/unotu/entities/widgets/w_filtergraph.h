@@ -57,6 +57,8 @@ struct w_filtergraph : public unotui::widget
         
         //:: Input.
         
+        void OnEvent( std::shared_ptr<unotui::widget_event> Event ) override;
+        
         void OnMousePressed( const int Button ) override;
         void OnMouseReleased( const int Button, const bool bFocusingClick ) override;
         void OnKeyInput( const int& Action, const int& Key, const int& Modifiers ) override;
@@ -74,6 +76,8 @@ struct w_filtergraph : public unotui::widget
         
         dpoint DragOffset();
         dpoint OriginDifference();
+        
+        void ZoomBy( double Amount );
         
 };
 
