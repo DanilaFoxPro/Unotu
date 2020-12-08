@@ -1,4 +1,7 @@
 
+set( SQLITECPP_RUN_CPPLINT OFF CACHE BOOL "SQLite code style check." )
+set( SQLITECPP_RUN_CPPCHECK OFF CACHE BOOL "SQLite code static analysis." )
+
 add_subdirectory( UnotUI EXCLUDE_FROM_ALL )
 add_subdirectory( SQLiteCpp-3.0.0 EXCLUDE_FROM_ALL )
 
