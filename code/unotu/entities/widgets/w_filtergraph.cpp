@@ -89,7 +89,16 @@ namespace unotu
         
         void w_filtergraph::OnMousePressed( const int Button )
         {
+                
+                const bool bShiftPressed = unotui::IsKeyPressed( GLFW_KEY_LEFT_SHIFT ) || unotui::IsKeyPressed( GLFW_KEY_RIGHT_SHIFT );
+                
                 switch( Button ) {
+                        case GLFW_MOUSE_BUTTON_LEFT: {
+                                if( bShiftPressed ) {
+                                        this->StartDragging();
+                                }
+                                break;
+                        }
                         case GLFW_MOUSE_BUTTON_MIDDLE: {
                                 this->StartDragging();
                                 break;
@@ -100,6 +109,9 @@ namespace unotu
         void w_filtergraph::OnMouseReleased( const int Button, const bool )
         {
                 switch( Button ) {
+                        case GLFW_MOUSE_BUTTON_LEFT: {
+                                this->StopDragging();
+                        }
                         case GLFW_MOUSE_BUTTON_MIDDLE: {
                                 this->StopDragging();
                                 break;
