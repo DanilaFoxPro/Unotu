@@ -25,7 +25,8 @@ struct w_filtergraph : public unotui::widget
         
         //:: Data.
         
-        const static int PixelsPerGraphUnit = 512;
+        const static int  PixelsPerGraphUnit = 512;
+        const static uint NodeMaxWidth = 16;
         
         const double MinimumViewzone = 0.2;
         const double MaximumViewzone = 20.0;

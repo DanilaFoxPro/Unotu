@@ -47,11 +47,56 @@ namespace unotu
                 
                 for( auto Node : Nodes ) {
                         const filter_node Data = Node->DataGet();
+                        
+                        const point RealPosition = this->ToRealPosition( Data.Position );
+                        
+                        const std::string& NodeName = Data.Name;
+                        const auto NodeNameLines = unotui::SplitText( NodeName, std::size_t(w_filtergraph::NodeMaxWidth) );
+                        
                         gText.AddText(
                                 Data.Name,
+                                NodeNameLines,
                                 TextSize,
-                                this->ToRealPosition( Data.Position )
+                                RealPosition,
+                                unotui::color::black
                         );
+                        
+                        const std::size_t NodeNameHeight = NodeNameLines.size();
+                        const std::size_t NodeNameWidth  = unotui::LongestLine( NodeNameLines );
+                        
+                        const unotui::rectangle Bounds = unotui::rectangle(
+                                point(
+                                        RealPosition.x,
+                                        RealPosition.y
+                                ),
+                                point(
+                                        RealPosition.x + pixel(TextSize*NodeNameWidth/2),
+                                        RealPosition.y - pixel(TextSize*NodeNameHeight)
+                                )
+                        );
+                        
+                        gColor.AddRectangle( unotui::colored_rectangle (
+                                Bounds,
+                                unotui::color::light_sky_blue
+                        ) );
+                        
+                        gColor.AddOutline(
+                                Bounds,
+                                int( -5/this->Viewzone ),
+                                unotui::TheTheme.PrimaryBack,
+                                unotui::TheTheme.PrimaryLit,
+                                unotui::TheTheme.PrimaryLit,
+                                unotui::TheTheme.PrimaryBack
+                        );
+                        
+                        gColor.AddOutline(
+                                unotui::colored_rectangle(
+                                        Bounds,
+                                        unotui::TheTheme.Primary
+                                ),
+                                int( 1/this->Viewzone )
+                        );
+                        
                 }
                 
                 gText.AddText(
@@ -62,11 +107,13 @@ namespace unotu
                 );
                 
                 gText.Update();
+                gColor.Update();
                 
         }
         
         void w_filtergraph::OnDraw()
         {
+                gColor.Draw();
                 gText.Draw();
         }
         
