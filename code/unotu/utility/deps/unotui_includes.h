@@ -8,3 +8,4 @@ using unotui::pixel;
 using unotui::ratio;
 using unotui::rgb;
 using unotui::rgba;
+using unotui::uint;
