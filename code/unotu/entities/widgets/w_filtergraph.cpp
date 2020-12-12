@@ -9,6 +9,9 @@ namespace unotu
                 this->bKeyboardFocusable    = true;
                 this->bAcceptExternalScroll = true;
                 
+                // Testing!
+                this->bValidateOnRefresh = false;
+                
                 Graph.NodeAdd(
                         std::make_shared<graph_node<filter_node, void*>>( filter_node(
                                 {0.0, 0.0},
@@ -105,6 +108,10 @@ namespace unotu
                         point(0, 32),
                         unotui::color::green*0.3f
                 );
+                
+                // Draw line from graph origin to mouse position.
+                gColor.AddLine( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 10, unotui::color::black );
+                gColor.AddLine( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 6, unotui::color::red );
                 
                 gText.Update();
                 gColor.Update();
