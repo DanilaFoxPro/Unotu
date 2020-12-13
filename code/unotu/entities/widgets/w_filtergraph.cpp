@@ -32,7 +32,6 @@ namespace unotu
                         Graph.NodeAdd( Node );
                 }
                 
-                // BUG: Those node connections result in crashes on exit.
                 Nodez[0]->ConnectTo( Nodez[2] );
                 Nodez[1]->ConnectTo( Nodez[2] );
                 

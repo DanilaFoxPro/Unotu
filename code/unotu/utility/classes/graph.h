@@ -72,6 +72,7 @@ public:
         std::set<graph_node_shared> ConnectedOutgoingGet();
         std::set<graph_node_shared> ConnectedIncomingGet();
         
+        graph_edge_shared           EdgeFind( graph_edge<node_data, edge_data>* Edge );
         std::set<graph_edge_shared> EdgesGet( graph_node_shared Node );
         std::set<graph_edge_shared> EdgesGet();
         std::set<graph_edge_shared> EdgesOutgoingGet();
@@ -157,7 +158,6 @@ void node_graph<node_data, edge_data>::NodeRemove(
         graph_node<node_data, edge_data>* Node
 )
 {
-        // Works because shared_ptr comparisons compare stored pointers, and std::set should respect that.
         // assert( this->ParentGraph, "Should have parent graph." );
         return this->NodeRemove( std::shared_ptr<graph_node<node_data, edge_data>>( this->ParentGraph->NodeGetShared( Node ) ) );
 }
@@ -288,6 +288,20 @@ graph_node<node_data, edge_data>::ConnectedOutgoingGet()
         }
         Outgoing.erase( std::shared_ptr<graph_node<node_data, edge_data>>() );
         return Outgoing;
+}
+
+template<typename node_data, typename edge_data>
+std::shared_ptr<graph_edge<node_data, edge_data>>
+graph_node<node_data, edge_data>::EdgeFind( graph_edge<node_data, edge_data>* Edge )
+{
+        for( auto SetEdge : Edges ) {
+                if( SetEdge.get() == Edge ) {
+                        return SetEdge;
+                }
+        }
+        
+        return {};
+        
 }
 
 template<typename node_data, typename edge_data>
@@ -457,11 +471,21 @@ graph_edge<node_data, edge_data>::Cut()
         graph_node<node_data, edge_data>* LockSource      = this->Source.lock().get();
         graph_node<node_data, edge_data>* LockDestination = this->Destination.lock().get();
         
+        std::shared_ptr<graph_edge<node_data, edge_data>> SharedEdge;
+        
+        if( LockSource ) {
+                SharedEdge = LockSource->EdgeFind( this );
+        } else if ( LockDestination ) {
+                SharedEdge = LockDestination->EdgeFind( this );
+        } else {
+                return;
+        }
+        
         if( LockSource )
-                LockSource->Edges.erase( std::shared_ptr<graph_edge<node_data, edge_data>>(this) );
+                LockSource->Edges.erase( SharedEdge );
         
         if( LockDestination )
-                LockDestination->Edges.erase( std::shared_ptr<graph_edge<node_data, edge_data>>(this) );
+                LockDestination->Edges.erase( SharedEdge );
         
 }
 
