@@ -43,6 +43,9 @@ struct w_filtergraph : public unotui::widget
         
         //
         
+        using graph_type = node_graph< filter_node, void* >;
+        using node_type  = graph_node< filter_node, void* >;
+        
         node_graph< filter_node, void* > Graph;
         
         unotui::color_geometry gColor;

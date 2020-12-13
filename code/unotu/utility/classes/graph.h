@@ -38,6 +38,7 @@ public:
         void NodeRemoveAll();
         
         std::set< graph_node_shared > NodeGetAll();
+        std::shared_ptr< graph_node<node_data, edge_data> > NodeGetShared( graph_node<node_data, edge_data>* Node );
         
 private:
         
@@ -179,6 +180,19 @@ node_graph<node_data, edge_data>::NodeGetAll()
         return this->Nodes;
 }
 
+template<typename node_data, typename edge_data>
+std::shared_ptr< graph_node<node_data, edge_data> >
+node_graph<node_data, edge_data>::NodeGetShared( graph_node<node_data, edge_data>* Node )
+{
+        auto Iterator = Nodes.find( graph_node_shared( Node ) );
+        
+        if( Iterator != Nodes.end() ) {
+                return *Iterator;
+        } else {
+                return {};
+        }
+        
+}
 
         // Graph node.
 
@@ -233,7 +247,7 @@ graph_node<node_data, edge_data>::ConnectedGet()
         for( auto Edge : this->Edges ) {
                 std::shared_ptr<graph_node<node_data, edge_data>> OtherNode = Edge->GetOther( this ).lock();
                 if( OtherNode ) {
-                        Connected.push_back( OtherNode );
+                        Connected.insert( OtherNode );
                 }
         }
         return Connected;
@@ -249,7 +263,7 @@ graph_node<node_data, edge_data>::ConnectedIncomingGet()
                 std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
                 // This supports self-connection.
                 if( Destination == this  ) {
-                        Incoming.push_back( Source );
+                        Incoming.insert( Source );
                 }
         }
         Incoming.erase( {} );
@@ -266,7 +280,7 @@ graph_node<node_data, edge_data>::ConnectedOutgoingGet()
                 std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
                 // This supports self-connection.
                 if( Source == this  ) {
-                        Outgoing.push_back( Destination );
+                        Outgoing.insert( Destination );
                 }
         }
         Outgoing.erase( {} );
@@ -284,7 +298,7 @@ graph_node<node_data, edge_data>::EdgesGet(
                 std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
                 std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
                 if( Source == Node || Destination == Node ) {
-                        Connected.push_back( Destination );
+                        Connected.insert( Destination );
                 }
         }
         Connected.erase( {} );
@@ -306,7 +320,7 @@ graph_node<node_data, edge_data>::EdgesIncomingGet()
         for( auto Edge : this->Edges ) {
                 const std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
                 if( Destination == this ) {
-                        Incoming.push_back( Edge );
+                        Incoming.insert( Edge );
                 }
         }
         Incoming.erase( {} );
@@ -321,7 +335,7 @@ graph_node<node_data, edge_data>::EdgesOutgoingGet()
         for( auto Edge : this->Edges ) {
                 const std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
                 if( Source == this ) {
-                        Outgoing.push_back( Edge );
+                        Outgoing.insert( Edge );
                 }
         }
         Outgoing.erase( {} );
@@ -337,19 +351,19 @@ bool graph_node<node_data, edge_data>::ConnectTo(
         if( !Destination )
                 return false;
         
-        if( this->ParentGraph && Destination->ParentGraph == this->ParentGraph )
+        if( !this->ParentGraph || Destination->ParentGraph != this->ParentGraph )
                 return false;
         
         // Shared pointer to 'this' needed, so the edge has a connected weak pointer.
-        std::shared_ptr< graph_node<node_data, edge_data> > SharedThis = ParentGraph.NodeGetShared(this);
+        std::shared_ptr< graph_node<node_data, edge_data> > SharedThis = ParentGraph->NodeGetShared(this);
         
         if( !SharedThis )
                 return false;
         
         std::shared_ptr< graph_edge<node_data, edge_data> > Edge = std::make_shared<graph_edge<node_data, edge_data>>( SharedThis, Destination, Data );
         
-        this->Edges.push_back( Edge );
-        Destination->Edges.push_back( Edge );
+        this->Edges.insert( Edge );
+        Destination->Edges.insert( Edge );
         
         return true;
         

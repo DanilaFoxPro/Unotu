@@ -18,18 +18,22 @@ namespace unotu
                                 "I'm the origin!"
                         ) )
                 );
-                Graph.NodeAdd(
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.1, 0.5}) )
-                );
-                Graph.NodeAdd(
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.8, 0.6}) )
-                );
-                Graph.NodeAdd(
+                
+                std::vector< std::shared_ptr<w_filtergraph::node_type> > Nodez = {
+                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.1, 0.5}) ),
+                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.8, 0.6}) ),
                         std::make_shared<graph_node<filter_node, void*>>( filter_node(
                                 {0.5, 0.8},
                                 "OUT"
                         ) )
-                );
+                };
+                
+                Nodez[0]->ConnectTo( Nodez[2] );
+                Nodez[1]->ConnectTo( Nodez[2] );
+                
+                for( auto Node : Nodez ) {
+                        Graph.NodeAdd( Node );
+                }
         }
         
         void w_filtergraph::OnTick()
@@ -109,9 +113,8 @@ namespace unotu
                         unotui::color::green*0.3f
                 );
                 
-                // Draw line from graph origin to mouse position.
-                gColor.AddLine( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 10, unotui::color::black );
-                gColor.AddLine( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 6, unotui::color::red );
+                // Draw arrow from graph origin to mouse position.
+                gColor.AddArrow( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 10, unotui::color::black );
                 
                 gText.Update();
                 gColor.Update();
