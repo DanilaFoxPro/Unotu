@@ -1,6 +1,8 @@
 #ifndef __UNOTU_CODE_UTILITY_CLASSES_GRAPH_H_
 #define __UNOTU_CODE_UTILITY_CLASSES_GRAPH_H_
 
+#include <unotu/utility/deps/unotui_includes.h> // assert
+
 #include <memory>
 #include <set>
 #include <stdexcept>
@@ -158,7 +160,7 @@ void node_graph<node_data, edge_data>::NodeRemove(
         graph_node<node_data, edge_data>* Node
 )
 {
-        // assert( this->ParentGraph, "Should have parent graph." );
+        assert( this->ParentGraph != nullptr, "Should have parent graph." );
         return this->NodeRemove( std::shared_ptr<graph_node<node_data, edge_data>>( this->ParentGraph->NodeGetShared( Node ) ) );
 }
 
@@ -371,24 +373,15 @@ bool graph_node<node_data, edge_data>::ConnectTo(
         if( !this->ParentGraph || Destination->ParentGraph != this->ParentGraph )
                 return false;
         
-        printf( "Getting shared ptr.\n" );
-        
         // Shared pointer to 'this' needed, so the edge has a connected weak pointer.
         std::shared_ptr< graph_node<node_data, edge_data> > SharedThis = ParentGraph->NodeGetShared(this);
         
-        if( !SharedThis )
-                return false;
-        
-        printf( "Creating edge.\n" );
+        assert( SharedThis.get() != nullptr , "Parent graph should be able to provide a shared copy." );
         
         std::shared_ptr< graph_edge<node_data, edge_data> > Edge = std::make_shared<graph_edge<node_data, edge_data>>( SharedThis, Destination, Data );
         
-        printf( "Inserting edge.\n" );
-        
         this->Edges.insert( Edge );
         Destination->Edges.insert( Edge );
-        
-        printf( "Edge inserted.\n" );
         
         return true;
         

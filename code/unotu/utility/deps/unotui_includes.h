@@ -1,3 +1,5 @@
+#define UNOTUI_USE_UNOTUI_ASSERT
+
 #include <unotui>
 
 using unotui::point;
