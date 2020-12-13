@@ -28,12 +28,14 @@ namespace unotu
                         ) )
                 };
                 
-                Nodez[0]->ConnectTo( Nodez[2] );
-                Nodez[1]->ConnectTo( Nodez[2] );
-                
                 for( auto Node : Nodez ) {
                         Graph.NodeAdd( Node );
                 }
+                
+                // BUG: Those node connections result in crashes on exit.
+                Nodez[0]->ConnectTo( Nodez[2] );
+                Nodez[1]->ConnectTo( Nodez[2] );
+                
         }
         
         void w_filtergraph::OnTick()
@@ -103,6 +105,25 @@ namespace unotu
                                 ),
                                 int( 1/this->Viewzone )
                         );
+                        
+                        const fpoint NodeCenter = Bounds.Center();
+                        
+                        const auto ConnectedNodes = Node->ConnectedOutgoingGet();
+                        for( auto ConnectedNode : ConnectedNodes ) {
+                                const filter_node ConnectedData = ConnectedNode->DataGet();
+                                const point ConnectedRealPosition = this->ToRealPosition( ConnectedData.Position );
+                                
+                                gColor.AddArrow(
+                                        NodeCenter,
+                                        ConnectedRealPosition,
+                                        6 /this->Viewzone,
+                                        16 /this->Viewzone,
+                                        32/this->Viewzone,
+                                        unotui::color::black
+                                );
+                                
+                        }
+                        
                         
                 }
                 
