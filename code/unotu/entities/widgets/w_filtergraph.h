@@ -4,21 +4,10 @@
 #include <unotu\utility\deps\unotui_includes.h>
 
 #include <unotu\utility\classes\graph.h>
+#include <unotu\entities\filter_graph\node.h>
 
 namespace unotu
 {
-
-struct filter_node
-{
-        filter_node() = default;
-        filter_node(
-                dpoint Position,
-                std::string Name = "No name"
-        ) : Position{Position}, Name{Name} {};
-        
-        dpoint Position;
-        std::string Name = "No name";
-};
 
 struct w_filtergraph : public unotui::widget
 {

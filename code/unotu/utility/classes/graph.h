@@ -64,7 +64,8 @@ public:
         graph_node( const node_data Data );
         ~graph_node();
         
-        node_data DataGet();
+        node_data  DataGet();
+        node_data& DataReferenceGet();
         void DataSet( const node_data Data );
         
         node_graph<node_data, edge_data>* GraphGet();
@@ -225,6 +226,12 @@ node_data graph_node<node_data, edge_data>::DataGet()
 }
 
 template<typename node_data, typename edge_data>
+node_data& graph_node<node_data, edge_data>::DataReferenceGet()
+{
+        return this->Data;
+}
+
+template<typename node_data, typename edge_data>
 void graph_node<node_data, edge_data>::DataSet( const node_data Data )
 {
         this->Data = Data;
@@ -250,7 +257,7 @@ graph_node<node_data, edge_data>::ConnectedGet()
 {
         std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Connected;
         for( auto Edge : this->Edges ) {
-                std::shared_ptr<graph_node<node_data, edge_data>> OtherNode = Edge->GetOther( this ).lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> OtherNode = Edge->OtherGet( this ).lock();
                 if( OtherNode ) {
                         Connected.insert( OtherNode );
                 }
@@ -264,14 +271,14 @@ graph_node<node_data, edge_data>::ConnectedIncomingGet()
 {
         std::set<std::shared_ptr<graph_node<node_data, edge_data>>> Incoming;
         for( auto Edge : this->Edges ) {
-                std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
-                std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->SourceGet().lock();
+                std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->DestinationGet().lock();
                 // This supports self-connection.
-                if( Destination == this  ) {
+                if( Destination.get() == this  ) {
                         Incoming.insert( Source );
                 }
         }
-        Incoming.erase( {} );
+        Incoming.erase( std::shared_ptr<graph_node<node_data, edge_data>>() );
         return Incoming;
 }
 
@@ -337,12 +344,13 @@ graph_node<node_data, edge_data>::EdgesIncomingGet()
 {
         std::set<std::shared_ptr<graph_edge<node_data, edge_data>>> Incoming;
         for( auto Edge : this->Edges ) {
-                const std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->GetDestination().lock();
-                if( Destination == this ) {
+                const std::shared_ptr<graph_node<node_data, edge_data>> Destination = Edge->DestinationGet().lock();
+                if( Destination.get() == this ) {
                         Incoming.insert( Edge );
                 }
         }
-        Incoming.erase( {} );
+        // Remove null pointers.
+        Incoming.erase( std::shared_ptr<graph_edge<node_data, edge_data>>() );
         return Incoming;
 }
 
@@ -352,12 +360,13 @@ graph_node<node_data, edge_data>::EdgesOutgoingGet()
 {
         std::set<std::shared_ptr<graph_edge<node_data, edge_data>>> Outgoing;
         for( auto Edge : this->Edges ) {
-                const std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->GetSource().lock();
-                if( Source == this ) {
+                const std::shared_ptr<graph_node<node_data, edge_data>> Source = Edge->SourceGet().lock();
+                if( Source.get() == this ) {
                         Outgoing.insert( Edge );
                 }
         }
-        Outgoing.erase( {} );
+        // Remove null pointers.
+        Outgoing.erase( std::shared_ptr<graph_edge<node_data, edge_data>>() );
         return Outgoing;
 }
 

@@ -107,6 +107,7 @@ namespace unotu
                         
                         const fpoint NodeCenter = Bounds.Center();
                         
+                        // Draw arrows between this node and all connected nodes.
                         const auto ConnectedNodes = Node->ConnectedOutgoingGet();
                         for( auto ConnectedNode : ConnectedNodes ) {
                                 const filter_node ConnectedData = ConnectedNode->DataGet();

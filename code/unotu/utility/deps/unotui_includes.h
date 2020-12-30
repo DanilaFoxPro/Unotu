@@ -11,3 +11,8 @@ using unotui::ratio;
 using unotui::rgb;
 using unotui::rgba;
 using unotui::uint;
+
+// Fancy vector shortcuts.
+
+using unotui::operator+;
+using unotui::operator+=;
