@@ -53,11 +53,14 @@ struct filter_node
                 dpoint Position,
                 std::string Name = "No name"
         ) : Position{Position}, Name{Name} {};
+        virtual ~filter_node();
         
         std::weak_ptr<graph_node_type> ParentGraphNode;
         
         dpoint Position;
         std::string Name = "No name";
+        
+        filter_node_parameter* CachedOutput = nullptr;
         
         graph_node_type* ParentNodeGet() const
         {
@@ -75,7 +78,8 @@ struct filter_node
         std::vector<filter_node_parameter*> InputParametersGet()
         {
                 std::vector<filter_node_parameter*> Output;
-                for( auto Node : ParentNodeGet()->ConnectedIncomingGet() ) {
+                auto Connected = ParentNodeGet()->ConnectedIncomingGet();
+                for( auto Node : Connected ) {
                         auto& FilterNode = Node->DataReferenceGet();
                         Output += FilterNode.OutputGet();
                 }
@@ -85,10 +89,13 @@ struct filter_node
         virtual fnp_type OutputTypeGet() const { return fnp_type::none; }
         virtual filter_node_parameter* OutputGet() { return nullptr; }
         
+        filter_node_parameter* CachedOutputSet( filter_node_parameter* Parameter );
+        
 };
 
 struct filter_node_parameter
 {
+        virtual ~filter_node_parameter() = default;
         
         fnp_type Type = fnp_type::none;
         
@@ -181,6 +188,11 @@ struct fnp_boolean: public filter_node_parameter
         {
                 this->Type = fnp_type::boolean;
         }
+        fnp_boolean( const bool Boolean )
+        {
+                this->Type = fnp_type::boolean;
+                this->Boolean = Boolean;
+        }
         
         bool Boolean;
         std::string FriendlyName() const override
@@ -197,6 +209,11 @@ struct fnp_boolean: public filter_node_parameter
 
 struct fn_out: public filter_node
 {
+        fn_out()
+        {
+                this->Name = "OUT";
+                this->Position = {0.5, 0.8};
+        }
         bool IsAcceptableParameter( filter_node_parameter* Parameter ) const override
         {
                 return Parameter->Type == fnp_type::boolean && InputCountGet() < 1;
@@ -208,10 +225,43 @@ struct fn_out: public filter_node
         filter_node_parameter* OutputGet() override
         {
                 auto Parameters = this->InputParametersGet();
-                throw user_error_exception( "OUT requires a boolean parameter.", this );
+                if( Parameters.size() != 1 ) {
+                        if( Parameters.size() == 0 ) {
+                                throw user_error_exception( "OUT requires a checkmark parameter.", this );
+                        } else {
+                                throw user_error_exception( "OUT requires only one parameter, which should be a checkmark.", this );
+                        }
+                }
                 auto Parameter = Parameters[0];
                 auto BoolParameter = dynamic_cast<fnp_boolean*>(Parameter);
                 assert( BoolParameter, "The only 'OUT' node parameter should be a boolean parameter." );
+                return CachedOutputSet( new fnp_boolean( BoolParameter->Boolean ) );
+        }
+};
+
+struct fn_boolean_literal: public filter_node
+{
+        fn_boolean_literal()
+        {
+                this->Name = "Checkmark";
+        }
+        bool IsAcceptableParameter( filter_node_parameter* Parameter ) const override
+        {
+                return Parameter->Type == fnp_type::boolean && InputCountGet() < 1;
+        }
+        filter_node_parameter* OutputGet() override
+        {
+                auto Parameters = this->InputParametersGet();
+                if( Parameters.size() == 1 ) {
+                        auto Parameter = Parameters[0];
+                        auto BoolParameter = dynamic_cast<fnp_boolean*>(Parameter);
+                        assert( BoolParameter, "'fn_boolean_literal' only accepts boolean parameters." );
+                        return CachedOutputSet( new fnp_boolean( BoolParameter->Boolean ) );
+                } else if( Parameters.size() == 0 ) {
+                        return CachedOutputSet( new fnp_boolean(true) );
+                }
+                assert( false, "Multiple parameters for boolean literal." );
+                return nullptr;
         }
 };
 

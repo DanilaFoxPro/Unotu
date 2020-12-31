@@ -12,28 +12,25 @@ namespace unotu
                 // Testing!
                 this->bValidateOnRefresh = false;
                 
-                Graph.NodeAdd(
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node(
-                                {0.0, 0.0},
-                                "I'm the origin!"
-                        ) )
-                );
-                
                 std::vector< std::shared_ptr<w_filtergraph::node_type> > Nodez = {
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.1, 0.5}) ),
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node({0.8, 0.6}) ),
-                        std::make_shared<graph_node<filter_node, void*>>( filter_node(
-                                {0.5, 0.8},
-                                "OUT"
-                        ) )
+                        std::make_shared<graph_node<filter_node*, void*>>( new fn_out() ),
+                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node({0.1, 0.5}) ),
+                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node({0.8, 0.6}) ),
                 };
                 
                 for( auto Node : Nodez ) {
                         Graph.NodeAdd( Node );
                 }
                 
-                Nodez[0]->ConnectTo( Nodez[2] );
-                Nodez[1]->ConnectTo( Nodez[2] );
+                Nodez[1]->ConnectTo( Nodez[0] );
+                Nodez[2]->ConnectTo( Nodez[0] );
+                
+                Graph.NodeAdd(
+                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
+                                {0.0, 0.0},
+                                "I'm the origin!"
+                        ) )
+                );
                 
         }
         
@@ -54,7 +51,7 @@ namespace unotu
                 const int TextSize = int( 32 / this->Viewzone );
                 
                 for( auto Node : Nodes ) {
-                        const filter_node Data = Node->DataGet();
+                        const filter_node Data = *Node->DataGet();
                         
                         const point RealPosition = this->ToRealPosition( Data.Position );
                         
@@ -110,7 +107,7 @@ namespace unotu
                         // Draw arrows between this node and all connected nodes.
                         const auto ConnectedNodes = Node->ConnectedOutgoingGet();
                         for( auto ConnectedNode : ConnectedNodes ) {
-                                const filter_node ConnectedData = ConnectedNode->DataGet();
+                                const filter_node ConnectedData = *ConnectedNode->DataGet();
                                 const point ConnectedRealPosition = this->ToRealPosition( ConnectedData.Position );
                                 
                                 gColor.AddArrow(
@@ -218,6 +215,41 @@ namespace unotu
                                         this->StopDragging();
                                 }
                         }
+                        case GLFW_KEY_1: {
+                                if( Action == GLFW_PRESS ) {
+                                        auto Node = std::make_shared<graph_node<filter_node*, void*>>( new fn_boolean_literal() );
+                                        Graph.NodeAdd( Node );
+                                        Node->DataReferenceGet()->Position = MousePositionInGraphCoordinates() + ViewOrigin*2.0;
+                                        printf( "Added node at: %s.\n", Node->DataReferenceGet()->Position.String().c_str() );
+                                }
+                        }
+                        case GLFW_KEY_ENTER: {
+                                if( Action == GLFW_PRESS ) {
+                                        printf( "Executing graph...\n" );
+                                        
+                                        fn_out* OutNode = nullptr;
+                                        auto Nodes = Graph.NodeGetAll();
+                                        for( auto& Item : Nodes ) {
+                                                if( Item.get() ) {
+                                                        OutNode = dynamic_cast<fn_out*>( Item.get()->DataGet() );
+                                                        if( OutNode ) {
+                                                                break;
+                                                        }
+                                                }
+                                        }
+                                        assert( OutNode, "Graph must contain an 'OUT' node." );
+                                        
+                                        filter_node_parameter* Result = OutNode->OutputGet();
+                                        fnp_boolean* Boolean = dynamic_cast<fnp_boolean*>(Result);
+                                        assert( Boolean, "'OUT' should always output a boolean." );
+                                        
+                                        printf( "Graph execution result: %s.\n",
+                                                Boolean->Boolean ?
+                                                "true" : "false"
+                                        );
+                                        
+                                }
+                        }
                 }
         }
         
@@ -239,6 +271,8 @@ namespace unotu
                 
                 const dpoint ScaledPosition = (dpoint)Position * Ratio * this->Viewzone;
                 
+                // TODO: Should be a plus here, but the system now depends on the minus.
+                //       And I forgot how all these conversions work.
                 return ScaledPosition - ViewOrigin;
         }
         
