@@ -20,6 +20,7 @@ namespace unotu
                 
                 for( auto Node : Nodez ) {
                         Graph.NodeAdd( Node );
+                        Node->DataGet()->ParentGraphNode = Node;
                 }
                 
                 Nodez[1]->ConnectTo( Nodez[0] );
@@ -229,6 +230,7 @@ namespace unotu
                                         
                                         fn_out* OutNode = nullptr;
                                         auto Nodes = Graph.NodeGetAll();
+                                        
                                         for( auto& Item : Nodes ) {
                                                 if( Item.get() ) {
                                                         OutNode = dynamic_cast<fn_out*>( Item.get()->DataGet() );
@@ -239,7 +241,19 @@ namespace unotu
                                         }
                                         assert( OutNode, "Graph must contain an 'OUT' node." );
                                         
-                                        filter_node_parameter* Result = OutNode->OutputGet();
+                                        filter_node_parameter* Result = nullptr;
+                                        try {
+                                                Result = OutNode->OutputGet();
+                                        } catch( unotu::user_error_exception& Exception ) {
+                                                Graph.NodeAdd(
+                                                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
+                                                                Exception.Source->Position + dpoint{0.2, 0.0},
+                                                                Exception.what()
+                                                        ) )
+                                                );
+                                                return;
+                                        }
+                                        
                                         fnp_boolean* Boolean = dynamic_cast<fnp_boolean*>(Result);
                                         assert( Boolean, "'OUT' should always output a boolean." );
                                         

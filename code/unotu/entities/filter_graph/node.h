@@ -46,7 +46,7 @@ struct user_error_exception : public std::runtime_error
 
 struct filter_node
 {
-        using graph_node_type = graph_node< filter_node, void* >;
+        using graph_node_type = graph_node< filter_node*, void* >;
         
         filter_node() = default;
         filter_node(
@@ -77,11 +77,12 @@ struct filter_node
         }
         std::vector<filter_node_parameter*> InputParametersGet()
         {
+                assert( ParentNodeGet(), "'filter_node' should contain a reference to its graph representation." );
                 std::vector<filter_node_parameter*> Output;
                 auto Connected = ParentNodeGet()->ConnectedIncomingGet();
                 for( auto Node : Connected ) {
                         auto& FilterNode = Node->DataReferenceGet();
-                        Output += FilterNode.OutputGet();
+                        Output += FilterNode->OutputGet();
                 }
                 return Output;
         }
@@ -224,7 +225,9 @@ struct fn_out: public filter_node
         }
         filter_node_parameter* OutputGet() override
         {
+                
                 auto Parameters = this->InputParametersGet();
+                
                 if( Parameters.size() != 1 ) {
                         if( Parameters.size() == 0 ) {
                                 throw user_error_exception( "OUT requires a checkmark parameter.", this );
@@ -232,6 +235,7 @@ struct fn_out: public filter_node
                                 throw user_error_exception( "OUT requires only one parameter, which should be a checkmark.", this );
                         }
                 }
+                
                 auto Parameter = Parameters[0];
                 auto BoolParameter = dynamic_cast<fnp_boolean*>(Parameter);
                 assert( BoolParameter, "The only 'OUT' node parameter should be a boolean parameter." );
