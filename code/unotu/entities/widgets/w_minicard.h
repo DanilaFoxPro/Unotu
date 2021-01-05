@@ -1,9 +1,9 @@
 #ifndef CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 #define CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 
-#include <unotu\utility\classes\card.h>
-
 #include <unotu\utility\deps\unotui_includes.h>
+
+#include <unotu\utility\classes\card.h>
 
 namespace unotu {
 
@@ -31,7 +31,7 @@ struct w_minicard: public unotui::widget {
                 const point& = point( 160, 80 )
         );
 	void PostConstruct();
-	virtual ~w_minicard();
+	virtual ~w_minicard() {};
         void CommonSetup();
 	
 	//:: Data.
@@ -42,6 +42,10 @@ struct w_minicard: public unotui::widget {
 	std::shared_ptr<unotui::w_textbox> ContentText;
 	
 	unotui::color_geometry gColor;
+        
+        //:: Options.
+        
+        bool bEnforceMinimumSize = true;
 	
 	//:: Overrides.
 	

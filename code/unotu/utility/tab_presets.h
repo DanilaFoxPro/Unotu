@@ -7,4 +7,6 @@
 #include <unotu\utility\tab_presets\edit_card.h>
 #include <unotu\utility\tab_presets\card_search.h>
 
+#include <unotu\utility\tab_presets\filter_editor.h>
+
 #endif

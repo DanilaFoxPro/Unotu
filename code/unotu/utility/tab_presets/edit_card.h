@@ -1,22 +1,22 @@
 #ifndef __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 #define __UNOTU_UTILITY_TAB_PRESETS_EDIT_CARD_H_
 
-#include <unotu\utility\classes\card.h>
-
 #include <unotu\utility\deps\unotui_includes.h>
+
+#include <unotu\utility\classes\card.h>
 
 namespace unotu {
 
 namespace TabPresets
 {
-struct EditCard : public unotui::w_tab
+struct edit_card : public unotui::w_tab
 {
 //:: Constructors.
-        EditCard();
-        EditCard( const indexed_card& );
+        edit_card();
+        edit_card( const indexed_card& );
         void CommonSetup();
         virtual void PostConstruct();
-        ~EditCard();
+        ~edit_card();
 //:: Widgets.
         std::shared_ptr<unotui::w_button> ConfirmButton;
         std::shared_ptr<unotui::w_button> CancelButton;

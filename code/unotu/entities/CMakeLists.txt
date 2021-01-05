@@ -7,4 +7,5 @@ target_sources_local(
 )
 
 
+add_subdirectory( filter_graph )
 add_subdirectory( widgets )

@@ -1,8 +1,7 @@
 target_sources_local(
         ${APP_LIBRARY_NAME}
         PUBLIC
-                card.h
-                graph.h
+                node.h
         PRIVATE
-                card.cpp
+                node.cpp
 )

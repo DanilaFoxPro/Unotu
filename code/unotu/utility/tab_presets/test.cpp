@@ -1,29 +1,28 @@
 #include <unotu\utility\tab_presets\test.h>
 
 #include <unotu\entities\widgets\w_minicard.h>
-#include <unotu\utility\tab_presets\edit_card.h>
-#include <unotu\utility\tab_presets\card_search.h>
+#include <unotu\utility\tab_presets.h>
 
 namespace unotu {
 
 namespace TabPresets
 {
 
-Test::Test()
+test::test()
 {
         this->Title = "Testing";
 }
 
 
-void Test::PostConstruct()
+void test::PostConstruct()
 {
         
         const std::vector<std::string> Options = {
                 "Edit Card Tab",
                 "New Window",
-                "Options",
-                "Credits",
-                "Exit"
+                "Card Search",
+                "Print Hierarchy",
+                "Filter Editor"
         };
         
         std::shared_ptr<unotui::w_horizontalbox> HorizontalBox = this->AddChild( new unotui::w_horizontalbox() );
@@ -38,7 +37,7 @@ void Test::PostConstruct()
                         )
                 );
         }
-        HorizontalBox->Weights = { 1.5f, 1.25f, 1.0f, 1.0f, 0.5f };
+        HorizontalBox->Weights = { 1.25f, 1.0f, 1.0f, 1.3f, 1.2f };
         HorizontalBox->Padding = point( 5, 0 );
         
         const std::string Text =
@@ -70,13 +69,13 @@ void Test::PostConstruct()
         
 }
 
-void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
+void test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
 {
         auto* ClickEvent = dynamic_cast<unotui::we_click*>( Event.get() );
         if( ClickEvent ) {
                 switch( ClickEvent->ActionID ) {
                         case 0: {
-                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::EditCard );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::edit_card );
                                 break;
                         }
                         case 1: {
@@ -84,13 +83,16 @@ void Test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                                 break;
                         }
                         case 2: {
-                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::CardSearch );
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::card_search );
                                 break;
                         }
                         case 3: {
                                 printf( "--===<<< Widget Hierarchy >>>===--\n\n" );
                                 unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().ActiveTab.Widgets );
                                 printf( "\n--===<<< End >>>===--\n" );
+                        }
+                        case 4: {
+                                unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::filter_editor );
                         }
                 }
                 return Event->Handle();
