@@ -1,5 +1,7 @@
 #include <unotu\entities\widgets\w_filtergraph.h>
 
+#include <unotu\entities\widgets\w_popup_dialog.h>
+
 namespace unotu
 {
         
@@ -172,6 +174,10 @@ namespace unotu
                         case GLFW_MOUSE_BUTTON_LEFT: {
                                 if( bShiftPressed ) {
                                         this->StartDragging();
+                                } else {
+                                        unotui::TheWindowManager.Cur().ActiveTab.AddWidget(
+                                                new w_popup_dialog( "Hello!" )
+                                        );
                                 }
                                 break;
                         }

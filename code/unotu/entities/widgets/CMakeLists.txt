@@ -3,7 +3,9 @@ target_sources_local(
   PUBLIC
     w_filtergraph.h
     w_minicard.h
+    w_popup_dialog.h
   PRIVATE
     w_filtergraph.cpp
     w_minicard.cpp
+    w_popup_dialog.cpp
 )
