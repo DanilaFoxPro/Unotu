@@ -6,13 +6,18 @@ namespace unotu {
 
 w_popup_dialog::w_popup_dialog( const std::string Text, bool bHasCancelButton )
 {
-        this->Text = std::make_shared<unotui::w_textbox>( point(), point(), Text );
         this->bHasCancelButton = bHasCancelButton;
         
         this->Position = point( 0.25f, 0.75f );
         this->Size     = point( 0.50f, 0.50f );
         // Don't overshadow overlay.
         this->Layer    = unotui::LayerReference::Frontmost-1;
+        
+        const int FontSize = 32;
+        this->Text = std::make_shared<unotui::w_textscrollbox>( point(), point(), Text, FontSize );
+        this->Text->BackgroundColor = unotui::TheTheme.Primary2;
+        this->Text->OutlineThickness = 2;
+        
 }
 
 
@@ -20,14 +25,14 @@ void w_popup_dialog::PostConstruct()
 {
         this->Container = AddChild( new unotui::w_verticalbox() );
         
-        this->Container->Padding   = ratio(0.02f);
+        this->Container->Padding   = point(0.02f);
         this->Container->bPadSides = true;
         
         this->Container->AddChild( this->Text );
         
         this->ButtonContainer = this->Container->AddChild( new unotui::w_horizontalbox() );
         
-        this->ButtonContainer->Padding   = point( 0, 0.1f );
+        this->ButtonContainer->Padding   = point( 0.005f, 0.001f );
         this->ButtonContainer->bPadSides = false;
         
         this->ButtonOkay = this->ButtonContainer->AddChild( new unotui::w_button( "Okay", action::Okay ) );
@@ -36,17 +41,30 @@ void w_popup_dialog::PostConstruct()
                         new unotui::w_button( "Cancel", action::Cancel )
                 );
         }
+        
+        this->Container->Weights = { 1.0f, 0.15f };
+        
 }
 
 void w_popup_dialog::OnRefresh( unotui::ValidityState_t Reason )
 {
         if( Reason & unotui::ValidityState::Resized ) {
+                
+                const point Position2 = unotui::SecondPosition( Position, Size );
+                
                 gColor.Clear();
                 gColor.AddRectangle(
                         unotui::colored_rectangle(
                                 fpoint( 0.0f, 1.0f ),
                                 fpoint( 1.0f, 0.0f ),
                                 rgba( unotui::color::black, 0.2f )
+                        )
+                );
+                gColor.AddRectangle(
+                        unotui::colored_rectangle(
+                                Position,
+                                Position2,
+                                unotui::TheTheme.Primary
                         )
                 );
                 gColor.Update();

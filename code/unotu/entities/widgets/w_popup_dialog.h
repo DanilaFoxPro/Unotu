@@ -13,7 +13,7 @@ namespace unotu {
                 bool bHasCancelButton = true;
                 
                 std::shared_ptr<unotui::w_verticalbox> Container;
-                std::shared_ptr<unotui::w_textbox> Text;
+                std::shared_ptr<unotui::w_textscrollbox> Text;
                 std::shared_ptr<unotui::w_horizontalbox> ButtonContainer;
                 std::shared_ptr<unotui::w_button> ButtonOkay;
                 std::shared_ptr<unotui::w_button> ButtonCancel;
