@@ -29,8 +29,28 @@ void test::PostConstruct()
         HorizontalBox->Position = point( 0.1f, ratio(1.0f)-pixel(30) );
         HorizontalBox->Size = point( 0.8f, 32 );
         
+        std::shared_ptr<unotui::w_verticalbox> VerticalBox = this->AddChild(
+                new unotui::w_verticalbox()
+        );
+        VerticalBox->Position = point(
+                0.70f,
+                ratio(1.0f)-pixel(92)
+        );
+        VerticalBox->Size = point(
+                0.30f,
+                0.40f
+        );
+        VerticalBox->Layer++;
+        VerticalBox->Padding = point( 0, 5 );
+        
         for( std::size_t i = 0; i < Options.size(); i++ ) {
                 HorizontalBox->AddChild(
+                        new unotui::w_button(
+                                Options[i],
+                                (int)i
+                        )
+                );
+                VerticalBox->AddChild(
                         new unotui::w_button(
                                 Options[i],
                                 (int)i
