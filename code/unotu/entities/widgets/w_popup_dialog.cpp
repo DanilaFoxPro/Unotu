@@ -20,7 +20,7 @@ void w_popup_dialog::PostConstruct()
 {
         this->Container = AddChild( new unotui::w_verticalbox() );
         
-        this->Container->Padding   = pixel(32);
+        this->Container->Padding   = ratio(0.02f);
         this->Container->bPadSides = true;
         
         this->Container->AddChild( this->Text );
@@ -40,7 +40,7 @@ void w_popup_dialog::PostConstruct()
 
 void w_popup_dialog::OnRefresh( unotui::ValidityState_t Reason )
 {
-        if( Reason == unotui::ValidityState::Resized ) {
+        if( Reason & unotui::ValidityState::Resized ) {
                 gColor.Clear();
                 gColor.AddRectangle(
                         unotui::colored_rectangle(
@@ -53,6 +53,8 @@ void w_popup_dialog::OnRefresh( unotui::ValidityState_t Reason )
                 
                 this->Container->Position = { 0.25f, 0.75f };
                 this->Container->Size     = { 0.50f, 0.50f };
+                
+                this->Container->Invalidate( unotui::ValidityState::Resized );
                 
         }
 }
