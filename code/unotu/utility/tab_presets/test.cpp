@@ -108,7 +108,7 @@ void test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                         }
                         case 3: {
                                 printf( "--===<<< Widget Hierarchy >>>===--\n\n" );
-                                unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().ActiveTab.Widgets );
+                                unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().Tab.Widgets );
                                 printf( "\n--===<<< End >>>===--\n" );
                         }
                         case 4: {

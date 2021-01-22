@@ -175,7 +175,7 @@ namespace unotu
                                 if( bShiftPressed ) {
                                         this->StartDragging();
                                 } else {
-                                        unotui::TheWindowManager.Cur().ActiveTab.AddWidget(
+                                        unotui::TheWindowManager.Cur().Tab.AddWidget(
                                                 new w_popup_dialog( "Hello!" )
                                         );
                                 }
