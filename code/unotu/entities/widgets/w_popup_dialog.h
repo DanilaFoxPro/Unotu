@@ -11,6 +11,7 @@ namespace unotu {
                 void PostConstruct() override;
                 
                 bool bHasCancelButton = true;
+                bool bAutoClose       = true;
                 
                 std::shared_ptr<unotui::w_verticalbox> Container;
                 std::shared_ptr<unotui::w_textscrollbox> Text;

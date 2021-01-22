@@ -95,10 +95,16 @@ void w_popup_dialog::OnEvent( std::shared_ptr<unotui::widget_event> Event )
                 switch( ClickEvent->ActionID ) {
                         case action::Okay: {
                                 ThrowEvent( std::make_shared<we_popup_action_confirm>() );
+                                if( this->bAutoClose ) {
+                                        this->Remove();
+                                }
                                 break;
                         }
                         case action::Cancel: {
                                 ThrowEvent( std::make_shared<we_popup_action_cancel>() );
+                                if( this->bAutoClose ) {
+                                        this->Remove();
+                                }
                                 break;
                         }
                 }
