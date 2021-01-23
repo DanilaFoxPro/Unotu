@@ -314,7 +314,34 @@ namespace unotu
         /** @brief Returns first node that collides with a point specified, if any. */
         filter_node* w_filtergraph::CollidingNode( const dpoint GraphPosition )
         {
-                // TODO: This.
+                
+                const auto Nodes = Graph.NodeGetAll();
+                
+                for( const auto Node : Nodes ) {
+                        auto Data = Node->DataGet();
+                        
+                        const ipoint NodeSize = Data->SizeGet();
+                        
+                        // TODO: A non-hacky way to convert node size in characters to size in
+                        //       graph coordinates.
+                        
+                        const dpoint Position1 = Data->Position;
+                        const dpoint Position2 = dpoint(
+                                Position1.x + NodeSize.x * (32.0*2.0 / this->Viewzone),
+                                Position1.y - NodeSize.y * (32.0     / this->Viewzone)
+                        );
+                        
+                        if(
+                                   GraphPosition.x > Position1.x
+                                && GraphPosition.y < Position1.y
+                                && GraphPosition.x < Position2.x
+                                && GraphPosition.y > Position2.y
+                        ) {
+                                return Data;
+                        }
+                        
+                }
+                
                 return nullptr;
         }
         
