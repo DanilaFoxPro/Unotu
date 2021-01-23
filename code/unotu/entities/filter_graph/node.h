@@ -47,6 +47,7 @@ struct user_error_exception : public std::runtime_error
 struct filter_node
 {
         using graph_node_type = graph_node< filter_node*, void* >;
+        using parameter_list  = std::vector<filter_node_parameter*>;
         
         filter_node() = default;
         filter_node(
@@ -62,11 +63,18 @@ struct filter_node
         
         filter_node_parameter* CachedOutput = nullptr;
         
+        std::string NameGet() const;
+        std::vector<unotui::split_line> NameGetLines() const;
+        std::string NameGetSplit() const;
+        void        NameSet( const std::string );
+        
+        ipoint SizeGet() const;
+        
         graph_node_type* ParentNodeGet() const;
         
-        virtual bool IsAcceptableParameter( filter_node_parameter* /*Parameter*/ ) const { return false; }
-        std::size_t InputCountGet() const;
-        std::vector<filter_node_parameter*> InputParametersGet();
+        virtual bool   IsAcceptableParameter( filter_node_parameter* /*Parameter*/ ) const { return false; }
+        std::size_t    InputCountGet() const;
+        parameter_list InputParametersGet();
         
         virtual fnp_type OutputTypeGet() const { return fnp_type::none; }
         virtual filter_node_parameter* OutputGet() { return nullptr; }

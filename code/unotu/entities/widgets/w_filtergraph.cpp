@@ -58,8 +58,8 @@ namespace unotu
                         
                         const point RealPosition = this->ToRealPosition( Data.Position );
                         
-                        const std::string& NodeName = Data.Name;
-                        const auto NodeNameLines = unotui::SplitText( NodeName, std::size_t(w_filtergraph::NodeMaxWidth) );
+                        const std::string NodeName = Data.NameGet();
+                        const auto NodeNameLines   = Data.NameGetLines();
                         
                         gText.AddText(
                                 Data.Name,
@@ -69,8 +69,10 @@ namespace unotu
                                 unotui::color::black
                         );
                         
-                        const std::size_t NodeNameHeight = NodeNameLines.size();
-                        const std::size_t NodeNameWidth  = unotui::LongestLine( NodeNameLines );
+                        const ipoint NodeSizeCharacters = Data.SizeGet();
+                        
+                        const int&   NodeNameWidth  = NodeSizeCharacters.x;
+                        const int&   NodeNameHeight = NodeSizeCharacters.y;
                         
                         const unotui::rectangle Bounds = unotui::rectangle(
                                 point(
@@ -380,7 +382,7 @@ namespace unotu
          *  @note  Multiply with window coordinates to get graph coordinates.
          *         Divide graph coordinates by this to get window coordinates.
          */
-        inline dpoint w_filtergraph::GraphCoordinatesConvertionRatio() const
+        inline dpoint w_filtergraph::GraphCoordinatesConvertionRatio()
         {
                 const point  WindowSize       = point(1.0f);
                 const dpoint WindowSizePixels = dpoint(

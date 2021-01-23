@@ -75,7 +75,7 @@ struct w_filtergraph : public unotui::widget
         void ZoomBy( double Amount );
         
         //:: Internal.
-        inline dpoint GraphCoordinatesConvertionRatio() const;
+        inline static dpoint GraphCoordinatesConvertionRatio();
         
 };
 
