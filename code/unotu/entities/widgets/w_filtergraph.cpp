@@ -127,6 +127,7 @@ namespace unotu
                         
                 }
                 
+                // Coordinate debug.
                 gText.AddText(
                         std::to_string( ViewOrigin.x ) + ", " + std::to_string( ViewOrigin.y ),
                         32,
@@ -174,10 +175,6 @@ namespace unotu
                         case GLFW_MOUSE_BUTTON_LEFT: {
                                 if( bShiftPressed ) {
                                         this->StartDragging();
-                                } else {
-                                        unotui::TheWindowManager.Cur().Tab.AddWidget(
-                                                new w_popup_dialog( "Hello!" )
-                                        );
                                 }
                                 break;
                         }
@@ -193,6 +190,7 @@ namespace unotu
                 switch( Button ) {
                         case GLFW_MOUSE_BUTTON_LEFT: {
                                 this->StopDragging();
+                                break;
                         }
                         case GLFW_MOUSE_BUTTON_MIDDLE: {
                                 this->StopDragging();
@@ -221,6 +219,7 @@ namespace unotu
                                 } else if( Action == GLFW_RELEASE ) {
                                         this->StopDragging();
                                 }
+                                break;
                         }
                         case GLFW_KEY_1: {
                                 if( Action == GLFW_PRESS ) {
@@ -229,6 +228,7 @@ namespace unotu
                                         Node->DataReferenceGet()->Position = MousePositionInGraphCoordinates() + ViewOrigin*2.0;
                                         printf( "Added node at: %s.\n", Node->DataReferenceGet()->Position.String().c_str() );
                                 }
+                                break;
                         }
                         case GLFW_KEY_ENTER: {
                                 if( Action == GLFW_PRESS ) {
@@ -269,27 +269,37 @@ namespace unotu
                                         );
                                         
                                 }
+                                break;
                         }
                 }
         }
         
         point w_filtergraph::ToRealPosition( const dpoint NodePosition )
         {
-                const point WindowSize   = point(1.0f);
-                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/w_filtergraph::PixelsPerGraphUnit;
+                // Shift position to be relative to view origin.
+                const dpoint ShiftedPosition = NodePosition - ViewOrigin;
+                const dpoint Ratio = GraphCoordinatesConvertionRatio();
                 
-                dpoint ShiftedPosition;
-                ShiftedPosition = NodePosition - ViewOrigin;
+                const unotui::ent_window TheWindow = unotui::TheWindowManager.Cur();
+                const dpoint WindowPosition        = point( TheWindow.PositionX, TheWindow.PositionY );
                 
-                return point( ShiftedPosition / Ratio / this->Viewzone );
+                // Divide by ratio and viewzone to get real coordinates.
+                // Subtracting window position to tie graph to screen coordinates.
+                const point RealPosition = point( ShiftedPosition / Ratio / this->Viewzone - WindowPosition );
+                
+                return RealPosition;
         }
         
         dpoint w_filtergraph::ToImaginaryPosition( const point Position )
         {
-                const point  WindowSize  = point(1.0f);
-                const dpoint Ratio       = dpoint(WindowSize.xpixels(), WindowSize.ypixels())/w_filtergraph::PixelsPerGraphUnit;
+                const dpoint Ratio = GraphCoordinatesConvertionRatio();
                 
-                const dpoint ScaledPosition = (dpoint)Position * Ratio * this->Viewzone;
+                const unotui::ent_window TheWindow = unotui::TheWindowManager.Cur();
+                const dpoint WindowPosition        = point( TheWindow.PositionX, TheWindow.PositionY );
+                
+                // Multiply by ratio and viewzone to get imaginary position.
+                // Adding window position to tie graph to screen coordinates.
+                const dpoint ScaledPosition = ((dpoint)Position+WindowPosition) * Ratio * this->Viewzone;
                 
                 // TODO: Should be a plus here, but the system now depends on the minus.
                 //       And I forgot how all these conversions work.
@@ -299,6 +309,13 @@ namespace unotu
         dpoint w_filtergraph::MousePositionInGraphCoordinates()
         {
                 return ToImaginaryPosition( unotui::MousePosition() );
+        }
+        
+        /** @brief Returns first node that collides with a point specified, if any. */
+        filter_node* w_filtergraph::CollidingNode( const dpoint GraphPosition )
+        {
+                // TODO: This.
+                return nullptr;
         }
         
         void w_filtergraph::StartDragging()
@@ -357,6 +374,22 @@ namespace unotu
                 }
                 
                 this->Invalidate( unotui::ValidityState::ParametersUpdated );
+        }
+        
+        //:: Internal.
+        
+        /** @brief Returns how many graph units the window would fit, on each axis.
+         *  @note  Multiply with window coordinates to get graph coordinates.
+         *         Divide graph coordinates by this to get window coordinates.
+         */
+        inline dpoint w_filtergraph::GraphCoordinatesConvertionRatio() const
+        {
+                const point  WindowSize       = point(1.0f);
+                const dpoint WindowSizePixels = dpoint(
+                        WindowSize.xpixels(),
+                        WindowSize.ypixels()
+                );
+                return WindowSizePixels/w_filtergraph::PixelsPerGraphUnit;
         }
         
 } // namespace unotu

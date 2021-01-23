@@ -22,7 +22,7 @@ struct w_filtergraph : public unotui::widget
         
         double Viewzone = 1.0;
         
-        dpoint ViewOrigin = { -0.5, -0.5 };
+        dpoint ViewOrigin = { -0.5, 0.5 };
         
         //
         
@@ -60,7 +60,9 @@ struct w_filtergraph : public unotui::widget
         
         point  ToRealPosition( const dpoint NodePosition );
         dpoint ToImaginaryPosition( const point Position );
+        
         dpoint MousePositionInGraphCoordinates();
+        filter_node* CollidingNode( const dpoint GraphPosition );
         
         void StartDragging();
         void StopDragging();
@@ -71,6 +73,9 @@ struct w_filtergraph : public unotui::widget
         dpoint OriginDifference();
         
         void ZoomBy( double Amount );
+        
+        //:: Internal.
+        inline dpoint GraphCoordinatesConvertionRatio() const;
         
 };
 
