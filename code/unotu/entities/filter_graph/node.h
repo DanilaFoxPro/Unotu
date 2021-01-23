@@ -62,30 +62,11 @@ struct filter_node
         
         filter_node_parameter* CachedOutput = nullptr;
         
-        graph_node_type* ParentNodeGet() const
-        {
-                return ParentGraphNode.lock().get();
-        }
+        graph_node_type* ParentNodeGet() const;
         
         virtual bool IsAcceptableParameter( filter_node_parameter* /*Parameter*/ ) const { return false; }
-        std::size_t InputCountGet() const
-        {
-                graph_node_type* ParentNode = ParentNodeGet();
-                assert( ParentNode, "'filter_node' with no graph node parent!" );
-                
-                return ParentNode->EdgesIncomingGet().size();
-        }
-        std::vector<filter_node_parameter*> InputParametersGet()
-        {
-                assert( ParentNodeGet(), "'filter_node' should contain a reference to its graph representation." );
-                std::vector<filter_node_parameter*> Output;
-                auto Connected = ParentNodeGet()->ConnectedIncomingGet();
-                for( auto Node : Connected ) {
-                        auto& FilterNode = Node->DataReferenceGet();
-                        Output += FilterNode->OutputGet();
-                }
-                return Output;
-        }
+        std::size_t InputCountGet() const;
+        std::vector<filter_node_parameter*> InputParametersGet();
         
         virtual fnp_type OutputTypeGet() const { return fnp_type::none; }
         virtual filter_node_parameter* OutputGet() { return nullptr; }
