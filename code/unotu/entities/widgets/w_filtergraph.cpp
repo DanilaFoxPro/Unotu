@@ -225,7 +225,7 @@ namespace unotu
                                 if( Action == GLFW_PRESS ) {
                                         auto Node = std::make_shared<graph_node<filter_node*, void*>>( new fn_boolean_literal() );
                                         Graph.NodeAdd( Node );
-                                        Node->DataReferenceGet()->Position = MousePositionInGraphCoordinates() + ViewOrigin*2.0;
+                                        Node->DataReferenceGet()->Position = MousePositionInGraphCoordinates();
                                         printf( "Added node at: %s.\n", Node->DataReferenceGet()->Position.String().c_str() );
                                 }
                                 break;
@@ -301,9 +301,7 @@ namespace unotu
                 // Adding window position to tie graph to screen coordinates.
                 const dpoint ScaledPosition = ((dpoint)Position+WindowPosition) * Ratio * this->Viewzone;
                 
-                // TODO: Should be a plus here, but the system now depends on the minus.
-                //       And I forgot how all these conversions work.
-                return ScaledPosition - ViewOrigin;
+                return ScaledPosition + ViewOrigin;
         }
         
         dpoint w_filtergraph::MousePositionInGraphCoordinates()
@@ -349,10 +347,10 @@ namespace unotu
                  * relative to ViewOrigin. This in turn means that if you don't
                  * add the OriginDifference -- the cursor would 'move' further and
                  * futher as the time progresses thus creating velocity. I don't
-                 * want any velocity here, so I add OriginDifference, thus
+                 * want any velocity here, so I subtract OriginDifference, thus
                  * stabilizing this mess.
                  */
-                return MousePosition - this->DragOrigin + this->OriginDifference();
+                return MousePosition - this->DragOrigin - this->OriginDifference();
         }
         
         dpoint w_filtergraph::OriginDifference()
