@@ -53,6 +53,8 @@ namespace unotu
                 
                 const int TextSize = int( 32 / this->Viewzone );
                 
+                filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
+                
                 for( auto Node : Nodes ) {
                         const filter_node Data = *Node->DataGet();
                         
@@ -66,7 +68,7 @@ namespace unotu
                                 NodeNameLines,
                                 TextSize,
                                 RealPosition,
-                                unotui::color::black
+                                Node->DataGet() == Colliding ? unotui::color::green : unotui::color::black
                         );
                         
                         const ipoint NodeSizeCharacters = Data.SizeGet();
@@ -326,9 +328,10 @@ namespace unotu
                         //       graph coordinates.
                         
                         const dpoint Position1 = Data->Position;
+                        // HACK: Magic numbers!
                         const dpoint Position2 = dpoint(
-                                Position1.x + NodeSize.x * (32.0*2.0 / this->Viewzone),
-                                Position1.y - NodeSize.y * (32.0     / this->Viewzone)
+                                Position1.x + NodeSize.x / (16.0*2.0 * this->Viewzone),
+                                Position1.y - NodeSize.y / (16.0     * this->Viewzone)
                         );
                         
                         if(
