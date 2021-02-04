@@ -21,6 +21,7 @@ namespace systems
         void setup_unotui();
         
         void postsetup_database();
+        void postsetup_window();
         
         void entry( uint8_t Executable )
         {
@@ -118,14 +119,27 @@ namespace systems
                 printf( "}\n" );
                 
         }
+        
+        void postsetup_window()
+        {
+                printf("Creating window\n{\n");
+                
+                //:: Window.
+                
+                unotui::CreateWindow();
+                
+                printf("}\n");
+        }
+        
 }// namespace system
 
 void unotui_bridge::PostSetup()
 {
         systems::postsetup_database();
+        systems::postsetup_window();
 }
 
-void unotui_bridge::OnNewWindow(unotui::ent_window& Window)
+void unotui_bridge::OnNewWindow( unotui::ent_window& Window, void* )
 {
         switch( TheApplication.Executable ) {
                 case Executable::Main: {
