@@ -40,6 +40,9 @@ struct w_filtergraph : public unotui::widget
         unotui::color_geometry gColor;
         unotui::text_geometry  gText;
         
+        unotui::color_geometry gColorOverlay;
+        unotui::text_geometry  gTextOverlay;
+        
         //:: Functions.
         
         w_filtergraph();
@@ -55,6 +58,10 @@ struct w_filtergraph : public unotui::widget
         void OnMousePressed( const int Button ) override;
         void OnMouseReleased( const int Button, const bool bFocusingClick ) override;
         void OnKeyInput( const int& Action, const int& Key, const int& Modifiers ) override;
+        
+        //:: Graph.
+        
+        void ExecuteGraph();
         
         //:: Helpers.
         

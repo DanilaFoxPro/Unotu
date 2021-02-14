@@ -47,6 +47,33 @@ void filter_node::NameSet( const std::string Name )
         this->Name = Name;
 }
 
+/** @brief Check if the node has any error attached to it. */
+bool filter_node::ErrorHas() const
+{
+        return this->Error.length() != 0;
+}
+
+/** @brief Get the error attached to this node, if any. */
+std::string filter_node::ErrorGet() const
+{
+        const size_t ErrorTextMaxWidth = 50;
+        return unotui::AssembleText( Error, unotui::SplitText( Error, ErrorTextMaxWidth ) );
+}
+
+/** @brief Attach a specific error message to this node.
+ *  @note  Overwrites any previously attached error message.
+ */
+void filter_node::ErrorSet( const std::string Error )
+{
+        this->Error = Error;
+}
+
+/** @brief Clear the error message attached to this node, if any. */
+void filter_node::ErrorClear()
+{
+        this->ErrorSet( "" );
+}
+
 /** @brief Returns node size, in characters. */
 ipoint filter_node::SizeGet() const
 {

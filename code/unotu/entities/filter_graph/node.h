@@ -59,7 +59,8 @@ struct filter_node
         std::weak_ptr<graph_node_type> ParentGraphNode;
         
         dpoint Position;
-        std::string Name = "No name";
+        std::string Name  = "No name";
+        std::string Error = "";
         
         filter_node_parameter* CachedOutput = nullptr;
         
@@ -67,6 +68,11 @@ struct filter_node
         std::vector<unotui::split_line> NameGetLines() const;
         std::string NameGetSplit() const;
         void        NameSet( const std::string );
+        
+        bool        ErrorHas() const;
+        std::string ErrorGet() const;
+        void        ErrorSet( const std::string Error );
+        void        ErrorClear();
         
         ipoint SizeGet() const;
         

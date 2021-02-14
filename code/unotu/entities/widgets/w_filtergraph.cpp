@@ -51,6 +51,9 @@ namespace unotu
                 gText.Clear();
                 gColor.Clear();
                 
+                gTextOverlay.Clear();
+                gColorOverlay.Clear();
+                
                 const int TextSize = int( 32 / this->Viewzone );
                 
                 filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
@@ -70,6 +73,15 @@ namespace unotu
                                 RealPosition,
                                 Node->DataGet() == Colliding ? unotui::color::green : unotui::color::black
                         );
+                        
+                        if( Data.ErrorHas() ) {
+                                gTextOverlay.AddText(
+                                        Data.ErrorGet(),
+                                        TextSize,
+                                        RealPosition,
+                                        unotui::color::red
+                                );
+                        }
                         
                         const ipoint NodeSizeCharacters = Data.SizeGet();
                         
@@ -145,12 +157,18 @@ namespace unotu
                 gText.Update();
                 gColor.Update();
                 
+                gTextOverlay.Update();
+                gColorOverlay.Update();
+                
         }
         
         void w_filtergraph::OnDraw()
         {
                 gColor.Draw();
                 gText.Draw();
+                
+                gColorOverlay.Draw();
+                gTextOverlay.Draw();
         }
         
         void w_filtergraph::OnEvent( std::shared_ptr<unotui::widget_event> Event )
@@ -236,46 +254,64 @@ namespace unotu
                         }
                         case GLFW_KEY_ENTER: {
                                 if( Action == GLFW_PRESS ) {
-                                        printf( "Executing graph...\n" );
-                                        
-                                        fn_out* OutNode = nullptr;
-                                        auto Nodes = Graph.NodeGetAll();
-                                        
-                                        for( auto& Item : Nodes ) {
-                                                if( Item.get() ) {
-                                                        OutNode = dynamic_cast<fn_out*>( Item.get()->DataGet() );
-                                                        if( OutNode ) {
-                                                                break;
-                                                        }
-                                                }
-                                        }
-                                        assert( OutNode, "Graph must contain an 'OUT' node." );
-                                        
-                                        filter_node_parameter* Result = nullptr;
-                                        try {
-                                                Result = OutNode->OutputGet();
-                                        } catch( unotu::user_error_exception& Exception ) {
-                                                Graph.NodeAdd(
-                                                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
-                                                                Exception.Source->Position + dpoint{0.2, 0.0},
-                                                                Exception.what()
-                                                        ) )
-                                                );
-                                                return;
-                                        }
-                                        
-                                        fnp_boolean* Boolean = dynamic_cast<fnp_boolean*>(Result);
-                                        assert( Boolean, "'OUT' should always output a boolean." );
-                                        
-                                        printf( "Graph execution result: %s.\n",
-                                                Boolean->Boolean ?
-                                                "true" : "false"
-                                        );
-                                        
+                                        this->ExecuteGraph();
                                 }
                                 break;
                         }
                 }
+        }
+        
+        void w_filtergraph::ExecuteGraph()
+        {
+                printf( "Executing graph...\n" );
+                
+                fn_out* OutNode = nullptr;
+                auto Nodes = Graph.NodeGetAll();
+                
+                for( auto& Item : Nodes ) {
+                        if( Item.get() ) {
+                                OutNode = dynamic_cast<fn_out*>( Item.get()->DataGet() );
+                                if( OutNode ) {
+                                        break;
+                                }
+                        }
+                }
+                assert( OutNode, "Graph must contain an 'OUT' node." );
+                
+                // Clear all errors.
+                for( auto& Item : Nodes ) {
+                        if( Item.get() ) {
+                                const auto Data = Item.get()->DataGet();
+                                if( Data ) {
+                                        Data->ErrorClear();
+                                }
+                        }
+                }
+                
+                filter_node_parameter* Result = nullptr;
+                try {
+                        Result = OutNode->OutputGet();
+                } catch( unotu::user_error_exception& Exception ) {
+                        // TODO: Remove obsolete error handling code.
+                        /*
+                        Graph.NodeAdd(
+                                std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
+                                        Exception.Source->Position + dpoint{0.2, 0.0},
+                                        Exception.what()
+                                ) )
+                        );
+                                */
+                        Exception.Source->ErrorSet( Exception.what() );
+                        return;
+                }
+                
+                fnp_boolean* Boolean = dynamic_cast<fnp_boolean*>(Result);
+                assert( Boolean, "'OUT' should always output a boolean." );
+                
+                printf( "Graph execution result: %s.\n",
+                        Boolean->Boolean ?
+                        "true" : "false"
+                );
         }
         
         point w_filtergraph::ToRealPosition( const dpoint NodePosition )
