@@ -54,7 +54,7 @@ namespace unotu
                 gTextOverlay.Clear();
                 gColorOverlay.Clear();
                 
-                const int TextSize = int( 32 / this->Viewzone );
+                const int TextSize = int( w_filtergraph::GraphNodeTextSize / this->Viewzone );
                 
                 filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
                 
@@ -363,12 +363,16 @@ namespace unotu
                         // TODO: A non-hacky way to convert node size in characters to size in
                         //       graph coordinates.
                         
-                        // HACK: Magic numbers!
+                        const double TextSize = (double)w_filtergraph::GraphNodeTextSize;
+                        
+                        // This code employs inversion, 'NodeSize.x * 1.0/TextSize' ->
+                        // 'NodeSize.x / TextSize', 'NodeSize.y * 2.0/TextSize' ->
+                        // 'NodeSize.y / (TextSize*0.5)'.
                         //
                         const dpoint Position1 = Data->Position;
                         const dpoint Position2 = dpoint(
-                                Position1.x + NodeSize.x / (16.0*2.0),
-                                Position1.y - NodeSize.y / (16.0    )
+                                Position1.x + NodeSize.x / TextSize,
+                                Position1.y - NodeSize.y / (TextSize*0.5)
                         );
                         
                         if(
