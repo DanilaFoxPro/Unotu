@@ -365,9 +365,9 @@ namespace unotu
                         
                         const double TextSize = (double)w_filtergraph::GraphNodeTextSize;
                         
-                        // This code employs inversion, 'NodeSize.x * 1.0/TextSize' ->
-                        // 'NodeSize.x / TextSize', 'NodeSize.y * 2.0/TextSize' ->
-                        // 'NodeSize.y / (TextSize*0.5)'.
+                        // This code employs inversion,
+                        // 'NodeSize.x * 1.0/TextSize' -> 'NodeSize.x / TextSize',
+                        // 'NodeSize.y * 2.0/TextSize' -> 'NodeSize.y / (TextSize*0.5)'.
                         //
                         const dpoint Position1 = Data->Position;
                         const dpoint Position2 = dpoint(
