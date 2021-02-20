@@ -13,10 +13,11 @@ namespace unotu
 struct filter_node;
 
 struct filter_node_parameter;
+struct fnp_string;
 struct fnp_stringlist;
+struct fnp_stringlist_selector;
 struct fnp_stringlist_any;
 struct fnp_stringlist_every;
-struct fnp_string;
 struct fnp_boolean;
 
 /** @brief Filter node parameter type.
@@ -64,6 +65,8 @@ struct filter_node
         
         filter_node_parameter* CachedOutput = nullptr;
         
+//:: Visuals.
+        
         std::string NameGet() const;
         std::vector<unotui::split_line> NameGetLines() const;
         std::string NameGetSplit() const;
@@ -76,7 +79,7 @@ struct filter_node
         
         ipoint SizeGet() const;
         
-        graph_node_type* ParentNodeGet() const;
+//:: Execution.
         
         virtual bool   IsAcceptableParameter( filter_node_parameter* /*Parameter*/ ) const { return false; }
         std::size_t    InputCountGet() const;
@@ -87,6 +90,10 @@ struct filter_node
         
         filter_node_parameter* CachedOutputSet( filter_node_parameter* Parameter );
         
+//:: Graph.
+        
+        graph_node_type* GraphNodeGet() const;
+        
 };
 
 struct filter_node_parameter
@@ -95,9 +102,34 @@ struct filter_node_parameter
         
         fnp_type Type = fnp_type::none;
         
-        virtual std::string AsString() { return ""; }
+        virtual std::string AsString() const { return ""; }
         virtual std::string FriendlyName() const { return "Node Parameter"; }
         
+};
+
+struct fnp_string: public filter_node_parameter
+{
+        fnp_string()
+        {
+                this->Type = fnp_type::string;
+        }
+        
+        std::string String;
+        
+        std::string FriendlyName() const override
+        {
+                return "Text";
+        }
+        
+        std::string StringGet() const
+        {
+                return String;
+        }
+        
+        std::string AsString() const override
+        {
+                return this->StringGet();
+        }
 };
 
 struct fnp_stringlist: public filter_node_parameter
@@ -112,16 +144,24 @@ struct fnp_stringlist: public filter_node_parameter
         {
                 return "List";
         }
-        std::string AsString() override
+        std::string AsString() const override
         {
                 std::string Output;
-                for( std::string& String : List ) {
+                for( const std::string& String : List ) {
                         if( Output.size() ) {
                                 Output += "\n";
                         }
                         Output += String;
                 }
                 return Output;
+        }
+};
+
+struct fnp_stringlist_selector : public fnp_stringlist, public fnp_string
+{
+        std::string AsString() const override
+        {
+                return fnp_stringlist::AsString();
         }
 };
 
@@ -136,7 +176,7 @@ struct fnp_stringlist_any: public fnp_stringlist
         {
                 return "Text";
         }
-        std::string AsString() override
+        std::string AsString() const override
         {
                 if( List.size() ) {
                         return List[0];
@@ -159,25 +199,6 @@ struct fnp_stringlist_every: public fnp_stringlist
         }
 };
 
-struct fnp_string: public filter_node_parameter
-{
-        fnp_string()
-        {
-                this->Type = fnp_type::string;
-        }
-        
-        std::string String;
-        
-        std::string FriendlyName() const override
-        {
-                return "Text";
-        }
-        std::string AsString() override
-        {
-                return String;
-        }
-};
-
 struct fnp_boolean: public filter_node_parameter
 {
         fnp_boolean()
@@ -195,7 +216,7 @@ struct fnp_boolean: public filter_node_parameter
         {
                 return "Checkmark";
         }
-        std::string AsString() override
+        std::string AsString() const override
         {
                 return Boolean ? "true" : "false";
         }

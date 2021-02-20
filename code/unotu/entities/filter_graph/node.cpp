@@ -12,6 +12,8 @@ filter_node::~filter_node()
         delete CachedOutput;
 }
 
+        //:: Visuals.
+
 /** @brief Returns original node name. */
 std::string filter_node::NameGet() const
 {
@@ -86,24 +88,19 @@ ipoint filter_node::SizeGet() const
         
 }
 
-graph_node_type* filter_node::ParentNodeGet() const
-{
-        return ParentGraphNode.lock().get();
-}
+        //:: Execution.
 
 std::size_t filter_node::InputCountGet() const
 {
-        graph_node_type* ParentNode = ParentNodeGet();
-        assert( ParentNode, "'filter_node' with no graph node parent!" );
+        graph_node_type* ParentNode = GraphNodeGet();
         
         return ParentNode->EdgesIncomingGet().size();
 }
 
 std::vector<filter_node_parameter*> filter_node::InputParametersGet()
 {
-        assert( ParentNodeGet(), "'filter_node' should contain a reference to its graph representation." );
         std::vector<filter_node_parameter*> Output;
-        auto Connected = ParentNodeGet()->ConnectedIncomingGet();
+        auto Connected = GraphNodeGet()->ConnectedIncomingGet();
         for( auto Node : Connected ) {
                 auto& FilterNode = Node->DataReferenceGet();
                 Output += FilterNode->OutputGet();
@@ -116,6 +113,17 @@ filter_node_parameter* filter_node::CachedOutputSet( filter_node_parameter* Para
         delete CachedOutput;
         CachedOutput = Parameter;
         return CachedOutput;
+}
+
+        //:: Graph.
+
+graph_node_type* filter_node::GraphNodeGet() const
+{
+        graph_node_type* const GraphNode = ParentGraphNode.lock().get();
+        
+        assert( GraphNode, "'filter_node' with no graph node parent!" );
+        
+        return GraphNode;
 }
 
 } // namespace unotu

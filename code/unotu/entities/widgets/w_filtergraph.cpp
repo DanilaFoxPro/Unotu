@@ -363,11 +363,12 @@ namespace unotu
                         // TODO: A non-hacky way to convert node size in characters to size in
                         //       graph coordinates.
                         
-                        const dpoint Position1 = Data->Position;
                         // HACK: Magic numbers!
+                        //
+                        const dpoint Position1 = Data->Position;
                         const dpoint Position2 = dpoint(
-                                Position1.x + NodeSize.x / (16.0*2.0 * this->Viewzone),
-                                Position1.y - NodeSize.y / (16.0     * this->Viewzone)
+                                Position1.x + NodeSize.x / (16.0*2.0),
+                                Position1.y - NodeSize.y / (16.0    )
                         );
                         
                         if(
