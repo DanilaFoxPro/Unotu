@@ -110,9 +110,11 @@ void test::OnEvent ( std::shared_ptr<unotui::widget_event> Event )
                                 printf( "--===<<< Widget Hierarchy >>>===--\n\n" );
                                 unotui::PrintWidgetHierarchy( unotui::TheWindowManager.Cur().Tab.Widgets );
                                 printf( "\n--===<<< End >>>===--\n" );
+                                break;
                         }
                         case 4: {
                                 unotui::TheWindowManager.Cur().SwitchTab( new TabPresets::filter_editor );
+                                break;
                         }
                 }
                 return Event->Handle();
