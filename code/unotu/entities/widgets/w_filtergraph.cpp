@@ -11,9 +11,6 @@ namespace unotu
                 this->bKeyboardFocusable    = true;
                 this->bAcceptExternalScroll = true;
                 
-                // Testing!
-                this->bValidateOnRefresh = false;
-                
                 std::vector< std::shared_ptr<w_filtergraph::node_type> > Nodez = {
                         std::make_shared<graph_node<filter_node*, void*>>( new fn_out() ),
                         std::make_shared<graph_node<filter_node*, void*>>( new filter_node({0.1, 0.5}) ),
@@ -56,6 +53,9 @@ namespace unotu
                 
                 const int TextSize = int( w_filtergraph::GraphNodeTextSize / this->Viewzone );
                 
+                // BUG: The graph isn't refreshed every frame, so the collision
+                //      is only occasionaly checked. Which causes node highlight
+                //      to get 'stuck'.
                 filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
                 
                 for( auto Node : Nodes ) {
@@ -99,11 +99,13 @@ namespace unotu
                                 )
                         );
                         
+                        // Node body.
                         gColor.AddRectangle( unotui::colored_rectangle (
                                 Bounds,
                                 unotui::color::light_sky_blue
                         ) );
                         
+                        // Node outline.
                         gColor.AddOutline(
                                 Bounds,
                                 int( -5/this->Viewzone ),
@@ -113,6 +115,7 @@ namespace unotu
                                 unotui::TheTheme.PrimaryBack
                         );
                         
+                        // Additional outline separating the outline and body.
                         gColor.AddOutline(
                                 unotui::colored_rectangle(
                                         Bounds,
@@ -150,9 +153,6 @@ namespace unotu
                         point(0, 32),
                         unotui::color::green*0.3f
                 );
-                
-                // Draw arrow from graph origin to mouse position.
-                gColor.AddArrow( ToRealPosition( dpoint(0) ), unotui::MousePosition(), 10, unotui::color::black );
                 
                 gText.Update();
                 gColor.Update();
@@ -312,6 +312,10 @@ namespace unotu
                         Boolean->Boolean ?
                         "true" : "false"
                 );
+                
+                // Some errors might've occured when executing. Refresh to show them.
+                this->Invalidate( unotui::ValidityState::ParametersUpdated );
+                
         }
         
         point w_filtergraph::ToRealPosition( const dpoint NodePosition )
