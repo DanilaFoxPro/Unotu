@@ -45,6 +45,15 @@ namespace unotu
                 if( this->bDragging ) {
                         this->AdjustViewToDrag();
                 }
+                
+                filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
+                
+                if( Colliding != HighlightedGraphNode ) {
+                        this->HighlightedGraphNode = Colliding;
+                        this->Invalidate( unotui::ValidityState::ParametersUpdated );
+                }
+                
+                
         }
         
         void w_filtergraph::OnRefresh( unotui::ValidityState_t )
@@ -59,11 +68,6 @@ namespace unotu
                 
                 const int TextSize = int( w_filtergraph::GraphNodeTextSize / this->Viewzone );
                 
-                // BUG: The graph isn't refreshed every frame, so the collision
-                //      is only occasionaly checked. Which causes node highlight
-                //      to get 'stuck'.
-                filter_node* const Colliding = CollidingNode( MousePositionInGraphCoordinates() );
-                
                 for( auto Node : Nodes ) {
                         const filter_node Data = *Node->DataGet();
                         const point RealPosition = this->ToRealPosition( Data.Position );
@@ -76,7 +80,7 @@ namespace unotu
                                 NodeNameLines,
                                 TextSize,
                                 RealPosition,
-                                Node->DataGet() == Colliding ? unotui::color::green : unotui::color::black
+                                Node->DataGet() == HighlightedGraphNode ? unotui::color::green : unotui::color::black
                         );
                         
                         if( Data.ErrorHas() ) {

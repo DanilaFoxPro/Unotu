@@ -38,6 +38,7 @@ struct w_filtergraph : public unotui::widget
         using node_type  = graph_node< filter_node*, void* >;
         
         graph_type Graph;
+        filter_node* HighlightedGraphNode = nullptr;
         
         unotui::color_geometry gColor;
         unotui::text_geometry  gText;
