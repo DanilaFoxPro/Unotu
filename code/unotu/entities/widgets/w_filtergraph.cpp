@@ -13,17 +13,23 @@ namespace unotu
                 
                 std::vector< std::shared_ptr<w_filtergraph::node_type> > Nodez = {
                         std::make_shared<graph_node<filter_node*, void*>>( new fn_out() ),
-                        std::make_shared<graph_node<filter_node*, void*>>( new filter_node({0.1, 0.5}) ),
+                        std::make_shared<graph_node<filter_node*, void*>>( new fn_boolean_literal() ),
                         std::make_shared<graph_node<filter_node*, void*>>( new filter_node({0.8, 0.6}) ),
                 };
+                
+                Nodez[1]->DataGet()->Position = {0.1, 0.5};
                 
                 for( auto Node : Nodez ) {
                         Graph.NodeAdd( Node );
                         Node->DataGet()->ParentGraphNode = Node;
                 }
                 
-                Nodez[1]->ConnectTo( Nodez[0] );
-                Nodez[2]->ConnectTo( Nodez[0] );
+                try {
+                        Nodez[0]->DataGet()->InputAdd( Nodez[1]->DataGet() );
+                        Nodez[0]->DataGet()->InputAdd( Nodez[2]->DataGet() );
+                } catch( unotu::user_error_exception& Exception ) {
+                        Exception.Source->ErrorSet( Exception.what() );
+                }
                 
                 Graph.NodeAdd(
                         std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
@@ -60,7 +66,6 @@ namespace unotu
                 
                 for( auto Node : Nodes ) {
                         const filter_node Data = *Node->DataGet();
-                        
                         const point RealPosition = this->ToRealPosition( Data.Position );
                         
                         const std::string NodeName = Data.NameGet();
@@ -292,16 +297,12 @@ namespace unotu
                 try {
                         Result = OutNode->OutputGet();
                 } catch( unotu::user_error_exception& Exception ) {
-                        // TODO: Remove obsolete error handling code.
-                        /*
-                        Graph.NodeAdd(
-                                std::make_shared<graph_node<filter_node*, void*>>( new filter_node(
-                                        Exception.Source->Position + dpoint{0.2, 0.0},
-                                        Exception.what()
-                                ) )
-                        );
-                                */
+                        
                         Exception.Source->ErrorSet( Exception.what() );
+                        
+                        // Error occured during execution. Refresh to show it.
+                        this->Invalidate( unotui::ValidityState::ParametersUpdated );
+                        
                         return;
                 }
                 
@@ -312,9 +313,6 @@ namespace unotu
                         Boolean->Boolean ?
                         "true" : "false"
                 );
-                
-                // Some errors might've occured when executing. Refresh to show them.
-                this->Invalidate( unotui::ValidityState::ParametersUpdated );
                 
         }
         

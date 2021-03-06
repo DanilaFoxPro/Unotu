@@ -90,6 +90,34 @@ ipoint filter_node::SizeGet() const
 
         //:: Execution.
 
+void filter_node::InputAdd( const filter_node* Node )
+{
+        if( Node == nullptr ) {
+                return;
+        }
+        
+        if( this->IsAcceptableParameter( Node->OutputTypeGet() ) ) {
+                
+                auto SelfGraphNode  = this->ParentGraphNode.lock();
+                auto OtherGraphNode = Node->ParentGraphNode.lock();
+                
+                assert( SelfGraphNode  != nullptr, "Self graph node shouldn't ever be null." );
+                assert( OtherGraphNode != nullptr, "Other graph node shouldn't ever be null." );
+                
+                OtherGraphNode->ConnectTo( SelfGraphNode );
+                
+        } else {
+                // Useful error messages. I should probably find a way for 'IsAcceptableParameter()'
+                // to provide specific error messages for unacceptable parameters.
+                // TODO: ^
+                throw user_error_exception(
+                        "This node doesn't accept parameter of this type, currently: " + std::to_string( Node->OutputTypeGet() ),
+                        this
+                );
+        }
+        
+}
+
 std::size_t filter_node::InputCountGet() const
 {
         graph_node_type* ParentNode = GraphNodeGet();

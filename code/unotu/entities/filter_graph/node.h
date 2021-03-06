@@ -81,7 +81,8 @@ struct filter_node
         
 //:: Execution.
         
-        virtual bool   IsAcceptableParameter( filter_node_parameter* /*Parameter*/ ) const { return false; }
+        virtual bool   IsAcceptableParameter( const fnp_type ) const { return false; }
+        void           InputAdd( const filter_node* );
         std::size_t    InputCountGet() const;
         parameter_list InputParametersGet();
         
@@ -231,9 +232,9 @@ struct fn_out: public filter_node
                 this->Name = "OUT";
                 this->Position = {0.5, 0.8};
         }
-        bool IsAcceptableParameter( filter_node_parameter* Parameter ) const override
+        bool IsAcceptableParameter( const fnp_type Type ) const override
         {
-                return Parameter->Type == fnp_type::boolean && InputCountGet() < 1;
+                return Type == fnp_type::boolean && InputCountGet() < 1;
         }
         fnp_type OutputTypeGet() const override
         {
@@ -265,9 +266,13 @@ struct fn_boolean_literal: public filter_node
         {
                 this->Name = "Checkmark";
         }
-        bool IsAcceptableParameter( filter_node_parameter* Parameter ) const override
+        bool IsAcceptableParameter( const fnp_type Type ) const override
         {
-                return Parameter->Type == fnp_type::boolean && InputCountGet() < 1;
+                return Type == fnp_type::boolean && InputCountGet() < 1;
+        }
+        fnp_type OutputTypeGet() const override
+        {
+                return fnp_type::boolean;
         }
         filter_node_parameter* OutputGet() override
         {
