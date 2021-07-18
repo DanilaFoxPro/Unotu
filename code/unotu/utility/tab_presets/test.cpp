@@ -1,7 +1,7 @@
-#include <unotu\utility\tab_presets\test.h>
+#include <unotu/utility/tab_presets/test.h>
 
-#include <unotu\entities\widgets\w_minicard.h>
-#include <unotu\utility\tab_presets.h>
+#include <unotu/entities/widgets/w_minicard.h>
+#include <unotu/utility/tab_presets.h>
 
 namespace unotu {
 

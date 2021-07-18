@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include <unotu\utility\executable_enum.h>
+#include <unotu/utility/executable_enum.h>
 
-#include <unotu\utility\deps\unotui_includes.h>
+#include <unotu/utility/deps/unotui_includes.h>
 
 namespace unotu {
 

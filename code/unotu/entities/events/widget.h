@@ -1,7 +1,7 @@
 #ifndef __UNOTU_ENTITIES_EVENTS_WIDGET_H_
 #define __UNOTU_ENTITIES_EVENTS_WIDGET_H_
 
-#include <unotu\utility\deps\unotui_includes.h>
+#include <unotu/utility/deps/unotui_includes.h>
 
 namespace unotu {
 

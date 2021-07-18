@@ -74,14 +74,14 @@ target_compile_options(
     "-Wall"
 )
 target_link_libraries( ${APP_NAME} PRIVATE ${APP_LIBRARY_NAME} )
-target_link_options(
-        ${APP_NAME}
-        PRIVATE
-                "-static"
-                "-lpthread"
-                "-static-libgcc"
-                "-static-libstdc++"
-)
+# target_link_options(
+#         ${APP_NAME}
+#         PRIVATE
+#                 "-static"
+#                 "-lpthread"
+#                 "-static-libgcc"
+#                 "-static-libstdc++"
+# )
 
 add_executable( ${APP_NAME}Test "code/unotu/_executables/test.cpp" )
 set_property(TARGET ${APP_NAME}Test PROPERTY CXX_STANDARD 11)

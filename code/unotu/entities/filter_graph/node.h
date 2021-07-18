@@ -1,8 +1,8 @@
 #ifndef __UNOTU_CODE_ENTITIES_FILTER_GRAPH_NODE_H_
 #define __UNOTU_CODE_ENTITIES_FILTER_GRAPH_NODE_H_
 
-#include <unotu\utility\deps\unotui_includes.h>
-#include <unotu\utility\classes\graph.h>
+#include <unotu/utility/deps/unotui_includes.h>
+#include <unotu/utility/classes/graph.h>
 #include <stdexcept>
 
 #include <string>

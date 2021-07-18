@@ -1,6 +1,6 @@
-#include <unotu\entities\widgets\w_popup_dialog.h>
+#include <unotu/entities/widgets/w_popup_dialog.h>
 
-#include <unotu\entities\events\widget.h>
+#include <unotu/entities/events/widget.h>
 
 namespace unotu {
 

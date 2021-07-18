@@ -1,12 +1,12 @@
-#include <unotu\utility\tab_presets\card_search.h>
+#include <unotu/utility/tab_presets/card_search.h>
 
-#include <unotu\utility\deps\unotui_includes.h>
+#include <unotu/utility/deps/unotui_includes.h>
 
-#include <unotu\entities\widgets\w_minicard.h>
-#include <unotu\entities\ent_application.h>
+#include <unotu/entities/widgets/w_minicard.h>
+#include <unotu/entities/ent_application.h>
 
-#include <unotu\utility\tab_presets\edit_card.h>
-#include <unotu\utility\data.h>
+#include <unotu/utility/tab_presets/edit_card.h>
+#include <unotu/utility/data.h>
 
 namespace unotu {
 

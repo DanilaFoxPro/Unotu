@@ -1,6 +1,6 @@
-#include <unotu\entities\filter_graph\node.h>
+#include <unotu/entities/filter_graph/node.h>
 
-#include <unotu\entities\widgets\w_filtergraph.h>
+#include <unotu/entities/widgets/w_filtergraph.h>
 
 namespace unotu
 {

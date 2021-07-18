@@ -1,9 +1,9 @@
-#include <unotu\utility\data.h>
+#include <unotu/utility/data.h>
 
-#include <unotu\utility\deps\sqlite_includes.h>
+#include <unotu/utility/deps/sqlite_includes.h>
 
-#include <unotu\entities\ent_application.h>
-#include <unotui\utility\text.h>
+#include <unotu/entities/ent_application.h>
+#include <unotui/utility/text.h>
 
 namespace unotu {
 

@@ -1,7 +1,7 @@
-#include <unotu\utility\tab_presets\edit_card.h>
+#include <unotu/utility/tab_presets/edit_card.h>
 
-#include <unotu\utility\data.h>
-#include <unotu\utility\tab_presets\card_search.h>
+#include <unotu/utility/data.h>
+#include <unotu/utility/tab_presets/card_search.h>
 
 namespace unotu {
 

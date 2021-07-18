@@ -1,4 +1,4 @@
-#include <unotu\entities\widgets\w_minicard.h>
+#include <unotu/entities/widgets/w_minicard.h>
 
 namespace unotu {
 
@@ -64,7 +64,7 @@ void w_minicard::PostConstruct()
 void w_minicard::CommonSetup()
 {
         
-        this->bInvalidateOnMousePass = true; // For highlight to update.
+        this->boInvalidateOnMousePass = true; // For highlight to update.
         
         this->TitleText   = std::make_shared<unotui::w_text>();
         this->ContentText = std::make_shared<unotui::w_textbox>();
@@ -122,7 +122,7 @@ void w_minicard::OnRefresh( unotui::ValidityState_t Reason )
                 unotui::colored_rectangle(
                         FPosition,
                         FPosition2,
-                        this->bMouseOver ? unotui::TheTheme.Highlight : unotui::TheTheme.Primary
+                        this->bsMouseOver ? unotui::TheTheme.Highlight : unotui::TheTheme.Primary
                 )
         );
         
@@ -130,7 +130,7 @@ void w_minicard::OnRefresh( unotui::ValidityState_t Reason )
         const rgba OutlineColor2 = unotui::TheTheme.PrimaryBack;
         const rgba OutlineColor2Light = unotui::color::gray * 0.8f;
         
-        if( this->bMouseOver ) {
+        if( this->bsMouseOver ) {
                 this->gColor.AddOutline(
                         unotui::rectangle( FPosition, FPosition2 ),
                         -4,

@@ -1,9 +1,9 @@
 #ifndef CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 #define CODE_ENTITIES_WIDGETS_W_MINICARD_H_
 
-#include <unotu\utility\deps\unotui_includes.h>
+#include <unotu/utility/deps/unotui_includes.h>
 
-#include <unotu\utility\classes\card.h>
+#include <unotu/utility/classes/card.h>
 
 namespace unotu {
 

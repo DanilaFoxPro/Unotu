@@ -1,6 +1,6 @@
-#include <unotu\entities\widgets\w_filtergraph.h>
+#include <unotu/entities/widgets/w_filtergraph.h>
 
-#include <unotu\entities\widgets\w_popup_dialog.h>
+#include <unotu/entities/widgets/w_popup_dialog.h>
 
 namespace unotu
 {
@@ -8,8 +8,8 @@ namespace unotu
         w_filtergraph::w_filtergraph()
         {
                 
-                this->bKeyboardFocusable    = true;
-                this->bAcceptExternalScroll = true;
+                this->boKeyboardFocusable    = true;
+                this->boAcceptExternalScroll = true;
                 
                 std::vector< std::shared_ptr<w_filtergraph::node_type> > Nodez = {
                         std::make_shared<graph_node<filter_node*, void*>>( new fn_out() ),

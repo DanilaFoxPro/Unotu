@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include <SQLiteCpp\SQLiteCpp.h>
+#include <SQLiteCpp/SQLiteCpp.h>
 
-#include <unotu\utility\executable_enum.h>
+#include <unotu/utility/executable_enum.h>
 
 namespace unotu {
 
